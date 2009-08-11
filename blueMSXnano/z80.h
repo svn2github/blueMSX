@@ -142,10 +142,10 @@ typedef struct
     CpuRegs       regs;             /* Active register bank            */
     UInt8         dataBus;          /* Current value on the data bus   */
     UInt8         defaultDatabus;   /* Value that is set after im2     */
-    int           intState;         /* Sate of interrupt line          */
-    int           nmiState;         /* Current NMI state               */
+    Int8          intState;         /* Sate of interrupt line          */
+    Int8          nmiState;         /* Current NMI state               */
 
-    int           terminate;        /* Termination flag                */
+    Int8          terminate;        /* Termination flag                */
     SystemTime    timeout;          /* User scheduled timeout          */
 } Z80;
 
@@ -157,7 +157,7 @@ typedef struct
 **
 *************************************************************************
 */
-void z80Init();
+void z80Init(void);
 
 /************************************************************************
 ** z80Reset
@@ -175,7 +175,7 @@ void z80Reset(UInt32 cpuTime);
 **
 *************************************************************************
 */
-void z80SetInt();
+void z80SetInt(void);
 
 /************************************************************************
 ** z80ClearInt
@@ -184,7 +184,7 @@ void z80SetInt();
 **
 *************************************************************************
 */
-void z80ClearInt();
+void z80ClearInt(void);
 
 /************************************************************************
 ** z80SetNmi
@@ -193,7 +193,7 @@ void z80ClearInt();
 **
 *************************************************************************
 */
-void z80SetNmi();
+void z80SetNmi(void);
 
 /************************************************************************
 ** z80ClearNmi
@@ -202,7 +202,7 @@ void z80SetNmi();
 **
 *************************************************************************
 */
-void z80ClearNmi();
+void z80ClearNmi(void);
 
 /************************************************************************
 ** z80SetDataBus
@@ -215,7 +215,7 @@ void z80ClearNmi();
 **      useDef      - Tells whether to modify the def value
 *************************************************************************
 */
-void z80SetDataBus(UInt8 value, UInt8 defValue, int useDef);
+void z80SetDataBus(UInt8 value, UInt8 defValue, Int8 useDef);
 
 /************************************************************************
 ** z80Execute
@@ -227,7 +227,7 @@ void z80SetDataBus(UInt8 value, UInt8 defValue, int useDef);
 **      z80        - Pointer to an Z80 object
 *************************************************************************
 */
-void z80Execute();
+void z80Execute(void);
 
 /************************************************************************
 ** z80ExecuteInstruction
@@ -236,7 +236,7 @@ void z80Execute();
 **
 *************************************************************************
 */
-void z80StopExecution();
+void z80StopExecution(void);
 void z80SetTimeout(SystemTime time);
 
 /************************************************************************
@@ -248,6 +248,6 @@ void z80SetTimeout(SystemTime time);
 **      Current system time.
 *************************************************************************
 */
-SystemTime z80GetSystemTime();
+SystemTime z80GetSystemTime(void);
 
 #endif /* Z80_H */

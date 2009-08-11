@@ -29,7 +29,28 @@ typedef unsigned long    UInt32;
 typedef   signed long    Int32;
 typedef unsigned __int64 UInt64;
 typedef   signed __int64 Int64;
+#define FARPTR *
+#define FARMALLOC(n)         malloc(n)
+#define FARMEMSET(b, c, n)   memset(b, c, n)
+#define FARMEMCPY(s1, s2, n) memcpy(s1, s2, n)
+
+#elif defined(MSDOS)
+
+typedef unsigned char      UInt8;
+typedef   signed char      Int8;
+typedef unsigned short     UInt16;
+typedef   signed short     Int16;
+typedef unsigned long      UInt32;
+typedef   signed long      Int32;
+typedef unsigned long long UInt64;
+typedef   signed long long Int64;
+#define FARPTR __far *
+#define FARMALLOC(n)         _fmalloc(n)
+#define FARMEMSET(b, c, n)   _fmemset(b, c, n)
+#define FARMEMCPY(s1, s2, n) _fmemcpy(s1, s2, n)
+
 #else
+
 typedef unsigned char      UInt8;
 typedef   signed char      Int8;
 typedef unsigned short     UInt16;
@@ -38,22 +59,30 @@ typedef unsigned int       UInt32;
 typedef   signed int       Int32;
 typedef unsigned long long UInt64;
 typedef   signed long long Int64;
+#define FARPTR *
+#define FARMALLOC(n)         malloc(n)
+#define FARMEMSET(b, c, n)   memset(b, c, n)
+#define FARMEMCPY(s1, s2, n) memcpy(s1, s2, n)
+
 #endif
 
 
 // Set cursor location in console
-void setpos(int x, int y);
+void setpos(Int8 x, Int8 y);
 
 // Return pressed key or 0 if no key is pressed
-char pollkbd(void);
+UInt8 pollkbd(void);
 
 // Get system time in microseconds
-unsigned long gettime(void);
+UInt32 gettime(void);
 
 // Delay ms milliseconds
-void delay(unsigned long ms);
+void delay(UInt32 ms);
 
 // Clears console screen
 void clearscreen(void);
+
+// Displays the specified "framebuffer"
+void display(const char *buffer);
 
 #endif

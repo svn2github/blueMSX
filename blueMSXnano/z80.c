@@ -34,7 +34,50 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef void (*Opcode)();
+#define INT_LOW   0
+#define INT_EDGE  1
+#define INT_HIGH  2
+
+#define DELAY_MEM      z80.systemTime += 3
+#define DELAY_MEMOP    z80.systemTime += 3
+#define DELAY_MEMPAGE  z80.systemTime += 0
+#define DELAY_PREIO    z80.systemTime += 1
+#define DELAY_POSTIO   z80.systemTime += 3
+#define DELAY_M1       z80.systemTime += 2
+#define DELAY_XD       z80.systemTime += 1
+#define DELAY_IM       z80.systemTime += 2
+#define DELAY_IM2      z80.systemTime += 19
+#define DELAY_NMI      z80.systemTime += 11
+#define DELAY_PARALLEL z80.systemTime += 2
+#define DELAY_BLOCK    z80.systemTime += 5
+#define DELAY_ADD8     z80.systemTime += 5
+#define DELAY_ADD16    z80.systemTime += 7
+#define DELAY_BIT      z80.systemTime += 1
+#define DELAY_CALL     z80.systemTime += 1
+#define DELAY_DJNZ     z80.systemTime += 1
+#define DELAY_EXSPHL   z80.systemTime += 3
+#define DELAY_INC      z80.systemTime += 1
+#define DELAY_INC16    z80.systemTime += 2
+#define DELAY_INOUT    z80.systemTime += 1
+#define DELAY_LD       z80.systemTime += 1
+#define DELAY_LDI      z80.systemTime += 2
+#define DELAY_MUL8     z80.systemTime += 0
+#define DELAY_MUL16    z80.systemTime += 0
+#define DELAY_PUSH     z80.systemTime += 1
+#define DELAY_RET      z80.systemTime += 1
+#define DELAY_RLD      z80.systemTime += 4
+#define DELAY_T9769    z80.systemTime += 0
+#define DELAY_LDSPHL   z80.systemTime += 2
+#define DELAY_BITIX    z80.systemTime += 2
+
+#ifdef ENABLE_CALLSTACK
+#define CALLSTACK_PUSH(address) \
+    z80.callstack[z80.callstackSize++ & 0xff] = address
+#else
+#define CALLSTACK_PUSH(address)
+#endif
+
+typedef void (*Opcode)(void);
 typedef void (*OpcodeNn)(UInt16);
 
 static UInt8  ZSXYTable[256];
@@ -42,64 +85,23 @@ static UInt8  ZSPXYTable[256];
 static UInt8  ZSPHTable[256];
 static UInt16 DAATable[0x800];
 
+static Z80 z80;
 
-static void cb();
-static void dd();
-static void ed();
-static void fd();
-static void dd_cb();
-static void fd_cb();
-
-#define INT_LOW   0
-#define INT_EDGE  1
-#define INT_HIGH  2
-
-
-
-#define delayMem(z80)      z80.systemTime += 3
-#define delayMemOp(z80)    z80.systemTime += 3
-#define delayMemPage(z80)  z80.systemTime += 0
-#define delayPreIo(z80)    z80.systemTime += 1
-#define delayPostIo(z80)   z80.systemTime += 3
-#define delayM1(z80)       z80.systemTime += 2
-#define delayXD(z80)       z80.systemTime += 1
-#define delayIm(z80)       z80.systemTime += 2
-#define delayIm2(z80)      z80.systemTime += 19
-#define delayNmi(z80)      z80.systemTime += 11
-#define delayParallel(z80) z80.systemTime += 2
-#define delayBlock(z80)    z80.systemTime += 5
-#define delayAdd8(z80)     z80.systemTime += 5
-#define delayAdd16(z80)    z80.systemTime += 7
-#define delayBit(z80)      z80.systemTime += 1
-#define delayCall(z80)     z80.systemTime += 1
-#define delayDjnz(z80)     z80.systemTime += 1
-#define delayExSpHl(z80)   z80.systemTime += 3
-#define delayInc(z80)      z80.systemTime += 1
-#define delayInc16(z80)    z80.systemTime += 2
-#define delayInOut(z80)    z80.systemTime += 1
-#define delayLd(z80)       z80.systemTime += 1
-#define delayLdi(z80)      z80.systemTime += 2
-#define delayMul8(z80)     z80.systemTime += 0
-#define delayMul16(z80)    z80.systemTime += 0
-#define delayPush(z80)     z80.systemTime += 1
-#define delayRet(z80)      z80.systemTime += 1
-#define delayRld(z80)      z80.systemTime += 4
-#define delayT9769(z80)    z80.systemTime += 0
-#define delayLdSpHl(z80)   z80.systemTime += 2
-#define delayBitIx(z80)    z80.systemTime += 2
-
-
-Z80 z80;
-
+static void cb(void);
+static void dd(void);
+static void ed(void);
+static void fd(void);
+static void dd_cb(void);
+static void fd_cb(void);
 
 static UInt8 readPort(UInt16 port) {
     UInt8 value;
 
     z80.regs.SH.W = port + 1;
-    delayPreIo(z80);
+    DELAY_PREIO;
 
     value = readIoPort(port);
-    delayPostIo(z80);
+    DELAY_POSTIO;
 
     return value;
 
@@ -107,25 +109,25 @@ static UInt8 readPort(UInt16 port) {
 
 static void writePort(UInt16 port, UInt8 value) {
     z80.regs.SH.W = port + 1;
-    delayPreIo(z80);
+    DELAY_PREIO;
 
     writeIoPort(port, value);
-    delayPostIo(z80);
+    DELAY_POSTIO;
 
 }
 
 static UInt8 readMem(UInt16 address) {
-    delayMem(z80);
+    DELAY_MEM;
     return readMemory(address);
 }
 
 static UInt8 readOpcode(UInt16 address) {
-    delayMemOp(z80);
+    DELAY_MEMOP;
     return readMemory(address);
 }
 
 static void writeMem(UInt16 address, UInt8 value) {
-    delayMem(z80);
+    DELAY_MEM;
     writeMemory(address, value);
 }
 
@@ -144,7 +146,8 @@ static void DEC(UInt8* reg) {
 }
 
 static void ADD(UInt8 reg) {
-    int rv = z80.regs.AF.B.h + reg;
+    Int16 rv = z80.regs.AF.B.h;
+    rv += reg;
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((z80.regs.AF.B.h ^ rv ^ reg) & H_FLAG) |
         ((((reg ^ z80.regs.AF.B.h ^ 0x80) & (reg ^ rv)) >> 5) & V_FLAG);
@@ -153,19 +156,22 @@ static void ADD(UInt8 reg) {
 
 static void ADDW(UInt16* reg1, UInt16 reg2) { //DIFF
 
-    int rv = *reg1 + reg2;
-
+    Int32 rv = *reg1;
+    rv += reg2;
+    
     z80.regs.SH.W   = *reg1 + 1;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | V_FLAG)) |
         (((*reg1 ^ reg2 ^ rv) >> 8) & H_FLAG) |
         ((rv >> 16) & C_FLAG) |
         ((rv >> 8) & (X_FLAG | Y_FLAG));
     *reg1 = rv;
-    delayAdd16(z80);
+    DELAY_ADD16;
 }
 
 static void ADC(UInt8 reg) {
-    int rv = z80.regs.AF.B.h + reg + (z80.regs.AF.B.l & C_FLAG);
+    Int16 rv = z80.regs.AF.B.h;
+    rv += reg;
+    rv += (z80.regs.AF.B.l & C_FLAG);
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((z80.regs.AF.B.h ^ rv ^ reg) & H_FLAG) |
         ((((reg ^ z80.regs.AF.B.h ^ 0x80) & (reg ^ rv)) >> 5) & V_FLAG);
@@ -173,20 +179,22 @@ static void ADC(UInt8 reg) {
 }
 
 static void ADCW(UInt16 reg) {
-    int rv = z80.regs.HL.W + reg + (z80.regs.AF.B.l & C_FLAG);
-
+    Int32 rv = z80.regs.HL.W;
+    rv += reg;
+    rv += (z80.regs.AF.B.l & C_FLAG);
+    
     z80.regs.SH.W   = z80.regs.HL.W + 1;
     z80.regs.AF.B.l = (((z80.regs.HL.W ^ reg ^ rv) >> 8) & H_FLAG) | 
         ((rv >> 16) & C_FLAG) | ((rv & 0xffff) ? 0 : Z_FLAG) |
         ((((reg ^ z80.regs.HL.W ^ 0x8000) & (reg ^ rv)) >> 13) & V_FLAG) |
         ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG));
     z80.regs.HL.W = rv;
-    delayAdd16(z80);
+    DELAY_ADD16;
 }
 
 static void SUB(UInt8 reg) {
-    int regVal = z80.regs.AF.B.h;
-    int rv = regVal - reg;
+    Int16 regVal = z80.regs.AF.B.h;
+    Int16 rv = regVal - reg;
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((regVal ^ rv ^ reg) & H_FLAG) | N_FLAG |
         ((((reg ^ regVal) & (rv ^ regVal)) >> 5) & V_FLAG);
@@ -194,8 +202,8 @@ static void SUB(UInt8 reg) {
 } 
 
 static void SBC(UInt8 reg) {
-    int regVal = z80.regs.AF.B.h;
-    int rv = regVal - reg - (z80.regs.AF.B.l & C_FLAG);
+    Int16 regVal = z80.regs.AF.B.h;
+    Int16 rv = regVal - reg - (z80.regs.AF.B.l & C_FLAG);
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((regVal ^ rv ^ reg) & H_FLAG) | N_FLAG |
         ((((reg ^ regVal) & (rv ^ regVal)) >> 5) & V_FLAG);
@@ -203,20 +211,20 @@ static void SBC(UInt8 reg) {
 }
 
 static void SBCW(UInt16 reg) {
-    int regVal = z80.regs.HL.W;
-    int rv = regVal - reg - (z80.regs.AF.B.l & C_FLAG);
+    Int32 regVal = z80.regs.HL.W;
+    Int32 rv = regVal - reg - (z80.regs.AF.B.l & C_FLAG);
     z80.regs.SH.W   = regVal + 1;
     z80.regs.AF.B.l = (((regVal ^ reg ^ rv) >> 8) & H_FLAG) | N_FLAG |
         ((rv >> 16) & C_FLAG) | ((rv & 0xffff) ? 0 : Z_FLAG) | 
         ((((reg ^ regVal) & (regVal ^ rv)) >> 13) & V_FLAG) |
         ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG));
     z80.regs.HL.W = rv;
-    delayAdd16(z80);
+    DELAY_ADD16;
 }
 
 static void CP(UInt8 reg) {
-    int regVal = z80.regs.AF.B.h;
-    int rv = regVal - reg;
+    Int16 regVal = z80.regs.AF.B.h;
+    Int16 rv = regVal - reg;
     z80.regs.AF.B.l = (ZSPXYTable[rv & 0xff] & (Z_FLAG | S_FLAG)) | 
         ((rv >> 8) & C_FLAG) |
         ((regVal ^ rv ^ reg) & H_FLAG) | N_FLAG |
@@ -239,21 +247,21 @@ static void XOR(UInt8 reg) {
     z80.regs.AF.B.l = ZSPXYTable[z80.regs.AF.B.h];
 }
 
-static void MULU(UInt8 reg) { // Diff on mask // RuMSX: (S_FLAG & V_FLAG)
-    z80.regs.HL.W = (Int16)z80.regs.AF.B.h * reg;
-    z80.regs.AF.B.l = (z80.regs.AF.B.l & (N_FLAG | H_FLAG)) |
-        (z80.regs.HL.W ? 0 : Z_FLAG) | ((z80.regs.HL.W >> 15) & C_FLAG);
-    delayMul8(z80);
-}
+//static void MULU(UInt8 reg) { // Diff on mask // RuMSX: (S_FLAG & V_FLAG)
+//    z80.regs.HL.W = (Int16)z80.regs.AF.B.h * reg;
+//    z80.regs.AF.B.l = (z80.regs.AF.B.l & (N_FLAG | H_FLAG)) |
+//        (z80.regs.HL.W ? 0 : Z_FLAG) | ((z80.regs.HL.W >> 15) & C_FLAG);
+//    DELAY_MUL8;
+//}
 
-static void MULUW(UInt16 reg) { // Diff on mask // RuMSX: (S_FLAG & V_FLAG)
-    UInt32 rv = (UInt32)z80.regs.HL.W * reg;
-    z80.regs.DE.W = (UInt16)(rv >> 16);
-    z80.regs.HL.W = (UInt16)(rv & 0xffff);
-    z80.regs.AF.B.l = (z80.regs.AF.B.l & (N_FLAG | H_FLAG)) |
-        (rv ? 0 : Z_FLAG) | (UInt8)((rv >> 31) & C_FLAG);
-    delayMul16(z80);
-}
+//static void MULUW(UInt16 reg) { // Diff on mask // RuMSX: (S_FLAG & V_FLAG)
+//    UInt32 rv = (UInt32)z80.regs.HL.W * reg;
+//    z80.regs.DE.W = (UInt16)(rv >> 16);
+//    z80.regs.HL.W = (UInt16)(rv & 0xffff);
+//    z80.regs.AF.B.l = (z80.regs.AF.B.l & (N_FLAG | H_FLAG)) |
+//        (rv ? 0 : Z_FLAG) | (UInt8)((rv >> 31) & C_FLAG);
+//    DELAY_MUL16;
+//}
 
 static void SLA(UInt8* reg) {
     UInt8 regVal = *reg;
@@ -324,75 +332,41 @@ static void SET(UInt8 bit, UInt8* reg) {
     *reg |= 1 << bit;
 }
 
-static void JR() {
-    RegisterPair addr;
-
-    addr.W = z80.regs.PC.W + 1 + (Int8)readOpcode(z80.regs.PC.W);
-    z80.regs.PC.W = addr.W;
-    z80.regs.SH.W = addr.W;
-    delayAdd8(z80);
-}
-
-static void SKIP_JR() {
-    readOpcode(z80.regs.PC.W++);
-}
-
-static void JP() {
-    RegisterPair addr;
-
-    addr.B.l = readOpcode(z80.regs.PC.W++);
-    addr.B.h = readOpcode(z80.regs.PC.W++);
-    z80.regs.PC.W = addr.W;
-    z80.regs.SH.W = addr.W;
-}
-
-static void SKIP_JP() {
-    RegisterPair addr;
-
-    addr.B.l = readOpcode(z80.regs.PC.W++);
-    addr.B.h = readOpcode(z80.regs.PC.W++);
-    z80.regs.SH.W = addr.W;
-}
-
-static void CALL() {
-    RegisterPair addr;
-
-    addr.B.l = readOpcode(z80.regs.PC.W++);
-    addr.B.h = readOpcode(z80.regs.PC.W++);
-    delayCall(z80);
-#ifdef ENABLE_CALLSTACK
-    z80.callstack[z80.callstackSize++ & 0xff] = z80.regs.PC.W;
-#endif
-    writeMem(--z80.regs.SP.W, z80.regs.PC.B.h);
-    writeMem(--z80.regs.SP.W, z80.regs.PC.B.l);
-    z80.regs.PC.W = addr.W;
-    z80.regs.SH.W = addr.W;
-}
-
-static void SKIP_CALL() {
-    RegisterPair addr;
-
-    addr.B.l = readOpcode(z80.regs.PC.W++);
-    addr.B.h = readOpcode(z80.regs.PC.W++);
-    z80.regs.SH.W = addr.W;
-}
-
-static void RET() { 
-    RegisterPair addr;
-    addr.B.l = readMem(z80.regs.SP.W++);
-    addr.B.h = readMem(z80.regs.SP.W++);
-    z80.regs.PC.W = addr.W;
-    z80.regs.SH.W = addr.W;
-#ifdef ENABLE_CALLSTACK
-    if (z80.callstack[(z80.callstackSize - 1) & 0xff] == addr.W) {
-        z80.callstackSize--;
+#define JR_COND(cond) \
+    if (cond) { \
+        RegisterPair addr; \
+        addr.W = z80.regs.PC.W + 1 + (Int8)readOpcode(z80.regs.PC.W); \
+        z80.regs.PC.W = addr.W; \
+        z80.regs.SH.W = addr.W; \
+        DELAY_ADD8; \
+    } else { \
+        readOpcode(z80.regs.PC.W++); \
     }
-#endif
-}
 
+#define JP_COND(cond) \
+    RegisterPair addr; \
+    addr.B.l = readOpcode(z80.regs.PC.W++); \
+    addr.B.h = readOpcode(z80.regs.PC.W++); \
+    z80.regs.SH.W = addr.W; \
+    if (cond) { \
+        z80.regs.PC.W = addr.W; \
+    }
+
+#define CALL_COND(cond) \
+    RegisterPair addr; \
+    addr.B.l = readOpcode(z80.regs.PC.W++); \
+    addr.B.h = readOpcode(z80.regs.PC.W++); \
+    z80.regs.SH.W = addr.W; \
+    if (cond) { \
+        DELAY_CALL; \
+        CALLSTACK_PUSH(z80.regs.PC.W); \
+        writeMem(--z80.regs.SP.W, z80.regs.PC.B.h); \
+        writeMem(--z80.regs.SP.W, z80.regs.PC.B.l); \
+        z80.regs.PC.W = addr.W; \
+    }
 static void PUSH(UInt16* reg) {
     RegisterPair* pair = (RegisterPair*)reg;
-    delayPush(z80);
+    DELAY_PUSH;
     writeMem(--z80.regs.SP.W, pair->B.h);
     writeMem(--z80.regs.SP.W, pair->B.l);
 }
@@ -404,9 +378,7 @@ static void POP(UInt16* reg) {
 }
 
 static void RST(UInt16 vector) {
-#ifdef ENABLE_CALLSTACK
-    z80.callstack[z80.callstackSize++ & 0xff] = z80.regs.PC.W;
-#endif
+    CALLSTACK_PUSH(z80.regs.PC.W);
     PUSH(&z80.regs.PC.W);
     z80.regs.PC.W = vector;
     z80.regs.SH.W = vector;
@@ -415,394 +387,394 @@ static void RST(UInt16 vector) {
 static void EX_SP(UInt16* reg) {
     RegisterPair* pair = (RegisterPair*)reg;
     RegisterPair addr;
-
+    
     addr.B.l = readMem(z80.regs.SP.W++);
     addr.B.h = readMem(z80.regs.SP.W);
     writeMem(z80.regs.SP.W--, pair->B.h);
     writeMem(z80.regs.SP.W,   pair->B.l);
     pair->W   = addr.W;
     z80.regs.SH.W = addr.W;
-    delayExSpHl(z80);
+    DELAY_EXSPHL;
 }
 
-static void M1() { 
+static void M1(void) {
     UInt8 value = z80.regs.R;
     z80.regs.R = (value & 0x80) | ((value + 1) & 0x7f); 
-    delayM1(z80);
+    DELAY_M1;
 }
 
 
-static void nop() {
+static void nop(void) {
 }
 
-static void ld_bc_word() {
+static void ld_bc_word(void) {
     z80.regs.BC.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.BC.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_de_word() {
+static void ld_de_word(void) {
     z80.regs.DE.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.DE.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_hl_word() {
+static void ld_hl_word(void) {
     z80.regs.HL.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.HL.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_ix_word() {
+static void ld_ix_word(void) {
     z80.regs.IX.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.IX.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_iy_word() {
+static void ld_iy_word(void) {
     z80.regs.IY.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.IY.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_sp_word() {
+static void ld_sp_word(void) {
     z80.regs.SP.B.l = readOpcode(z80.regs.PC.W++);
     z80.regs.SP.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_sp_hl() { 
-    delayLdSpHl(z80);                  // white cat append
+static void ld_sp_hl(void) { 
+    DELAY_LDSPHL;                  // white cat append
     z80.regs.SP.W = z80.regs.HL.W; 
 }
 
-static void ld_sp_ix() { 
-    delayLdSpHl(z80);                  // white cat append
+static void ld_sp_ix(void) {
+    DELAY_LDSPHL;                  // white cat append
     z80.regs.SP.W = z80.regs.IX.W; 
 }
 
-static void ld_sp_iy() { 
-    delayLdSpHl(z80);                  // white cat append
+static void ld_sp_iy(void) { 
+    DELAY_LDSPHL;                  // white cat append
     z80.regs.SP.W = z80.regs.IY.W; 
 }
 
-static void ld_xbc_a() {
+static void ld_xbc_a(void) {
     writeMem(z80.regs.BC.W, z80.regs.AF.B.h);
 }
 
-static void ld_xde_a() {
+static void ld_xde_a(void) {
     writeMem(z80.regs.DE.W, z80.regs.AF.B.h);
 }
 
-static void ld_xhl_a() {
+static void ld_xhl_a(void) {
     writeMem(z80.regs.HL.W, z80.regs.AF.B.h);
 }
 
-static void ld_a_xbc() {
+static void ld_a_xbc(void) {
     z80.regs.AF.B.h = readMem(z80.regs.BC.W);
 }
 
-static void ld_a_xde() {
+static void ld_a_xde(void) {
     z80.regs.AF.B.h = readMem(z80.regs.DE.W);
 }
 
-static void ld_xhl_byte() {
+static void ld_xhl_byte(void) {
     writeMem(z80.regs.HL.W, readOpcode(z80.regs.PC.W++));
 }
 
-static void ld_i_a() {
-    delayLd(z80);
+static void ld_i_a(void) {
+    DELAY_LD;
     z80.regs.I = z80.regs.AF.B.h;
 }
 
-static void ld_r_a() {
-    delayLd(z80);
+static void ld_r_a(void) {
+    DELAY_LD;
     z80.regs.R = z80.regs.R2 = z80.regs.AF.B.h;
 }
 
-static void ld_a_i() {
-    delayLd(z80);
+static void ld_a_i(void) {
+    DELAY_LD;
     z80.regs.AF.B.h = z80.regs.I;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSXYTable[z80.regs.AF.B.h] | (z80.regs.iff2 << 2);
 }
 
-static void ld_a_r() {
-    delayLd(z80);
+static void ld_a_r(void) {
+    DELAY_LD;
     z80.regs.AF.B.h = (z80.regs.R & 0x7f) | (z80.regs.R2 & 0x80);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSXYTable[z80.regs.AF.B.h] | (z80.regs.iff2 << 2);
 }
 
-static void inc_bc() {
-    z80.regs.BC.W++; delayInc16(z80);
+static void inc_bc(void) {
+    z80.regs.BC.W++; DELAY_INC16;
 }
 
-static void inc_de() {
-    z80.regs.DE.W++; delayInc16(z80);
+static void inc_de(void) {
+    z80.regs.DE.W++; DELAY_INC16;
 }
 
-static void inc_hl() {
-    z80.regs.HL.W++; delayInc16(z80);
+static void inc_hl(void) {
+    z80.regs.HL.W++; DELAY_INC16;
 }
 
-static void inc_ix() {
-    z80.regs.IX.W++; delayInc16(z80);
+static void inc_ix(void) {
+    z80.regs.IX.W++; DELAY_INC16;
 }
 
-static void inc_iy() {
-    z80.regs.IY.W++; delayInc16(z80);
+static void inc_iy(void) {
+    z80.regs.IY.W++; DELAY_INC16;
 }
 
-static void inc_sp() {
-    z80.regs.SP.W++; delayInc16(z80);
+static void inc_sp(void) {
+    z80.regs.SP.W++; DELAY_INC16;
 }
 
-static void inc_a() {
+static void inc_a(void) {
     INC(&z80.regs.AF.B.h);
 }
 
-static void inc_b() {
+static void inc_b(void) {
     INC(&z80.regs.BC.B.h);
 }
 
-static void inc_c() {
+static void inc_c(void) {
     INC(&z80.regs.BC.B.l);
 }
 
-static void inc_d() {
+static void inc_d(void) {
     INC(&z80.regs.DE.B.h);
 }
 
-static void inc_e() {
+static void inc_e(void) {
     INC(&z80.regs.DE.B.l);
 }
 
-static void inc_h() {
+static void inc_h(void) {
     INC(&z80.regs.HL.B.h);
 }
 
-static void inc_l() {
+static void inc_l(void) {
     INC(&z80.regs.HL.B.l);
 }
 
-static void inc_ixh() { 
+static void inc_ixh(void) { 
     INC(&z80.regs.IX.B.h); 
 }
 
-static void inc_ixl() { 
+static void inc_ixl(void) { 
     INC(&z80.regs.IX.B.l); 
 }
 
-static void inc_iyh() { 
+static void inc_iyh(void) { 
     INC(&z80.regs.IY.B.h); 
 }
 
 
-static void inc_iyl() { 
+static void inc_iyl(void) { 
     INC(&z80.regs.IY.B.l); 
 }
 
-static void inc_xhl() {
+static void inc_xhl(void) {
     UInt8 value = readMem(z80.regs.HL.W);
     INC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, value);
 }
 
-static void inc_xix() {
+static void inc_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value;
-    delayAdd8(z80);
+    DELAY_ADD8;
     value = readMem(addr);
     INC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(addr, value);
     z80.regs.SH.W = addr;
 }
 
-static void inc_xiy() {
+static void inc_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value;
-    delayAdd8(z80);
+    DELAY_ADD8;
     value = readMem(addr);
     INC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(addr, value);
     z80.regs.SH.W = addr;
 }
 
-static void dec_bc() {
-    z80.regs.BC.W--; delayInc16(z80);
+static void dec_bc(void) {
+    z80.regs.BC.W--; DELAY_INC16;
 }
 
-static void dec_de() {
-    z80.regs.DE.W--; delayInc16(z80);
+static void dec_de(void) {
+    z80.regs.DE.W--; DELAY_INC16;
 }
 
-static void dec_hl() {
-    z80.regs.HL.W--; delayInc16(z80);
+static void dec_hl(void) {
+    z80.regs.HL.W--; DELAY_INC16;
 }
 
-static void dec_ix() {
-    z80.regs.IX.W--; delayInc16(z80);
+static void dec_ix(void) {
+    z80.regs.IX.W--; DELAY_INC16;
 }
 
-static void dec_iy() {
-    z80.regs.IY.W--; delayInc16(z80);
+static void dec_iy(void) {
+    z80.regs.IY.W--; DELAY_INC16;
 }
 
-static void dec_sp() {
-    z80.regs.SP.W--; delayInc16(z80);
+static void dec_sp(void) {
+    z80.regs.SP.W--; DELAY_INC16;
 }
 
-static void dec_a() {
+static void dec_a(void) {
     DEC(&z80.regs.AF.B.h);
 }
 
-static void dec_b() {
+static void dec_b(void) {
     DEC(&z80.regs.BC.B.h);
 }
 
-static void dec_c() {
+static void dec_c(void) {
     DEC(&z80.regs.BC.B.l);
 }
 
-static void dec_d() {
+static void dec_d(void) {
     DEC(&z80.regs.DE.B.h);
 }
 
-static void dec_e() {
+static void dec_e(void) {
     DEC(&z80.regs.DE.B.l);
 }
 
-static void dec_h() {
+static void dec_h(void) {
     DEC(&z80.regs.HL.B.h);
 }
 
-static void dec_l() {
+static void dec_l(void) {
     DEC(&z80.regs.HL.B.l);
 }
 
-static void dec_ixh() { 
+static void dec_ixh(void) { 
     DEC(&z80.regs.IX.B.h); 
 }
 
-static void dec_ixl() { 
+static void dec_ixl(void) { 
     DEC(&z80.regs.IX.B.l); 
 }
 
-static void dec_iyh() { 
+static void dec_iyh(void) { 
     DEC(&z80.regs.IY.B.h); 
 }
 
-static void dec_iyl() { 
+static void dec_iyl(void) { 
     DEC(&z80.regs.IY.B.l); 
 }
 
-static void dec_xhl() {
+static void dec_xhl(void) {
     UInt8 value = readMem(z80.regs.HL.W);
     DEC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, value);
 }
 
-static void dec_xix() {
+static void dec_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value;
-    delayAdd8(z80);
+    DELAY_ADD8;
     value = readMem(addr);
     DEC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(addr, value);
     z80.regs.SH.W = addr;
 }
 
-static void dec_xiy() {
+static void dec_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value;
-    delayAdd8(z80);
+    DELAY_ADD8;
     value = readMem(addr);
     DEC(&value);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(addr, value);
     z80.regs.SH.W = addr;
 }
 
-static void ld_a_a() { 
+static void ld_a_a(void) { 
 }
 
-static void ld_a_b() { 
+static void ld_a_b(void) { 
     z80.regs.AF.B.h = z80.regs.BC.B.h; 
 }
 
-static void ld_a_c() { 
+static void ld_a_c(void) { 
     z80.regs.AF.B.h = z80.regs.BC.B.l; 
 }
 
-static void ld_a_d() { 
+static void ld_a_d(void) { 
     z80.regs.AF.B.h = z80.regs.DE.B.h; 
 }
 
-static void ld_a_e() { 
+static void ld_a_e(void) { 
     z80.regs.AF.B.h = z80.regs.DE.B.l; 
 }
 
-static void ld_a_h() { 
+static void ld_a_h(void) { 
     z80.regs.AF.B.h = z80.regs.HL.B.h; 
 }
 
-static void ld_a_l() { 
+static void ld_a_l(void) { 
     z80.regs.AF.B.h = z80.regs.HL.B.l; 
 }
 
-static void ld_a_ixh() { 
+static void ld_a_ixh(void) { 
     z80.regs.AF.B.h = z80.regs.IX.B.h; 
 }
 
-static void ld_a_ixl() { 
+static void ld_a_ixl(void) { 
     z80.regs.AF.B.h = z80.regs.IX.B.l; 
 }
 
-static void ld_a_iyh() { 
+static void ld_a_iyh(void) { 
     z80.regs.AF.B.h = z80.regs.IY.B.h; 
 }
 
-static void ld_a_iyl() { 
+static void ld_a_iyl(void) { 
     z80.regs.AF.B.h = z80.regs.IY.B.l; 
 }
 
-static void ld_a_xhl() { 
+static void ld_a_xhl(void) { 
     z80.regs.AF.B.h = readMem(z80.regs.HL.W); 
 }
 
-static void ld_a_xix() { 
+static void ld_a_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.AF.B.h = readMem(addr);
 }
 
-static void ld_a_xiy() { 
+static void ld_a_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.AF.B.h = readMem(addr);
 }
 
-static void ld_xiy_a() { 
+static void ld_xiy_a(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.AF.B.h);
 }
 
-static void ld_xix_a() { 
+static void ld_xix_a(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.AF.B.h);
 }
 
-static void ld_b_a() { 
+static void ld_b_a(void) { 
     z80.regs.BC.B.h = z80.regs.AF.B.h; 
 }
 
-static void ld_b_b() { 
+static void ld_b_b(void) { 
 #ifdef ENABLE_ASMSX_DEBUG_COMMANDS
 #if 1
     char debugString[256];
@@ -877,162 +849,162 @@ static void ld_b_b() {
 #endif
 }
 
-static void ld_b_c() { 
+static void ld_b_c(void) { 
     z80.regs.BC.B.h = z80.regs.BC.B.l; 
 }
 
-static void ld_b_d() { 
+static void ld_b_d(void) { 
     z80.regs.BC.B.h = z80.regs.DE.B.h; 
 }
 
-static void ld_b_e() { 
+static void ld_b_e(void) { 
     z80.regs.BC.B.h = z80.regs.DE.B.l; 
 }
 
-static void ld_b_h() { 
+static void ld_b_h(void) { 
     z80.regs.BC.B.h = z80.regs.HL.B.h; 
 }
 
-static void ld_b_l() { 
+static void ld_b_l(void) { 
     z80.regs.BC.B.h = z80.regs.HL.B.l; 
 }
 
-static void ld_b_ixh() { 
+static void ld_b_ixh(void) { 
     z80.regs.BC.B.h = z80.regs.IX.B.h; 
 }
 
-static void ld_b_ixl() { 
+static void ld_b_ixl(void) { 
     z80.regs.BC.B.h = z80.regs.IX.B.l; 
 }
 
-static void ld_b_iyh() { 
+static void ld_b_iyh(void) { 
     z80.regs.BC.B.h = z80.regs.IY.B.h; 
 }
 
-static void ld_b_iyl() { 
+static void ld_b_iyl(void) { 
     z80.regs.BC.B.h = z80.regs.IY.B.l; 
 }
 
-static void ld_b_xhl() { 
+static void ld_b_xhl(void) { 
     z80.regs.BC.B.h = readMem(z80.regs.HL.W); 
 }
 
-static void ld_b_xix() { 
+static void ld_b_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.BC.B.h = readMem(addr);
 }
 
-static void ld_b_xiy() { 
+static void ld_b_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.BC.B.h = readMem(addr);
 }
 
-static void ld_xix_b() { 
+static void ld_xix_b(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.BC.B.h);
 }
 
-static void ld_xiy_b() { 
+static void ld_xiy_b(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.BC.B.h);
 }
 
-static void ld_c_a() { 
+static void ld_c_a(void) { 
     z80.regs.BC.B.l = z80.regs.AF.B.h; 
 }
 
-static void ld_c_b() { 
+static void ld_c_b(void) { 
     z80.regs.BC.B.l = z80.regs.BC.B.h; 
 }
 
-static void ld_c_c() { 
+static void ld_c_c(void) { 
 }
 
-static void ld_c_d() { 
+static void ld_c_d(void) { 
     z80.regs.BC.B.l = z80.regs.DE.B.h; 
 }
 
-static void ld_c_e() {
+static void ld_c_e(void) {
     z80.regs.BC.B.l = z80.regs.DE.B.l;
 }
 
-static void ld_c_h() { 
+static void ld_c_h(void) { 
     z80.regs.BC.B.l = z80.regs.HL.B.h; 
 }
 
-static void ld_c_l() { 
+static void ld_c_l(void) { 
     z80.regs.BC.B.l = z80.regs.HL.B.l; 
 }
 
-static void ld_c_ixh() { 
+static void ld_c_ixh(void) { 
     z80.regs.BC.B.l = z80.regs.IX.B.h; 
 }
 
-static void ld_c_ixl() { 
+static void ld_c_ixl(void) { 
     z80.regs.BC.B.l = z80.regs.IX.B.l; 
 }
 
-static void ld_c_iyh() { 
+static void ld_c_iyh(void) { 
     z80.regs.BC.B.l = z80.regs.IY.B.h; 
 }
 
-static void ld_c_iyl() { 
+static void ld_c_iyl(void) { 
     z80.regs.BC.B.l = z80.regs.IY.B.l; 
 }
 
-static void ld_c_xhl() { 
+static void ld_c_xhl(void) { 
     z80.regs.BC.B.l = readMem(z80.regs.HL.W); 
 }
 
-static void ld_c_xix() { 
+static void ld_c_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.BC.B.l = readMem(addr);
 }
 
-static void ld_c_xiy() { 
+static void ld_c_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.BC.B.l = readMem(addr);
 }
 
-static void ld_xix_c() { 
+static void ld_xix_c(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.BC.B.l);
 }
 
-static void ld_xiy_c() { 
+static void ld_xiy_c(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.BC.B.l);
 }
 
-static void ld_d_a() { 
+static void ld_d_a(void) { 
     z80.regs.DE.B.h = z80.regs.AF.B.h; 
 }
 
-static void ld_d_b() { 
+static void ld_d_b(void) { 
     z80.regs.DE.B.h = z80.regs.BC.B.h; 
 }
 
-static void ld_d_c() { 
+static void ld_d_c(void) { 
     z80.regs.DE.B.h = z80.regs.BC.B.l; 
 }
 
-static void ld_d_d() { 
+static void ld_d_d(void) { 
 #ifdef ENABLE_ASMSX_DEBUG_COMMANDS
     char debugString[256];
     UInt16 addr = z80.regs.PC.W;
@@ -1072,472 +1044,472 @@ static void ld_d_d() {
 #endif
 }
 
-static void ld_d_e() { 
+static void ld_d_e(void) { 
     z80.regs.DE.B.h = z80.regs.DE.B.l; 
 }
 
-static void ld_d_h() { 
+static void ld_d_h(void) { 
     z80.regs.DE.B.h = z80.regs.HL.B.h; 
 }
 
-static void ld_d_l() { 
+static void ld_d_l(void) { 
     z80.regs.DE.B.h = z80.regs.HL.B.l; 
 }
 
-static void ld_d_ixh() { 
+static void ld_d_ixh(void) { 
     z80.regs.DE.B.h = z80.regs.IX.B.h; 
 }
 
-static void ld_d_ixl() { 
+static void ld_d_ixl(void) { 
     z80.regs.DE.B.h = z80.regs.IX.B.l; 
 }
 
-static void ld_d_iyh() { 
+static void ld_d_iyh(void) { 
     z80.regs.DE.B.h = z80.regs.IY.B.h; 
 }
 
-static void ld_d_iyl() { 
+static void ld_d_iyl(void) { 
     z80.regs.DE.B.h = z80.regs.IY.B.l; 
 }
 
-static void ld_d_xhl() { 
+static void ld_d_xhl(void) { 
     z80.regs.DE.B.h = readMem(z80.regs.HL.W); 
 }
 
-static void ld_d_xix() { 
+static void ld_d_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.DE.B.h = readMem(addr);
 }
 
-static void ld_d_xiy() { 
+static void ld_d_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.DE.B.h = readMem(addr);
 }
 
-static void ld_xix_d() { 
+static void ld_xix_d(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.DE.B.h);
 
 }
-static void ld_xiy_d() { 
+static void ld_xiy_d(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.DE.B.h);
 }
 
-static void ld_e_a() { 
+static void ld_e_a(void) { 
     z80.regs.DE.B.l = z80.regs.AF.B.h; 
 }
 
-static void ld_e_b() { 
+static void ld_e_b(void) { 
     z80.regs.DE.B.l = z80.regs.BC.B.h; 
 }
 
-static void ld_e_c() { 
+static void ld_e_c(void) { 
     z80.regs.DE.B.l = z80.regs.BC.B.l; 
 }
 
-static void ld_e_d() {
+static void ld_e_d(void) {
     z80.regs.DE.B.l = z80.regs.DE.B.h; 
 }
 
-static void ld_e_e() { 
+static void ld_e_e(void) { 
 }
 
-static void ld_e_h() {
+static void ld_e_h(void) {
     z80.regs.DE.B.l = z80.regs.HL.B.h; 
 }
 
-static void ld_e_l() { 
+static void ld_e_l(void) { 
     z80.regs.DE.B.l = z80.regs.HL.B.l; 
 }
 
-static void ld_e_ixh() { 
+static void ld_e_ixh(void) { 
     z80.regs.DE.B.l = z80.regs.IX.B.h; 
 }
 
-static void ld_e_ixl() { 
+static void ld_e_ixl(void) { 
     z80.regs.DE.B.l = z80.regs.IX.B.l; 
 }
 
-static void ld_e_iyh() { 
+static void ld_e_iyh(void) { 
     z80.regs.DE.B.l = z80.regs.IY.B.h; 
 }
 
-static void ld_e_iyl() { 
+static void ld_e_iyl(void) { 
     z80.regs.DE.B.l = z80.regs.IY.B.l; 
 }
 
-static void ld_e_xhl() { 
+static void ld_e_xhl(void) { 
     z80.regs.DE.B.l = readMem(z80.regs.HL.W); 
 }
 
-static void ld_e_xix() { 
+static void ld_e_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.DE.B.l = readMem(addr);
 }
 
-static void ld_e_xiy() { 
+static void ld_e_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.DE.B.l = readMem(addr);
 }
 
-static void ld_xix_e() { 
+static void ld_xix_e(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.DE.B.l);
 }
 
-static void ld_xiy_e() { 
+static void ld_xiy_e(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.DE.B.l);
 }
 
-static void ld_h_a() { 
+static void ld_h_a(void) { 
     z80.regs.HL.B.h = z80.regs.AF.B.h;
 }
 
-static void ld_h_b() { 
+static void ld_h_b(void) { 
     z80.regs.HL.B.h = z80.regs.BC.B.h;
 }
 
-static void ld_h_c() { 
+static void ld_h_c(void) { 
     z80.regs.HL.B.h = z80.regs.BC.B.l;
 }
 
-static void ld_h_d() {
+static void ld_h_d(void) {
     z80.regs.HL.B.h = z80.regs.DE.B.h;
 }
 
-static void ld_h_e() {
+static void ld_h_e(void) {
     z80.regs.HL.B.h = z80.regs.DE.B.l; 
 }
 
-static void ld_h_h() { 
+static void ld_h_h(void) { 
     z80.regs.HL.B.h = z80.regs.HL.B.h; 
 }
 
-static void ld_h_l() { 
+static void ld_h_l(void) { 
     z80.regs.HL.B.h = z80.regs.HL.B.l; 
 }
 
-static void ld_h_ixh() {
-    z80.regs.HL.B.h = z80.regs.IX.B.h; 
-}
+//static void ld_h_ixh(void) {
+//    z80.regs.HL.B.h = z80.regs.IX.B.h; 
+//}
 
-static void ld_h_ixl() {
-    z80.regs.HL.B.h = z80.regs.IX.B.l;
-}
+//static void ld_h_ixl(void) {
+//    z80.regs.HL.B.h = z80.regs.IX.B.l;
+//}
 
-static void ld_h_iyh() {
-    z80.regs.HL.B.h = z80.regs.IY.B.h; 
-}
+//static void ld_h_iyh(void) {
+//    z80.regs.HL.B.h = z80.regs.IY.B.h; 
+//}
 
-static void ld_h_iyl() {
-    z80.regs.HL.B.h = z80.regs.IY.B.l; 
-}
+//static void ld_h_iyl(void) {
+//    z80.regs.HL.B.h = z80.regs.IY.B.l; 
+//}
 
-static void ld_h_xhl() {
+static void ld_h_xhl(void) {
     z80.regs.HL.B.h = readMem(z80.regs.HL.W); 
 }
 
-static void ld_h_xix() { 
+static void ld_h_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.HL.B.h = readMem(addr);
 }
 
-static void ld_h_xiy() { 
+static void ld_h_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.HL.B.h = readMem(addr);
 }
 
-static void ld_xix_h() { 
+static void ld_xix_h(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.HL.B.h);
 }
 
-static void ld_xiy_h() { 
+static void ld_xiy_h(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.HL.B.h);
 }
 
-static void ld_l_a() { 
+static void ld_l_a(void) { 
     z80.regs.HL.B.l = z80.regs.AF.B.h; 
 }
 
-static void ld_l_b() {
+static void ld_l_b(void) {
     z80.regs.HL.B.l = z80.regs.BC.B.h; 
 }
 
-static void ld_l_c() {
+static void ld_l_c(void) {
     z80.regs.HL.B.l = z80.regs.BC.B.l;
 }
 
-static void ld_l_d() {
+static void ld_l_d(void) {
     z80.regs.HL.B.l = z80.regs.DE.B.h;
 }
 
-static void ld_l_e() {
+static void ld_l_e(void) {
     z80.regs.HL.B.l = z80.regs.DE.B.l;
 }
 
-static void ld_l_h() {
+static void ld_l_h(void) {
     z80.regs.HL.B.l = z80.regs.HL.B.h;
 }
 
-static void ld_l_l() {
+static void ld_l_l(void) {
     z80.regs.HL.B.l = z80.regs.HL.B.l;
 }
 
-static void ld_l_ixh() {
-    z80.regs.HL.B.l = z80.regs.IX.B.h;
-}
+//static void ld_l_ixh(void) {
+//    z80.regs.HL.B.l = z80.regs.IX.B.h;
+//}
 
-static void ld_l_ixl() {
-    z80.regs.HL.B.l = z80.regs.IX.B.l;
-}
+//static void ld_l_ixl(void) {
+//    z80.regs.HL.B.l = z80.regs.IX.B.l;
+//}
 
-static void ld_l_iyh() {
-    z80.regs.HL.B.l = z80.regs.IY.B.h;
-}
+//static void ld_l_iyh(void) {
+//    z80.regs.HL.B.l = z80.regs.IY.B.h;
+//}
 
-static void ld_l_iyl() {
-    z80.regs.HL.B.l = z80.regs.IY.B.l; 
-}
+//static void ld_l_iyl(void) {
+//    z80.regs.HL.B.l = z80.regs.IY.B.l; 
+//}
 
-static void ld_l_xhl() {
+static void ld_l_xhl(void) {
     z80.regs.HL.B.l = readMem(z80.regs.HL.W); 
 }
 
-static void ld_l_xix() { 
+static void ld_l_xix(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.HL.B.l = readMem(addr);
 }
 
-static void ld_l_xiy() { 
+static void ld_l_xiy(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     z80.regs.HL.B.l = readMem(addr);
 }
 
-static void ld_xix_l() { 
+static void ld_xix_l(void) { 
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.HL.B.l);
 }
 
-static void ld_xiy_l()   { 
+static void ld_xiy_l(void) { 
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80);
+    DELAY_ADD8;
     z80.regs.SH.W = addr;
     writeMem(addr, z80.regs.HL.B.l);
 }
 
-static void ld_ixh_a() { 
+static void ld_ixh_a(void) { 
     z80.regs.IX.B.h = z80.regs.AF.B.h;
 }
 
-static void ld_ixh_b() {
+static void ld_ixh_b(void) {
     z80.regs.IX.B.h = z80.regs.BC.B.h;
 }
 
-static void ld_ixh_c() {
+static void ld_ixh_c(void) {
     z80.regs.IX.B.h = z80.regs.BC.B.l;
 }
 
-static void ld_ixh_d() {
+static void ld_ixh_d(void) {
     z80.regs.IX.B.h = z80.regs.DE.B.h; 
 }
 
-static void ld_ixh_e() {
+static void ld_ixh_e(void) {
     z80.regs.IX.B.h = z80.regs.DE.B.l;
 }
 
-static void ld_ixh_ixh() {
+static void ld_ixh_ixh(void) {
 }
 
-static void ld_ixh_ixl() {
+static void ld_ixh_ixl(void) {
     z80.regs.IX.B.h = z80.regs.IX.B.l;
 }
 
-static void ld_ixl_a() { 
+static void ld_ixl_a(void) { 
     z80.regs.IX.B.l = z80.regs.AF.B.h;
 }
 
-static void ld_ixl_b() {
+static void ld_ixl_b(void) {
     z80.regs.IX.B.l = z80.regs.BC.B.h;
 }
 
-static void ld_ixl_c() {
+static void ld_ixl_c(void) {
     z80.regs.IX.B.l = z80.regs.BC.B.l; 
 }
 
-static void ld_ixl_d() { 
+static void ld_ixl_d(void) { 
     z80.regs.IX.B.l = z80.regs.DE.B.h;
 }
 
-static void ld_ixl_e() {
+static void ld_ixl_e(void) {
     z80.regs.IX.B.l = z80.regs.DE.B.l;
 }
 
-static void ld_ixl_ixh() {
+static void ld_ixl_ixh(void) {
     z80.regs.IX.B.l = z80.regs.IX.B.h;
 }
 
-static void ld_ixl_ixl() {
+static void ld_ixl_ixl(void) {
 }
 
-static void ld_iyh_a() {
+static void ld_iyh_a(void) {
     z80.regs.IY.B.h = z80.regs.AF.B.h;
 }
 
-static void ld_iyh_b() {
+static void ld_iyh_b(void) {
     z80.regs.IY.B.h = z80.regs.BC.B.h;
 }
 
-static void ld_iyh_c() { 
+static void ld_iyh_c(void) { 
     z80.regs.IY.B.h = z80.regs.BC.B.l;
 }
 
-static void ld_iyh_d() {
+static void ld_iyh_d(void) {
     z80.regs.IY.B.h = z80.regs.DE.B.h; 
 }
 
-static void ld_iyh_e() {
+static void ld_iyh_e(void) {
     z80.regs.IY.B.h = z80.regs.DE.B.l; 
 }
 
-static void ld_iyh_iyh() {
+static void ld_iyh_iyh(void) {
 }
 
-static void ld_iyh_iyl() {
+static void ld_iyh_iyl(void) {
     z80.regs.IY.B.h = z80.regs.IY.B.l; 
 }
 
-static void ld_iyl_a() {
+static void ld_iyl_a(void) {
     z80.regs.IY.B.l = z80.regs.AF.B.h;
 }
 
-static void ld_iyl_b() { 
+static void ld_iyl_b(void) { 
     z80.regs.IY.B.l = z80.regs.BC.B.h;
 }
 
-static void ld_iyl_c() { 
+static void ld_iyl_c(void) { 
     z80.regs.IY.B.l = z80.regs.BC.B.l;
 }
 
-static void ld_iyl_d() { 
+static void ld_iyl_d(void) { 
     z80.regs.IY.B.l = z80.regs.DE.B.h;
 }
 
-static void ld_iyl_e() { 
+static void ld_iyl_e(void) { 
     z80.regs.IY.B.l = z80.regs.DE.B.l;
 }
 
-static void ld_iyl_iyh() { 
+static void ld_iyl_iyh(void) { 
     z80.regs.IY.B.l = z80.regs.IY.B.h;
 }
 
-static void ld_iyl_iyl() {
+static void ld_iyl_iyl(void) {
 }
 
-static void ld_xhl_b() { 
+static void ld_xhl_b(void) { 
     writeMem(z80.regs.HL.W, z80.regs.BC.B.h);
 }
 
-static void ld_xhl_c() { 
+static void ld_xhl_c(void) { 
     writeMem(z80.regs.HL.W, z80.regs.BC.B.l); 
 }
 
-static void ld_xhl_d() { 
+static void ld_xhl_d(void) { 
     writeMem(z80.regs.HL.W, z80.regs.DE.B.h);
 }
 
-static void ld_xhl_e() { 
+static void ld_xhl_e(void) { 
     writeMem(z80.regs.HL.W, z80.regs.DE.B.l);
 }
 
-static void ld_xhl_h() { 
+static void ld_xhl_h(void) { 
     writeMem(z80.regs.HL.W, z80.regs.HL.B.h);
 }
 
-static void ld_xhl_l() { 
+static void ld_xhl_l(void) { 
     writeMem(z80.regs.HL.W, z80.regs.HL.B.l);
 }
 
-static void ld_a_byte() {
+static void ld_a_byte(void) {
     z80.regs.AF.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_b_byte() {
+static void ld_b_byte(void) {
     z80.regs.BC.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_c_byte() {
+static void ld_c_byte(void) {
     z80.regs.BC.B.l = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_d_byte() {
+static void ld_d_byte(void) {
     z80.regs.DE.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_e_byte() {
+static void ld_e_byte(void) {
     z80.regs.DE.B.l = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_h_byte() {
+static void ld_h_byte(void) {
     z80.regs.HL.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_l_byte() {
+static void ld_l_byte(void) {
     z80.regs.HL.B.l = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_ixh_byte() {
+static void ld_ixh_byte(void) {
 
     z80.regs.IX.B.h = readOpcode(z80.regs.PC.W++);
 
 }
 
-static void ld_ixl_byte() {
+static void ld_ixl_byte(void) {
     z80.regs.IX.B.l = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_iyh_byte() { 
+static void ld_iyh_byte(void) { 
     z80.regs.IY.B.h = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_iyl_byte() { 
+static void ld_iyl_byte(void) { 
     z80.regs.IY.B.l = readOpcode(z80.regs.PC.W++);
 }
 
-static void ld_xbyte_a() {
+static void ld_xbyte_a(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1545,7 +1517,7 @@ static void ld_xbyte_a() {
     writeMem(addr.W, z80.regs.AF.B.h);
 }
 
-static void ld_a_xbyte() {
+static void ld_a_xbyte(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1554,23 +1526,23 @@ static void ld_a_xbyte() {
 }
 
 
-static void ld_xix_byte() {
+static void ld_xix_byte(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value = readOpcode(z80.regs.PC.W++);
-    delayParallel(z80); 
+    DELAY_PARALLEL; 
     z80.regs.SH.W = addr;
     writeMem(addr, value);
 }
 
-static void ld_xiy_byte() {
+static void ld_xiy_byte(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
     UInt8 value = readOpcode(z80.regs.PC.W++);
-    delayParallel(z80); 
+    DELAY_PARALLEL; 
     z80.regs.SH.W = addr;
     writeMem(addr, value);
 }
 
-static void ld_xword_bc() {
+static void ld_xword_bc(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1579,7 +1551,7 @@ static void ld_xword_bc() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_xword_de() {
+static void ld_xword_de(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1588,7 +1560,7 @@ static void ld_xword_de() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_xword_hl() {
+static void ld_xword_hl(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1597,7 +1569,7 @@ static void ld_xword_hl() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_xword_ix() {
+static void ld_xword_ix(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1606,7 +1578,7 @@ static void ld_xword_ix() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_xword_iy() {
+static void ld_xword_iy(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1615,7 +1587,7 @@ static void ld_xword_iy() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_xword_sp() {
+static void ld_xword_sp(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1624,7 +1596,7 @@ static void ld_xword_sp() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_bc_xword() {
+static void ld_bc_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1633,7 +1605,7 @@ static void ld_bc_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_de_xword() {
+static void ld_de_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1642,7 +1614,7 @@ static void ld_de_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_hl_xword() {
+static void ld_hl_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1651,7 +1623,7 @@ static void ld_hl_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_ix_xword() {
+static void ld_ix_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1660,7 +1632,7 @@ static void ld_ix_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_iy_xword() {
+static void ld_iy_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1669,7 +1641,7 @@ static void ld_iy_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void ld_sp_xword() {
+static void ld_sp_xword(void) {
     RegisterPair addr;
     addr.B.l = readOpcode(z80.regs.PC.W++);
     addr.B.h = readOpcode(z80.regs.PC.W++);
@@ -1678,3167 +1650,3074 @@ static void ld_sp_xword() {
     z80.regs.SH.W = addr.W;
 }
 
-static void add_a_a() {
+static void add_a_a(void) {
     ADD(z80.regs.AF.B.h); 
 }
 
-static void add_a_b() {
+static void add_a_b(void) {
     ADD(z80.regs.BC.B.h);
 }
 
-static void add_a_c() {
+static void add_a_c(void) {
     ADD(z80.regs.BC.B.l);
 }
 
-static void add_a_d() {
+static void add_a_d(void) {
     ADD(z80.regs.DE.B.h);
 }
 
-static void add_a_e() {
+static void add_a_e(void) {
     ADD(z80.regs.DE.B.l);
 }
 
-static void add_a_h() {
+static void add_a_h(void) {
     ADD(z80.regs.HL.B.h); 
 }
 
-static void add_a_l() { 
+static void add_a_l(void) { 
     ADD(z80.regs.HL.B.l);
 }
 
-static void add_a_ixl() {
+static void add_a_ixl(void) {
     ADD(z80.regs.IX.B.l); 
 }
 
-static void add_a_ixh() {
+static void add_a_ixh(void) {
     ADD(z80.regs.IX.B.h);
 }
 
-static void add_a_iyl() {
+static void add_a_iyl(void) {
     ADD(z80.regs.IY.B.l);
 }
 
-static void add_a_iyh() {
+static void add_a_iyh(void) {
     ADD(z80.regs.IY.B.h);
 }
 
-static void add_a_byte(){
+static void add_a_byte(void) {
     ADD(readOpcode(z80.regs.PC.W++));
 }
 
-static void add_a_xhl() { 
+static void add_a_xhl(void) { 
     ADD(readMem(z80.regs.HL.W)); 
 }
 
-static void add_a_xix() {
+static void add_a_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     ADD(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void add_a_xiy() {
+static void add_a_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     ADD(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void adc_a_a() {
+static void adc_a_a(void) {
     ADC(z80.regs.AF.B.h);
 }
 
-static void adc_a_b() {
+static void adc_a_b(void) {
     ADC(z80.regs.BC.B.h); 
 }
 
-static void adc_a_c() {
+static void adc_a_c(void) {
     ADC(z80.regs.BC.B.l); 
 }
 
-static void adc_a_d() {
+static void adc_a_d(void) {
     ADC(z80.regs.DE.B.h); 
 }
 
-static void adc_a_e() {
+static void adc_a_e(void) {
     ADC(z80.regs.DE.B.l);
 }
 
-static void adc_a_h() {
+static void adc_a_h(void) {
     ADC(z80.regs.HL.B.h);
 }
 
-static void adc_a_l() {
+static void adc_a_l(void) {
     ADC(z80.regs.HL.B.l);
 }
 
-static void adc_a_ixl() {
+static void adc_a_ixl(void) {
     ADC(z80.regs.IX.B.l);
 }
 
-static void adc_a_ixh() {
+static void adc_a_ixh(void) {
     ADC(z80.regs.IX.B.h);
 }
 
-static void adc_a_iyl() {
+static void adc_a_iyl(void) {
     ADC(z80.regs.IY.B.l);
 }
 
-static void adc_a_iyh() { 
+static void adc_a_iyh(void) { 
     ADC(z80.regs.IY.B.h);
 }
 
-static void adc_a_byte() {
+static void adc_a_byte(void) {
     ADC(readOpcode(z80.regs.PC.W++)); 
 }
 
-static void adc_a_xhl() {
+static void adc_a_xhl(void) {
     ADC(readMem(z80.regs.HL.W));
 }
 
-static void adc_a_xix() {
+static void adc_a_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     z80.regs.SH.W = addr;
     ADC(readMem(addr));
 }
 
-static void adc_a_xiy() {
+static void adc_a_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     z80.regs.SH.W = addr;
     ADC(readMem(addr));
 }
 
-static void adc_hl_bc() {
+static void adc_hl_bc(void) {
     ADCW(z80.regs.BC.W);
 }
 
-static void adc_hl_de() { 
+static void adc_hl_de(void) { 
     ADCW(z80.regs.DE.W);
 }
 
-static void adc_hl_hl() {
+static void adc_hl_hl(void) {
     ADCW(z80.regs.HL.W);
 }
 
-static void adc_hl_sp() {
+static void adc_hl_sp(void) {
     ADCW(z80.regs.SP.W);
 }
 
-static void sub_a() {
+static void sub_a(void) {
     SUB(z80.regs.AF.B.h);
 }
 
-static void sub_b() {
+static void sub_b(void) {
     SUB(z80.regs.BC.B.h); 
 }
 
-static void sub_c() { 
+static void sub_c(void) { 
     SUB(z80.regs.BC.B.l); 
 }
 
-static void sub_d() {
+static void sub_d(void) {
     SUB(z80.regs.DE.B.h); 
 }
 
-static void sub_e() {
+static void sub_e(void) {
     SUB(z80.regs.DE.B.l); 
 }
 
-static void sub_h() {
+static void sub_h(void) {
     SUB(z80.regs.HL.B.h);
 }
 
-static void sub_l() {
+static void sub_l(void) {
     SUB(z80.regs.HL.B.l);
 }
 
-static void sub_ixl() {
+static void sub_ixl(void) {
     SUB(z80.regs.IX.B.l); 
 }
 
-static void sub_ixh() {
+static void sub_ixh(void) {
     SUB(z80.regs.IX.B.h);
 }
 
-static void sub_iyl() {
+static void sub_iyl(void) {
     SUB(z80.regs.IY.B.l);
 }
 
-static void sub_iyh() {
+static void sub_iyh(void) {
     SUB(z80.regs.IY.B.h);
 }
 
-static void sub_byte(){
+static void sub_byte(void) {
     SUB(readOpcode(z80.regs.PC.W++)); 
 }
 
-static void sub_xhl() { 
+static void sub_xhl(void) { 
     SUB(readMem(z80.regs.HL.W)); 
 }
 
-static void sub_xix() {
+static void sub_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     z80.regs.SH.W = addr;
     SUB(readMem(addr));
 }
 
-static void sub_xiy() {
+static void sub_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     z80.regs.SH.W = addr;
     SUB(readMem(addr));
 }
 
-static void neg() {
+static void neg(void) {
     UInt8 regVal = z80.regs.AF.B.h;
     z80.regs.AF.B.h = 0;
     SUB(regVal);
 }
 
-static void sbc_a_a() {
+static void sbc_a_a(void) {
     SBC(z80.regs.AF.B.h); 
 }
 
-static void sbc_a_b() {
+static void sbc_a_b(void) {
     SBC(z80.regs.BC.B.h); 
 }
 
-static void sbc_a_c() {
+static void sbc_a_c(void) {
     SBC(z80.regs.BC.B.l); 
 }
 
-static void sbc_a_d() {
+static void sbc_a_d(void) {
     SBC(z80.regs.DE.B.h);
 }
 
-static void sbc_a_e() {
+static void sbc_a_e(void) {
     SBC(z80.regs.DE.B.l);
 }
 
-static void sbc_a_h() {
+static void sbc_a_h(void) {
     SBC(z80.regs.HL.B.h);
 }
 
-static void sbc_a_l() {
+static void sbc_a_l(void) {
     SBC(z80.regs.HL.B.l);
 }
 
-static void sbc_a_ixl() {
+static void sbc_a_ixl(void) {
     SBC(z80.regs.IX.B.l);
 }
 
-static void sbc_a_ixh() {
+static void sbc_a_ixh(void) {
     SBC(z80.regs.IX.B.h);
 }
 
-static void sbc_a_iyl() {
+static void sbc_a_iyl(void) {
     SBC(z80.regs.IY.B.l);
 }
 
-static void sbc_a_iyh() { 
+static void sbc_a_iyh(void) { 
     SBC(z80.regs.IY.B.h);
 }
 
-static void sbc_a_byte(){ 
+static void sbc_a_byte(void) { 
     SBC(readOpcode(z80.regs.PC.W++));
 }
 
-static void sbc_a_xhl() { 
+static void sbc_a_xhl(void) { 
     SBC(readMem(z80.regs.HL.W)); 
 }
 
-static void sbc_a_xix() {
+static void sbc_a_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     SBC(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void sbc_a_xiy() {
+static void sbc_a_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     SBC(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void sbc_hl_bc() { SBCW(z80.regs.BC.W);
+static void sbc_hl_bc(void) {
+    SBCW(z80.regs.BC.W);
 }
 
-static void sbc_hl_de() { SBCW(z80.regs.DE.W); 
+static void sbc_hl_de(void) {
+    SBCW(z80.regs.DE.W); 
 }
 
-static void sbc_hl_hl() { SBCW(z80.regs.HL.W);
+static void sbc_hl_hl(void) {
+    SBCW(z80.regs.HL.W);
 }
 
-static void sbc_hl_sp() { SBCW(z80.regs.SP.W);
+static void sbc_hl_sp(void) {
+    SBCW(z80.regs.SP.W);
 }
 
-static void cp_a() {
+static void cp_a(void) {
     CP(z80.regs.AF.B.h);
 }
 
-static void cp_b() {
+static void cp_b(void) {
     CP(z80.regs.BC.B.h);
 }
 
-static void cp_c() {
+static void cp_c(void) {
     CP(z80.regs.BC.B.l);
 }
 
-static void cp_d() {
+static void cp_d(void) {
     CP(z80.regs.DE.B.h);
 }
 
-static void cp_e() {
+static void cp_e(void) {
     CP(z80.regs.DE.B.l);
 }
 
-static void cp_h() {
+static void cp_h(void) {
     CP(z80.regs.HL.B.h);
 }
 
-static void cp_l() {
+static void cp_l(void) {
     CP(z80.regs.HL.B.l);
 }
 
-static void cp_ixl() {
+static void cp_ixl(void) {
     CP(z80.regs.IX.B.l);
 }
 
-static void cp_ixh() {
+static void cp_ixh(void) {
     CP(z80.regs.IX.B.h);
 }
 
-static void cp_iyl() { 
+static void cp_iyl(void) { 
     CP(z80.regs.IY.B.l);
 }
 
-static void cp_iyh() {
+static void cp_iyh(void) {
     CP(z80.regs.IY.B.h);
 }
 
-static void cp_byte(){
+static void cp_byte(void) {
     CP(readOpcode(z80.regs.PC.W++)); 
 }
 
-static void cp_xhl() { 
+static void cp_xhl(void) { 
     CP(readMem(z80.regs.HL.W)); 
 }
 
-static void cp_xix() {
+static void cp_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     CP(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void cp_xiy() {
+static void cp_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     CP(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void and_a() {
+static void and_a(void) {
     AND(z80.regs.AF.B.h); 
 }
 
-static void and_b() {
+static void and_b(void) {
     AND(z80.regs.BC.B.h); 
 }
 
-static void and_c() {
+static void and_c(void) {
     AND(z80.regs.BC.B.l);
 }
 
-static void and_d() {
+static void and_d(void) {
     AND(z80.regs.DE.B.h);
 }
 
-static void and_e() {
+static void and_e(void) {
     AND(z80.regs.DE.B.l); 
 }
 
-static void and_h() {
+static void and_h(void) {
     AND(z80.regs.HL.B.h);
 }
 
-static void and_l() { 
+static void and_l(void) { 
     AND(z80.regs.HL.B.l); 
 }
 
-static void and_ixl() {
+static void and_ixl(void) {
     AND(z80.regs.IX.B.l);
 }
 
-static void and_ixh() {
+static void and_ixh(void) {
     AND(z80.regs.IX.B.h); 
 }
 
-static void and_iyl() {
+static void and_iyl(void) {
     AND(z80.regs.IY.B.l); 
 }
 
-static void and_iyh() {
+static void and_iyh(void) {
     AND(z80.regs.IY.B.h); 
 }
 
-static void and_byte(){
+static void and_byte(void) {
     AND(readOpcode(z80.regs.PC.W++)); 
 }
 
-static void and_xhl() { 
+static void and_xhl(void) { 
     AND(readMem(z80.regs.HL.W));
 }
 
-static void and_xix() {
+static void and_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     AND(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void and_xiy() {
+static void and_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     AND(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void or_a() {
+static void or_a(void) {
     OR(z80.regs.AF.B.h);
 }
 
-static void or_b() {
+static void or_b(void) {
     OR(z80.regs.BC.B.h);
 }
 
-static void or_c() {
+static void or_c(void) {
     OR(z80.regs.BC.B.l);
 }
 
-static void or_d() {
+static void or_d(void) {
     OR(z80.regs.DE.B.h);
 }
 
-static void or_e() {
+static void or_e(void) {
     OR(z80.regs.DE.B.l);
 }
 
-static void or_h() {
+static void or_h(void) {
     OR(z80.regs.HL.B.h); 
 }
 
-static void or_l() {
+static void or_l(void) {
     OR(z80.regs.HL.B.l); 
 }
 
-static void or_ixl() {
+static void or_ixl(void) {
     OR(z80.regs.IX.B.l); 
 }
 
-static void or_ixh() {
+static void or_ixh(void) {
     OR(z80.regs.IX.B.h);
 }
 
-static void or_iyl() {
+static void or_iyl(void) {
     OR(z80.regs.IY.B.l); 
 }
 
-static void or_iyh() {
+static void or_iyh(void) {
     OR(z80.regs.IY.B.h); 
 }
 
-static void or_byte(){
+static void or_byte(void) {
     OR(readOpcode(z80.regs.PC.W++)); 
 }
 
-static void or_xhl() { 
+static void or_xhl(void) { 
     OR(readMem(z80.regs.HL.W));
 }
 
-static void or_xix() {
+static void or_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     OR(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void or_xiy() {
+static void or_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     OR(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void xor_a() { 
+static void xor_a(void) { 
     XOR(z80.regs.AF.B.h); 
 }
 
-static void xor_b() {
+static void xor_b(void) {
     XOR(z80.regs.BC.B.h); 
 }
 
-static void xor_c() { 
+static void xor_c(void) { 
     XOR(z80.regs.BC.B.l); 
 }
 
-static void xor_d() { 
+static void xor_d(void) { 
     XOR(z80.regs.DE.B.h);
 }
 
-static void xor_e() {
+static void xor_e(void) {
     XOR(z80.regs.DE.B.l);
 }
 
-static void xor_h() {
+static void xor_h(void) {
     XOR(z80.regs.HL.B.h);
 }
 
-static void xor_l() {
+static void xor_l(void) {
     XOR(z80.regs.HL.B.l);
 }
 
-static void xor_ixl() {
+static void xor_ixl(void) {
     XOR(z80.regs.IX.B.l); 
 }
 
-static void xor_ixh() { 
+static void xor_ixh(void) { 
     XOR(z80.regs.IX.B.h); 
 }
 
-static void xor_iyl() {
+static void xor_iyl(void) {
     XOR(z80.regs.IY.B.l); 
 }
 
-static void xor_iyh() { 
+static void xor_iyh(void) { 
     XOR(z80.regs.IY.B.h);
 }
 
-static void xor_byte(){
+static void xor_byte(void) {
     XOR(readOpcode(z80.regs.PC.W++));
 }
 
-static void xor_xhl() {
+static void xor_xhl(void) {
     XOR(readMem(z80.regs.HL.W));
 }
 
-static void xor_xix() {
+static void xor_xix(void) {
     UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     XOR(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void xor_xiy() {
+static void xor_xiy(void) {
     UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    delayAdd8(z80); 
+    DELAY_ADD8; 
     XOR(readMem(addr));
     z80.regs.SH.W = addr;
 }
 
-static void add_hl_bc() {
+static void add_hl_bc(void) {
     ADDW(&z80.regs.HL.W, z80.regs.BC.W);
 }
 
-static void add_hl_de() {
+static void add_hl_de(void) {
     ADDW(&z80.regs.HL.W, z80.regs.DE.W);
 }
 
-static void add_hl_hl() {
+static void add_hl_hl(void) {
     ADDW(&z80.regs.HL.W, z80.regs.HL.W);
 }
 
-static void add_hl_sp() {
+static void add_hl_sp(void) {
     ADDW(&z80.regs.HL.W, z80.regs.SP.W);
 }
 
-static void add_ix_bc() {
+static void add_ix_bc(void) {
     ADDW(&z80.regs.IX.W, z80.regs.BC.W);
 }
 
-static void add_ix_de() {
+static void add_ix_de(void) {
     ADDW(&z80.regs.IX.W, z80.regs.DE.W);
 }
 
-static void add_ix_ix() {
+static void add_ix_ix(void) {
     ADDW(&z80.regs.IX.W, z80.regs.IX.W);
 }
 
-static void add_ix_sp() {
+static void add_ix_sp(void) {
     ADDW(&z80.regs.IX.W, z80.regs.SP.W);
 }
 
-static void add_iy_bc() {
+static void add_iy_bc(void) {
     ADDW(&z80.regs.IY.W, z80.regs.BC.W);
 }
 
-static void add_iy_de() {
+static void add_iy_de(void) {
     ADDW(&z80.regs.IY.W, z80.regs.DE.W);
 }
 
-static void add_iy_iy() {
+static void add_iy_iy(void) {
     ADDW(&z80.regs.IY.W, z80.regs.IY.W);
 }
 
-static void add_iy_sp() {
+static void add_iy_sp(void) {
     ADDW(&z80.regs.IY.W, z80.regs.SP.W);
 }
 
-static void mulu_xhl() { 
+static void mulu_xhl(void) { 
 }
 
-static void mulu_a() { 
+static void mulu_a(void) { 
 }
 
-static void mulu_b() { 
+static void mulu_b(void) { 
 }
 
-static void mulu_c() {
+static void mulu_c(void) {
 }
 
-static void mulu_d() {
+static void mulu_d(void) {
 }
 
-static void mulu_e() {
+static void mulu_e(void) {
 }
 
-static void mulu_h() { 
+static void mulu_h(void) { 
 }
 
-static void mulu_l() { 
+static void mulu_l(void) { 
 }
 
-static void muluw_bc() { 
+static void muluw_bc(void) { 
 }
 
-static void muluw_de() {
+static void muluw_de(void) {
 }
 
-static void muluw_hl() {
+static void muluw_hl(void) {
 }
 
-static void muluw_sp() {
+static void muluw_sp(void) {
 }
 
-static void sla_a() { 
+static void sla_a(void) { 
     SLA(&z80.regs.AF.B.h); 
 }
 
-static void sla_b() { 
+static void sla_b(void) { 
     SLA(&z80.regs.BC.B.h); 
 }
 
-static void sla_c() {
+static void sla_c(void) {
     SLA(&z80.regs.BC.B.l); 
 }
 
-static void sla_d() {
+static void sla_d(void) {
     SLA(&z80.regs.DE.B.h);
 }
 
-static void sla_e() { 
+static void sla_e(void) { 
     SLA(&z80.regs.DE.B.l); 
 }
 
-static void sla_h() {
+static void sla_h(void) {
     SLA(&z80.regs.HL.B.h);
 }
 
-static void sla_l() {
+static void sla_l(void) {
     SLA(&z80.regs.HL.B.l); 
 }
 
-static void sla_xhl() { 
+static void sla_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     SLA(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SLA_XNN(UInt16 addr) {
+static UInt8 sla_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SLA(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void sla_xnn  (UInt16 addr) {
-    SLA_XNN(addr);
+static void sla_xnn(UInt16 addr) {
+    sla_xnn_v(addr);
 }
 
 static void sla_xnn_a(UInt16 addr) { 
-    z80.regs.AF.B.h = SLA_XNN(addr);
+    z80.regs.AF.B.h = sla_xnn_v(addr);
 }
 
 static void sla_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SLA_XNN(addr);
+    z80.regs.BC.B.h = sla_xnn_v(addr);
 }
 
 static void sla_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = SLA_XNN(addr);
+    z80.regs.BC.B.l = sla_xnn_v(addr);
 }
 
 static void sla_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SLA_XNN(addr);
+    z80.regs.DE.B.h = sla_xnn_v(addr);
 }
 
 static void sla_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SLA_XNN(addr);
+    z80.regs.DE.B.l = sla_xnn_v(addr);
 }
 
 static void sla_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SLA_XNN(addr);
+    z80.regs.HL.B.h = sla_xnn_v(addr);
 }
 
 static void sla_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SLA_XNN(addr);
+    z80.regs.HL.B.l = sla_xnn_v(addr);
 }
 
-static void sll_a() {
+static void sll_a(void) {
     SLL(&z80.regs.AF.B.h); 
 }
 
-static void sll_b() {
+static void sll_b(void) {
     SLL(&z80.regs.BC.B.h); 
 }
 
-static void sll_c() {
+static void sll_c(void) {
     SLL(&z80.regs.BC.B.l);
 }
 
-static void sll_d() {
+static void sll_d(void) {
     SLL(&z80.regs.DE.B.h);
 }
 
-static void sll_e() {
+static void sll_e(void) {
     SLL(&z80.regs.DE.B.l);
 }
 
-static void sll_h() {
+static void sll_h(void) {
     SLL(&z80.regs.HL.B.h);
 }
 
-static void sll_l() {
+static void sll_l(void) {
     SLL(&z80.regs.HL.B.l); 
 }
 
-static void sll_xhl() { 
+static void sll_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     SLL(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SLL_XNN(UInt16 addr) {
+static UInt8 sll_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SLL(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void sll_xnn  (UInt16 addr) { 
-    SLL_XNN(addr);
+static void sll_xnn(UInt16 addr) { 
+    sll_xnn_v(addr);
 }
 
 static void sll_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SLL_XNN(addr);
+    z80.regs.AF.B.h = sll_xnn_v(addr);
 }
 
 static void sll_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SLL_XNN(addr);
+    z80.regs.BC.B.h = sll_xnn_v(addr);
 }
 
 static void sll_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SLL_XNN(addr);
+    z80.regs.BC.B.l = sll_xnn_v(addr);
 }
 
 static void sll_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SLL_XNN(addr);
+    z80.regs.DE.B.h = sll_xnn_v(addr);
 }
 
 static void sll_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SLL_XNN(addr);
+    z80.regs.DE.B.l = sll_xnn_v(addr);
 }
 
 static void sll_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SLL_XNN(addr);
+    z80.regs.HL.B.h = sll_xnn_v(addr);
 }
 
 static void sll_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SLL_XNN(addr); 
+    z80.regs.HL.B.l = sll_xnn_v(addr); 
 }
 
-static void sra_a() {    
+static void sra_a(void) {    
     SRA(&z80.regs.AF.B.h);
 }
 
-static void sra_b() { 
+static void sra_b(void) { 
     SRA(&z80.regs.BC.B.h);
 }
 
-static void sra_c() { 
+static void sra_c(void) { 
     SRA(&z80.regs.BC.B.l);
 }
 
-static void sra_d() { 
+static void sra_d(void) { 
     SRA(&z80.regs.DE.B.h);
 }
 
-static void sra_e() { 
+static void sra_e(void) { 
     SRA(&z80.regs.DE.B.l); 
 }
 
-static void sra_h() {
+static void sra_h(void) {
     SRA(&z80.regs.HL.B.h);
 }
 
-static void sra_l() {
+static void sra_l(void) {
     SRA(&z80.regs.HL.B.l); 
 }
 
-static void sra_xhl() { 
+static void sra_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     SRA(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SRA_XNN(UInt16 addr) {
+static UInt8 sra_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SRA(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void sra_xnn  (UInt16 addr) {
-    SRA_XNN(addr); 
+static void sra_xnn(UInt16 addr) {
+    sra_xnn_v(addr); 
 }
 
 static void sra_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SRA_XNN(addr); 
+    z80.regs.AF.B.h = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SRA_XNN(addr); 
+    z80.regs.BC.B.h = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SRA_XNN(addr); 
+    z80.regs.BC.B.l = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SRA_XNN(addr); 
+    z80.regs.DE.B.h = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = SRA_XNN(addr); 
+    z80.regs.DE.B.l = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SRA_XNN(addr); 
+    z80.regs.HL.B.h = sra_xnn_v(addr); 
 }
 
 static void sra_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SRA_XNN(addr);
+    z80.regs.HL.B.l = sra_xnn_v(addr);
 }
 
-static void srl_a() { 
+static void srl_a(void) { 
     SRL(&z80.regs.AF.B.h); 
 }
 
-static void srl_b() {
+static void srl_b(void) {
     SRL(&z80.regs.BC.B.h); 
 }
 
-static void srl_c() { 
+static void srl_c(void) { 
     SRL(&z80.regs.BC.B.l); 
 }
 
-static void srl_d() {
+static void srl_d(void) {
     SRL(&z80.regs.DE.B.h);
 }
 
-static void srl_e() {
+static void srl_e(void) {
     SRL(&z80.regs.DE.B.l); 
 }
 
-static void srl_h() {
+static void srl_h(void) {
     SRL(&z80.regs.HL.B.h); 
 }
 
-static void srl_l() {
+static void srl_l(void) {
     SRL(&z80.regs.HL.B.l); 
 }
 
-static void srl_xhl() { 
+static void srl_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     SRL(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SRL_XNN(UInt16 addr) {
+static UInt8 srl_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SRL(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void srl_xnn  (UInt16 addr) {
-    SRL_XNN(addr);
+static void srl_xnn(UInt16 addr) {
+    srl_xnn_v(addr);
 }
 
 static void srl_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SRL_XNN(addr);
+    z80.regs.AF.B.h = srl_xnn_v(addr);
 }
 
 static void srl_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SRL_XNN(addr); 
+    z80.regs.BC.B.h = srl_xnn_v(addr); 
 }
 
 static void srl_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SRL_XNN(addr); 
+    z80.regs.BC.B.l = srl_xnn_v(addr); 
 }
 
 static void srl_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SRL_XNN(addr);
+    z80.regs.DE.B.h = srl_xnn_v(addr);
 }
 
 static void srl_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = SRL_XNN(addr); 
+    z80.regs.DE.B.l = srl_xnn_v(addr); 
 }
 
 static void srl_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SRL_XNN(addr);
+    z80.regs.HL.B.h = srl_xnn_v(addr);
 }
 
 static void srl_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SRL_XNN(addr);
+    z80.regs.HL.B.l = srl_xnn_v(addr);
 }
 
-static void rl_a() {
+static void rl_a(void) {
     RL(&z80.regs.AF.B.h);
 }
 
-static void rl_b() {
+static void rl_b(void) {
     RL(&z80.regs.BC.B.h);
 }
 
-static void rl_c() { 
+static void rl_c(void) { 
     RL(&z80.regs.BC.B.l); 
 }
 
-static void rl_d() {
+static void rl_d(void) {
     RL(&z80.regs.DE.B.h);
 }
 
-static void rl_e() { 
+static void rl_e(void) { 
     RL(&z80.regs.DE.B.l);
 }
 
-static void rl_h() {
+static void rl_h(void) {
     RL(&z80.regs.HL.B.h);
 }
 
-static void rl_l() { 
+static void rl_l(void) { 
     RL(&z80.regs.HL.B.l);
 }
 
-static void rl_xhl() { 
+static void rl_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     RL(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RL_XNN(UInt16 addr) {
+static UInt8 rl_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RL(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void rl_xnn  (UInt16 addr) {
-    RL_XNN(addr);
+static void rl_xnn(UInt16 addr) {
+    rl_xnn_v(addr);
 }
 
 static void rl_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RL_XNN(addr);
+    z80.regs.AF.B.h = rl_xnn_v(addr);
 }
 
 static void rl_xnn_b(UInt16 addr) { 
-    z80.regs.BC.B.h = RL_XNN(addr); 
+    z80.regs.BC.B.h = rl_xnn_v(addr); 
 }
 
 static void rl_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = RL_XNN(addr); 
+    z80.regs.BC.B.l = rl_xnn_v(addr); 
 }
 
 static void rl_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RL_XNN(addr);
+    z80.regs.DE.B.h = rl_xnn_v(addr);
 }
 
 static void rl_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = RL_XNN(addr);
+    z80.regs.DE.B.l = rl_xnn_v(addr);
 }
 
 static void rl_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RL_XNN(addr);
+    z80.regs.HL.B.h = rl_xnn_v(addr);
 }
 
 static void rl_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RL_XNN(addr);
+    z80.regs.HL.B.l = rl_xnn_v(addr);
 }
 
-static void rlc_a() {
+static void rlc_a(void) {
     RLC(&z80.regs.AF.B.h);
 }
 
-static void rlc_b() {
+static void rlc_b(void) {
     RLC(&z80.regs.BC.B.h);
 }
 
-static void rlc_c() { 
+static void rlc_c(void) { 
     RLC(&z80.regs.BC.B.l);
 }
 
-static void rlc_d() {
+static void rlc_d(void) {
     RLC(&z80.regs.DE.B.h);
 }
 
-static void rlc_e() { 
+static void rlc_e(void) { 
     RLC(&z80.regs.DE.B.l);
 }
 
-static void rlc_h() {
+static void rlc_h(void) {
     RLC(&z80.regs.HL.B.h);
 }
 
-static void rlc_l() { 
+static void rlc_l(void) { 
     RLC(&z80.regs.HL.B.l);
 }
 
-static void rlc_xhl() { 
+static void rlc_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     RLC(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RLC_XNN(UInt16 addr) {
+static UInt8 rlc_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RLC(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void rlc_xnn  (UInt16 addr) { 
-    RLC_XNN(addr);
+static void rlc_xnn(UInt16 addr) { 
+    rlc_xnn_v(addr);
 }
 
 static void rlc_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RLC_XNN(addr);
+    z80.regs.AF.B.h = rlc_xnn_v(addr);
 }
 
 static void rlc_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RLC_XNN(addr);
+    z80.regs.BC.B.h = rlc_xnn_v(addr);
 }
 
 static void rlc_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RLC_XNN(addr); 
+    z80.regs.BC.B.l = rlc_xnn_v(addr); 
 }
 
 static void rlc_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RLC_XNN(addr); 
+    z80.regs.DE.B.h = rlc_xnn_v(addr); 
 }
 
 static void rlc_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RLC_XNN(addr); 
+    z80.regs.DE.B.l = rlc_xnn_v(addr); 
 }
 
 static void rlc_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RLC_XNN(addr);
+    z80.regs.HL.B.h = rlc_xnn_v(addr);
 }
 
 static void rlc_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RLC_XNN(addr); 
+    z80.regs.HL.B.l = rlc_xnn_v(addr); 
 }
 
-static void rr_a() {
+static void rr_a(void) {
     RR(&z80.regs.AF.B.h);
 }
 
-static void rr_b() {
+static void rr_b(void) {
     RR(&z80.regs.BC.B.h); 
 }
 
-static void rr_c() {
+static void rr_c(void) {
     RR(&z80.regs.BC.B.l);
 }
 
-static void rr_d() {
+static void rr_d(void) {
     RR(&z80.regs.DE.B.h);
 }
 
-static void rr_e() {
+static void rr_e(void) {
     RR(&z80.regs.DE.B.l);
 }
 
-static void rr_h() {
+static void rr_h(void) {
     RR(&z80.regs.HL.B.h);
 }
 
-static void rr_l() { 
+static void rr_l(void) { 
     RR(&z80.regs.HL.B.l);
 }
 
-static void rr_xhl() { 
+static void rr_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     RR(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RR_XNN(UInt16 addr) {
+static UInt8 rr_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RR(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void rr_xnn  (UInt16 addr) {
-    RR_XNN(addr);
+static void rr_xnn(UInt16 addr) {
+    rr_xnn_v(addr);
 }
 
 static void rr_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RR_XNN(addr);
+    z80.regs.AF.B.h = rr_xnn_v(addr);
 }
 
 static void rr_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RR_XNN(addr);
+    z80.regs.BC.B.h = rr_xnn_v(addr);
 }
 
 static void rr_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RR_XNN(addr);
+    z80.regs.BC.B.l = rr_xnn_v(addr);
 }
 
 static void rr_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RR_XNN(addr);
+    z80.regs.DE.B.h = rr_xnn_v(addr);
 }
 
 static void rr_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RR_XNN(addr); 
+    z80.regs.DE.B.l = rr_xnn_v(addr); 
 }
 
 static void rr_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RR_XNN(addr);
+    z80.regs.HL.B.h = rr_xnn_v(addr);
 }
 
 static void rr_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RR_XNN(addr);
+    z80.regs.HL.B.l = rr_xnn_v(addr);
 }
 
-static void rrc_a() {
+static void rrc_a(void) {
     RRC(&z80.regs.AF.B.h);
 }
 
-static void rrc_b() {
+static void rrc_b(void) {
     RRC(&z80.regs.BC.B.h);
 }
 
-static void rrc_c() {
+static void rrc_c(void) {
     RRC(&z80.regs.BC.B.l);
 }
 
-static void rrc_d() {
+static void rrc_d(void) {
     RRC(&z80.regs.DE.B.h);
 }
 
-static void rrc_e() {
+static void rrc_e(void) {
     RRC(&z80.regs.DE.B.l);
 }
 
-static void rrc_h() { 
+static void rrc_h(void) { 
     RRC(&z80.regs.HL.B.h);
 }
 
-static void rrc_l() { 
+static void rrc_l(void) { 
     RRC(&z80.regs.HL.B.l); 
 }
 
-static void rrc_xhl() { 
+static void rrc_xhl(void) { 
     UInt8 val = readMem(z80.regs.HL.W);
     RRC(&val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RRC_XNN(UInt16 addr) {
+static UInt8 rrc_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RRC(&val);
-    delayBit(z80);                 // white cat append
-    delayInc(z80);
+    DELAY_BIT;                 // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
-static void rrc_xnn  (UInt16 addr) {
-    RRC_XNN(addr);
+static void rrc_xnn(UInt16 addr) {
+    rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RRC_XNN(addr); 
+    z80.regs.AF.B.h = rrc_xnn_v(addr); 
 }
 
 static void rrc_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RRC_XNN(addr);
+    z80.regs.BC.B.h = rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RRC_XNN(addr);
+    z80.regs.BC.B.l = rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RRC_XNN(addr);
+    z80.regs.DE.B.h = rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RRC_XNN(addr);
+    z80.regs.DE.B.l = rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RRC_XNN(addr);
+    z80.regs.HL.B.h = rrc_xnn_v(addr);
 }
 
 static void rrc_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = RRC_XNN(addr);
+    z80.regs.HL.B.l = rrc_xnn_v(addr);
 }
 
-static void bit_0_a() { 
+static void bit_0_a(void) { 
     BIT(0, z80.regs.AF.B.h);
 }
 
-static void bit_0_b() {
+static void bit_0_b(void) {
     BIT(0, z80.regs.BC.B.h);
 }
 
-static void bit_0_c() {
+static void bit_0_c(void) {
     BIT(0, z80.regs.BC.B.l);
 }
 
-static void bit_0_d() {
+static void bit_0_d(void) {
     BIT(0, z80.regs.DE.B.h); 
 }
 
-static void bit_0_e() {
+static void bit_0_e(void) {
     BIT(0, z80.regs.DE.B.l);
 }
 
-static void bit_0_h() { 
+static void bit_0_h(void) { 
     BIT(0, z80.regs.HL.B.h);
 }
 
-static void bit_0_l() {
+static void bit_0_l(void) {
     BIT(0, z80.regs.HL.B.l); 
 }
 
-static void bit_0_xhl() {
-    delayBit(z80);
+static void bit_0_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 0)];
 }
 
 static void bit_0_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 0)];
 }
 
-static void bit_1_a() {
+static void bit_1_a(void) {
     BIT(1, z80.regs.AF.B.h);
 }
 
-static void bit_1_b() {
+static void bit_1_b(void) {
     BIT(1, z80.regs.BC.B.h);
 }
 
-static void bit_1_c() {
+static void bit_1_c(void) {
     BIT(1, z80.regs.BC.B.l);
 }
 
-static void bit_1_d() {
+static void bit_1_d(void) {
     BIT(1, z80.regs.DE.B.h);
 }
 
-static void bit_1_e() {
+static void bit_1_e(void) {
     BIT(1, z80.regs.DE.B.l);
 }
 
-static void bit_1_h() {
+static void bit_1_h(void) {
     BIT(1, z80.regs.HL.B.h);
 }
 
-static void bit_1_l() {
+static void bit_1_l(void) {
     BIT(1, z80.regs.HL.B.l);
 }
 
-static void bit_1_xhl() {
-    delayBit(z80);
+static void bit_1_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 1)];
 }
 
 static void bit_1_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 1)];
 }
 
-static void bit_2_a() {
+static void bit_2_a(void) {
     BIT(2, z80.regs.AF.B.h); 
 }
 
-static void bit_2_b() {
+static void bit_2_b(void) {
     BIT(2, z80.regs.BC.B.h);
 }
 
-static void bit_2_c() {
+static void bit_2_c(void) {
     BIT(2, z80.regs.BC.B.l);
 }
 
-static void bit_2_d() {
+static void bit_2_d(void) {
     BIT(2, z80.regs.DE.B.h);
 }
 
-static void bit_2_e() {
+static void bit_2_e(void) {
     BIT(2, z80.regs.DE.B.l);
 }
 
-static void bit_2_h() {
+static void bit_2_h(void) {
     BIT(2, z80.regs.HL.B.h);
 }
 
-static void bit_2_l() { 
+static void bit_2_l(void) { 
     BIT(2, z80.regs.HL.B.l);
 }
 
-static void bit_2_xhl() {
-    delayBit(z80);
+static void bit_2_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 2)];
 }
 
 static void bit_2_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 2)];
 }
 
-static void bit_3_a() {
+static void bit_3_a(void) {
     BIT(3, z80.regs.AF.B.h);
 }
 
-static void bit_3_b() {
+static void bit_3_b(void) {
     BIT(3, z80.regs.BC.B.h);
 }
 
-static void bit_3_c() { 
+static void bit_3_c(void) { 
     BIT(3, z80.regs.BC.B.l);
 }
 
-static void bit_3_d() {
+static void bit_3_d(void) {
     BIT(3, z80.regs.DE.B.h); 
 }
 
-static void bit_3_e() {
+static void bit_3_e(void) {
     BIT(3, z80.regs.DE.B.l);
 }
 
-static void bit_3_h() { 
+static void bit_3_h(void) { 
     BIT(3, z80.regs.HL.B.h);
 }
 
-static void bit_3_l() { 
+static void bit_3_l(void) { 
     BIT(3, z80.regs.HL.B.l);
 }
 
-static void bit_3_xhl() {
-    delayBit(z80);
+static void bit_3_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 3)];
 }
 
 static void bit_3_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 3)];
 }
 
-static void bit_4_a() {
+static void bit_4_a(void) {
     BIT(4, z80.regs.AF.B.h);
 }
 
-static void bit_4_b() { 
+static void bit_4_b(void) { 
     BIT(4, z80.regs.BC.B.h);
 }
 
-static void bit_4_c() { 
+static void bit_4_c(void) { 
     BIT(4, z80.regs.BC.B.l);
 }
 
-static void bit_4_d() {
+static void bit_4_d(void) {
     BIT(4, z80.regs.DE.B.h);
 }
 
-static void bit_4_e() {
+static void bit_4_e(void) {
     BIT(4, z80.regs.DE.B.l);
 }
 
-static void bit_4_h() {
+static void bit_4_h(void) {
     BIT(4, z80.regs.HL.B.h);
 }
 
-static void bit_4_l() { 
+static void bit_4_l(void) { 
     BIT(4, z80.regs.HL.B.l);
 }
 
-static void bit_4_xhl() {
-    delayBit(z80);
+static void bit_4_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 4)];
 }
 
 static void bit_4_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 4)];
 }
 
-static void bit_5_a() {
+static void bit_5_a(void) {
     BIT(5, z80.regs.AF.B.h); 
 }
 
-static void bit_5_b() {
+static void bit_5_b(void) {
     BIT(5, z80.regs.BC.B.h); 
 }
 
-static void bit_5_c() { 
+static void bit_5_c(void) { 
     BIT(5, z80.regs.BC.B.l); 
 }
 
-static void bit_5_d() {
+static void bit_5_d(void) {
     BIT(5, z80.regs.DE.B.h); 
 }
 
-static void bit_5_e() {
+static void bit_5_e(void) {
     BIT(5, z80.regs.DE.B.l); 
 }
 
-static void bit_5_h() {
+static void bit_5_h(void) {
     BIT(5, z80.regs.HL.B.h);
 }
 
-static void bit_5_l() { 
+static void bit_5_l(void) { 
     BIT(5, z80.regs.HL.B.l); 
 }
 
-static void bit_5_xhl() {
-    delayBit(z80);
+static void bit_5_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 5)];
 }
 
 static void bit_5_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 5)];
 }
 
-static void bit_6_a() { 
+static void bit_6_a(void) { 
     BIT(6, z80.regs.AF.B.h);
 }
 
-static void bit_6_b() {
+static void bit_6_b(void) {
     BIT(6, z80.regs.BC.B.h);
 }
 
-static void bit_6_c() {
+static void bit_6_c(void) {
     BIT(6, z80.regs.BC.B.l); 
 }
 
-static void bit_6_d() { 
+static void bit_6_d(void) { 
     BIT(6, z80.regs.DE.B.h);
 }
 
-static void bit_6_e() {
+static void bit_6_e(void) {
     BIT(6, z80.regs.DE.B.l);
 }
 
-static void bit_6_h() {
+static void bit_6_h(void) {
     BIT(6, z80.regs.HL.B.h);
 }
 
-static void bit_6_l() {
+static void bit_6_l(void) {
     BIT(6, z80.regs.HL.B.l);
 }
 
-static void bit_6_xhl() {
-    delayBit(z80);
+static void bit_6_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 6)];
 }
 
 static void bit_6_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 6)];
 }
 
-static void bit_7_a() { 
+static void bit_7_a(void) { 
     BIT(7, z80.regs.AF.B.h); 
 }
 
-static void bit_7_b() { 
+static void bit_7_b(void) { 
     BIT(7, z80.regs.BC.B.h);
 }
 
-static void bit_7_c() {
+static void bit_7_c(void) {
     BIT(7, z80.regs.BC.B.l);
 }
 
-static void bit_7_d() {
+static void bit_7_d(void) {
     BIT(7, z80.regs.DE.B.h);
 }
 
-static void bit_7_e() {
+static void bit_7_e(void) {
     BIT(7, z80.regs.DE.B.l); 
 }
 
-static void bit_7_h() {
+static void bit_7_h(void) {
     BIT(7, z80.regs.HL.B.h);
 }
 
-static void bit_7_l() {
+static void bit_7_l(void) {
     BIT(7, z80.regs.HL.B.l); 
 }
 
-static void bit_7_xhl() {
-    delayBit(z80);
+static void bit_7_xhl(void) {
+    DELAY_BIT;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) | 
         ZSPHTable[readMem(z80.regs.HL.W) & (1 << 7)];
 }
 
 static void bit_7_xnn(UInt16 addr) { 
-    delayBitIx(z80);           // white cat append
+    DELAY_BITIX;           // white cat append
     z80.regs.SH.W   = addr;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         (z80.regs.SH.B.h & (X_FLAG | Y_FLAG)) |
         ZSPHTable[readMem(addr) & (1 << 7)];
 }
 
-static void res_0_a() {
+static void res_0_a(void) {
     RES(0, &z80.regs.AF.B.h);
 }
 
-static void res_0_b() {
+static void res_0_b(void) {
     RES(0, &z80.regs.BC.B.h);
 }
 
-static void res_0_c() {
+static void res_0_c(void) {
     RES(0, &z80.regs.BC.B.l);
 }
 
-static void res_0_d() {
+static void res_0_d(void) {
     RES(0, &z80.regs.DE.B.h);
 }
 
-static void res_0_e() {
+static void res_0_e(void) {
     RES(0, &z80.regs.DE.B.l);
 }
 
-static void res_0_h() {
+static void res_0_h(void) {
     RES(0, &z80.regs.HL.B.h);
 }
 
-static void res_0_l() {
+static void res_0_l(void) {
     RES(0, &z80.regs.HL.B.l);
 }
 
-static void res_0_xhl() {
+static void res_0_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(0, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_0_XNN(UInt16 addr) {
+static UInt8 res_0_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(0, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_0_xnn  (UInt16 addr) {
-    RES_0_XNN(addr);
+    res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_0_XNN(addr);
+    z80.regs.AF.B.h = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_0_XNN(addr);
+    z80.regs.BC.B.h = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RES_0_XNN(addr);
+    z80.regs.BC.B.l = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_0_XNN(addr);
+    z80.regs.DE.B.h = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RES_0_XNN(addr);
+    z80.regs.DE.B.l = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RES_0_XNN(addr);
+    z80.regs.HL.B.h = res_0_xnn_v(addr);
 }
 
 static void res_0_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = RES_0_XNN(addr); 
+    z80.regs.HL.B.l = res_0_xnn_v(addr); 
 }
 
-static void res_1_a() { 
+static void res_1_a(void) { 
     RES(1, &z80.regs.AF.B.h);
 }
 
-static void res_1_b() {
+static void res_1_b(void) {
     RES(1, &z80.regs.BC.B.h);
 }
 
-static void res_1_c() {
+static void res_1_c(void) {
     RES(1, &z80.regs.BC.B.l); 
 }
 
-static void res_1_d() {
+static void res_1_d(void) {
     RES(1, &z80.regs.DE.B.h); 
 }
 
-static void res_1_e() {
+static void res_1_e(void) {
     RES(1, &z80.regs.DE.B.l); 
 }
 
-static void res_1_h() {
+static void res_1_h(void) {
     RES(1, &z80.regs.HL.B.h);
 }
 
-static void res_1_l() {
+static void res_1_l(void) {
     RES(1, &z80.regs.HL.B.l); 
 }
 
-static void res_1_xhl() {
+static void res_1_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(1, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_1_XNN(UInt16 addr) {
+static UInt8 res_1_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(1, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_1_xnn  (UInt16 addr) {
-    RES_1_XNN(addr); 
+    res_1_xnn_v(addr); 
 }
 
 static void res_1_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_1_XNN(addr);
+    z80.regs.AF.B.h = res_1_xnn_v(addr);
 }
 
 static void res_1_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_1_XNN(addr);
+    z80.regs.BC.B.h = res_1_xnn_v(addr);
 }
 
 static void res_1_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = RES_1_XNN(addr); 
+    z80.regs.BC.B.l = res_1_xnn_v(addr); 
 }
 
 static void res_1_xnn_d(UInt16 addr) { 
-    z80.regs.DE.B.h = RES_1_XNN(addr);
+    z80.regs.DE.B.h = res_1_xnn_v(addr);
 }
 
 static void res_1_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = RES_1_XNN(addr);
+    z80.regs.DE.B.l = res_1_xnn_v(addr);
 }
 
 static void res_1_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = RES_1_XNN(addr);
+    z80.regs.HL.B.h = res_1_xnn_v(addr);
 }
 
 static void res_1_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = RES_1_XNN(addr);
+    z80.regs.HL.B.l = res_1_xnn_v(addr);
 }
 
-static void res_2_a() {
+static void res_2_a(void) {
     RES(2, &z80.regs.AF.B.h);
 }
 
-static void res_2_b() {
+static void res_2_b(void) {
     RES(2, &z80.regs.BC.B.h);
 }
 
-static void res_2_c() {
+static void res_2_c(void) {
     RES(2, &z80.regs.BC.B.l);
 }
 
-static void res_2_d() {
+static void res_2_d(void) {
     RES(2, &z80.regs.DE.B.h);
 }
 
-static void res_2_e() { 
+static void res_2_e(void) { 
     RES(2, &z80.regs.DE.B.l); 
 }
 
-static void res_2_h() {
+static void res_2_h(void) {
     RES(2, &z80.regs.HL.B.h); 
 }
 
-static void res_2_l() {
+static void res_2_l(void) {
     RES(2, &z80.regs.HL.B.l);
 }
 
-static void res_2_xhl() {
+static void res_2_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(2, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_2_XNN(UInt16 addr) {
+static UInt8 res_2_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(2, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_2_xnn  (UInt16 addr) {
-    RES_2_XNN(addr); 
+    res_2_xnn_v(addr); 
 }
 
 static void res_2_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_2_XNN(addr);
+    z80.regs.AF.B.h = res_2_xnn_v(addr);
 }
 
 static void res_2_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_2_XNN(addr);
+    z80.regs.BC.B.h = res_2_xnn_v(addr);
 }
 
 static void res_2_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RES_2_XNN(addr);
+    z80.regs.BC.B.l = res_2_xnn_v(addr);
 }
 
 static void res_2_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_2_XNN(addr);
+    z80.regs.DE.B.h = res_2_xnn_v(addr);
 }
 
 static void res_2_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RES_2_XNN(addr);
+    z80.regs.DE.B.l = res_2_xnn_v(addr);
 }
 
 static void res_2_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RES_2_XNN(addr); 
+    z80.regs.HL.B.h = res_2_xnn_v(addr); 
 }
 
 static void res_2_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RES_2_XNN(addr);
+    z80.regs.HL.B.l = res_2_xnn_v(addr);
 }
 
-static void res_3_a() {
+static void res_3_a(void) {
     RES(3, &z80.regs.AF.B.h);
 }
 
-static void res_3_b() {
+static void res_3_b(void) {
     RES(3, &z80.regs.BC.B.h);
 }
 
-static void res_3_c() { 
+static void res_3_c(void) { 
     RES(3, &z80.regs.BC.B.l);
 }
 
-static void res_3_d() {
+static void res_3_d(void) {
     RES(3, &z80.regs.DE.B.h);
 }
 
-static void res_3_e() {
+static void res_3_e(void) {
     RES(3, &z80.regs.DE.B.l);
 }
 
-static void res_3_h() {
+static void res_3_h(void) {
     RES(3, &z80.regs.HL.B.h);
 }
 
-static void res_3_l() {
+static void res_3_l(void) {
     RES(3, &z80.regs.HL.B.l);
 }
 
-static void res_3_xhl() {
+static void res_3_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(3, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_3_XNN(UInt16 addr) {
+static UInt8 res_3_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(3, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_3_xnn  (UInt16 addr) {
-    RES_3_XNN(addr);
+    res_3_xnn_v(addr);
 }
 
 static void res_3_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_3_XNN(addr); 
+    z80.regs.AF.B.h = res_3_xnn_v(addr); 
 }
 
 static void res_3_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_3_XNN(addr);
+    z80.regs.BC.B.h = res_3_xnn_v(addr);
 }
 
 static void res_3_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RES_3_XNN(addr); 
+    z80.regs.BC.B.l = res_3_xnn_v(addr); 
 }
 
 static void res_3_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_3_XNN(addr);
+    z80.regs.DE.B.h = res_3_xnn_v(addr);
 }
 
 static void res_3_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RES_3_XNN(addr);
+    z80.regs.DE.B.l = res_3_xnn_v(addr);
 }
 
 static void res_3_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = RES_3_XNN(addr); 
+    z80.regs.HL.B.h = res_3_xnn_v(addr); 
 }
 
 static void res_3_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RES_3_XNN(addr);
+    z80.regs.HL.B.l = res_3_xnn_v(addr);
 }
 
-static void res_4_a() {
+static void res_4_a(void) {
     RES(4, &z80.regs.AF.B.h);
 }
 
-static void res_4_b() {
+static void res_4_b(void) {
     RES(4, &z80.regs.BC.B.h);
 }
 
-static void res_4_c() { 
+static void res_4_c(void) { 
     RES(4, &z80.regs.BC.B.l);
 }
 
-static void res_4_d() {
+static void res_4_d(void) {
     RES(4, &z80.regs.DE.B.h);
 }
 
-static void res_4_e() {
+static void res_4_e(void) {
     RES(4, &z80.regs.DE.B.l);
 }
 
-static void res_4_h() {
+static void res_4_h(void) {
     RES(4, &z80.regs.HL.B.h);
 }
 
-static void res_4_l() {
+static void res_4_l(void) {
     RES(4, &z80.regs.HL.B.l); 
 }
 
-static void res_4_xhl() {
+static void res_4_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(4, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_4_XNN(UInt16 addr) {
+static UInt8 res_4_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(4, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_4_xnn  (UInt16 addr) {
-    RES_4_XNN(addr); 
+    res_4_xnn_v(addr); 
 }
 
 static void res_4_xnn_a(UInt16 addr) { 
-    z80.regs.AF.B.h = RES_4_XNN(addr); 
+    z80.regs.AF.B.h = res_4_xnn_v(addr); 
 }
 
 static void res_4_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_4_XNN(addr);
+    z80.regs.BC.B.h = res_4_xnn_v(addr);
 }
 
 static void res_4_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RES_4_XNN(addr);
+    z80.regs.BC.B.l = res_4_xnn_v(addr);
 }
 
 static void res_4_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_4_XNN(addr);
+    z80.regs.DE.B.h = res_4_xnn_v(addr);
 }
 
 static void res_4_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RES_4_XNN(addr);
+    z80.regs.DE.B.l = res_4_xnn_v(addr);
 }
 
 static void res_4_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RES_4_XNN(addr);
+    z80.regs.HL.B.h = res_4_xnn_v(addr);
 }
 
 static void res_4_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RES_4_XNN(addr);
+    z80.regs.HL.B.l = res_4_xnn_v(addr);
 }
 
-static void res_5_a() {
+static void res_5_a(void) {
     RES(5, &z80.regs.AF.B.h);
 }
 
-static void res_5_b() {
+static void res_5_b(void) {
     RES(5, &z80.regs.BC.B.h);
 }
 
-static void res_5_c() {
+static void res_5_c(void) {
     RES(5, &z80.regs.BC.B.l);
 }
 
-static void res_5_d() {
+static void res_5_d(void) {
     RES(5, &z80.regs.DE.B.h);
 }
 
-static void res_5_e() {
+static void res_5_e(void) {
     RES(5, &z80.regs.DE.B.l);
 }
 
-static void res_5_h() {
+static void res_5_h(void) {
     RES(5, &z80.regs.HL.B.h);
 }
 
-static void res_5_l() {
+static void res_5_l(void) {
     RES(5, &z80.regs.HL.B.l);
 }
 
-static void res_5_xhl() {
+static void res_5_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(5, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_5_XNN(UInt16 addr) {
+static UInt8 res_5_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(5, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_5_xnn  (UInt16 addr) {
-    RES_5_XNN(addr);
+    res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_a(UInt16 addr) { 
-    z80.regs.AF.B.h = RES_5_XNN(addr);
+    z80.regs.AF.B.h = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_b(UInt16 addr) { 
-    z80.regs.BC.B.h = RES_5_XNN(addr);
+    z80.regs.BC.B.h = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = RES_5_XNN(addr);
+    z80.regs.BC.B.l = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_d(UInt16 addr) { 
-    z80.regs.DE.B.h = RES_5_XNN(addr);
+    z80.regs.DE.B.h = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = RES_5_XNN(addr);
+    z80.regs.DE.B.l = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = RES_5_XNN(addr);
+    z80.regs.HL.B.h = res_5_xnn_v(addr);
 }
 
 static void res_5_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = RES_5_XNN(addr);
+    z80.regs.HL.B.l = res_5_xnn_v(addr);
 }
 
-static void res_6_a() {
+static void res_6_a(void) {
     RES(6, &z80.regs.AF.B.h);
 }
 
-static void res_6_b() {
+static void res_6_b(void) {
     RES(6, &z80.regs.BC.B.h);
 }
 
-static void res_6_c() {
+static void res_6_c(void) {
     RES(6, &z80.regs.BC.B.l); 
 }
 
-static void res_6_d() { 
+static void res_6_d(void) { 
     RES(6, &z80.regs.DE.B.h);
 }
 
-static void res_6_e() { 
+static void res_6_e(void) { 
     RES(6, &z80.regs.DE.B.l);
 }
 
-static void res_6_h() { 
+static void res_6_h(void) { 
     RES(6, &z80.regs.HL.B.h);
 }
 
-static void res_6_l() { 
+static void res_6_l(void) { 
     RES(6, &z80.regs.HL.B.l);
 }
 
-static void res_6_xhl() {
+static void res_6_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(6, &val); 
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_6_XNN(UInt16 addr) {
+static UInt8 res_6_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(6, &val);
-    delayInc(z80);
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_6_xnn  (UInt16 addr) {
-    RES_6_XNN(addr);
+    res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_6_XNN(addr);
+    z80.regs.AF.B.h = res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_6_XNN(addr);
+    z80.regs.BC.B.h = res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = RES_6_XNN(addr); 
+    z80.regs.BC.B.l = res_6_xnn_v(addr); 
 }
 
 static void res_6_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_6_XNN(addr);
+    z80.regs.DE.B.h = res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = RES_6_XNN(addr);
+    z80.regs.DE.B.l = res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = RES_6_XNN(addr);
+    z80.regs.HL.B.h = res_6_xnn_v(addr);
 }
 
 static void res_6_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = RES_6_XNN(addr);
+    z80.regs.HL.B.l = res_6_xnn_v(addr);
 }
 
-static void res_7_a() {
+static void res_7_a(void) {
     RES(7, &z80.regs.AF.B.h);
 }
 
-static void res_7_b() {
+static void res_7_b(void) {
     RES(7, &z80.regs.BC.B.h);
 }
 
-static void res_7_c() {
+static void res_7_c(void) {
     RES(7, &z80.regs.BC.B.l);
 }
 
-static void res_7_d() { 
+static void res_7_d(void) { 
     RES(7, &z80.regs.DE.B.h);
 }
 
-static void res_7_e() {
+static void res_7_e(void) {
     RES(7, &z80.regs.DE.B.l);
 }
 
-static void res_7_h() {
+static void res_7_h(void) {
     RES(7, &z80.regs.HL.B.h);
 }
 
-static void res_7_l() {
+static void res_7_l(void) {
     RES(7, &z80.regs.HL.B.l); 
 }
 
-static void res_7_xhl() {
+static void res_7_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     RES(7, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 RES_7_XNN(UInt16 addr) {
+static UInt8 res_7_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     RES(7, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void res_7_xnn  (UInt16 addr) {
-    RES_7_XNN(addr); 
+    res_7_xnn_v(addr); 
 }
 
 static void res_7_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = RES_7_XNN(addr);
+    z80.regs.AF.B.h = res_7_xnn_v(addr);
 }
 
 static void res_7_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = RES_7_XNN(addr); 
+    z80.regs.BC.B.h = res_7_xnn_v(addr); 
 }
 
 static void res_7_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = RES_7_XNN(addr); 
+    z80.regs.BC.B.l = res_7_xnn_v(addr); 
 }
 
 static void res_7_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = RES_7_XNN(addr);
+    z80.regs.DE.B.h = res_7_xnn_v(addr);
 }
 
 static void res_7_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = RES_7_XNN(addr); 
+    z80.regs.DE.B.l = res_7_xnn_v(addr); 
 }
 
 static void res_7_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = RES_7_XNN(addr); 
+    z80.regs.HL.B.h = res_7_xnn_v(addr); 
 }
 
 static void res_7_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = RES_7_XNN(addr); 
+    z80.regs.HL.B.l = res_7_xnn_v(addr); 
 }
 
-static void set_0_a() {
+static void set_0_a(void) {
     SET(0, &z80.regs.AF.B.h); 
 }
 
-static void set_0_b() {
+static void set_0_b(void) {
     SET(0, &z80.regs.BC.B.h);
 }
 
-static void set_0_c() {
+static void set_0_c(void) {
     SET(0, &z80.regs.BC.B.l);
 }
 
-static void set_0_d() {
+static void set_0_d(void) {
     SET(0, &z80.regs.DE.B.h);
 }
 
-static void set_0_e() { 
+static void set_0_e(void) { 
     SET(0, &z80.regs.DE.B.l);
 }
 
-static void set_0_h() { 
+static void set_0_h(void) { 
     SET(0, &z80.regs.HL.B.h);
 }
 
-static void set_0_l() {
+static void set_0_l(void) {
     SET(0, &z80.regs.HL.B.l);
 }
 
-static void set_0_xhl() {
+static void set_0_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(0, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_0_XNN(UInt16 addr) {
-
+static UInt8 set_0_xnn_v(UInt16 addr) {
+    
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
-
+    
     SET(0, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
-
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
+    
     writeMem(addr, val);
     return val;
 }
 
 static void set_0_xnn  (UInt16 addr) { 
-    SET_0_XNN(addr);
+    set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_0_XNN(addr);
+    z80.regs.AF.B.h = set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_0_XNN(addr);
+    z80.regs.BC.B.h = set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_0_XNN(addr);
+    z80.regs.BC.B.l = set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_0_XNN(addr);
+    z80.regs.DE.B.h = set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SET_0_XNN(addr);
+    z80.regs.DE.B.l = set_0_xnn_v(addr);
 }
 
 static void set_0_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = SET_0_XNN(addr); 
+    z80.regs.HL.B.h = set_0_xnn_v(addr); 
 }
 
 static void set_0_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SET_0_XNN(addr);
+    z80.regs.HL.B.l = set_0_xnn_v(addr);
 }
 
-static void set_1_a() {
+static void set_1_a(void) {
     SET(1, &z80.regs.AF.B.h);
 }
 
-static void set_1_b() {
+static void set_1_b(void) {
     SET(1, &z80.regs.BC.B.h);
 }
 
-static void set_1_c() {
+static void set_1_c(void) {
     SET(1, &z80.regs.BC.B.l);
 }
 
-static void set_1_d() {
+static void set_1_d(void) {
     SET(1, &z80.regs.DE.B.h);
 }
 
-static void set_1_e() {
+static void set_1_e(void) {
     SET(1, &z80.regs.DE.B.l);
 }
 
-static void set_1_h() {
+static void set_1_h(void) {
     SET(1, &z80.regs.HL.B.h);
 }
 
-static void set_1_l() { 
+static void set_1_l(void) { 
     SET(1, &z80.regs.HL.B.l);
 }
 
-static void set_1_xhl() {
+static void set_1_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(1, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_1_XNN(UInt16 addr) {
+static UInt8 set_1_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(1, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_1_xnn  (UInt16 addr) { 
-    SET_1_XNN(addr);
+    set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_1_XNN(addr); 
+    z80.regs.AF.B.h = set_1_xnn_v(addr); 
 }
 
 static void set_1_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_1_XNN(addr);
+    z80.regs.BC.B.h = set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_c(UInt16 addr) { 
-    z80.regs.BC.B.l = SET_1_XNN(addr);
+    z80.regs.BC.B.l = set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_1_XNN(addr);
+    z80.regs.DE.B.h = set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = SET_1_XNN(addr);
+    z80.regs.DE.B.l = set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = SET_1_XNN(addr);
+    z80.regs.HL.B.h = set_1_xnn_v(addr);
 }
 
 static void set_1_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SET_1_XNN(addr);
+    z80.regs.HL.B.l = set_1_xnn_v(addr);
 }
 
-static void set_2_a() { 
+static void set_2_a(void) { 
     SET(2, &z80.regs.AF.B.h);
 }
 
-static void set_2_b() {
+static void set_2_b(void) {
     SET(2, &z80.regs.BC.B.h); 
 }
 
-static void set_2_c() {
+static void set_2_c(void) {
     SET(2, &z80.regs.BC.B.l); 
 }
 
-static void set_2_d() { 
+static void set_2_d(void) { 
     SET(2, &z80.regs.DE.B.h);
 }
 
-static void set_2_e() { 
+static void set_2_e(void) { 
     SET(2, &z80.regs.DE.B.l);
 }
 
-static void set_2_h() {
+static void set_2_h(void) {
     SET(2, &z80.regs.HL.B.h);
 }
 
-static void set_2_l() {
+static void set_2_l(void) {
     SET(2, &z80.regs.HL.B.l);
 }
 
-static void set_2_xhl() {
+static void set_2_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(2, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_2_XNN(UInt16 addr) {
+static UInt8 set_2_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(2, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_2_xnn  (UInt16 addr) {
-    SET_2_XNN(addr);
+    set_2_xnn_v(addr);
 }
 
 static void set_2_xnn_a(UInt16 addr) { 
-    z80.regs.AF.B.h = SET_2_XNN(addr); 
+    z80.regs.AF.B.h = set_2_xnn_v(addr); 
 }
 
 static void set_2_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_2_XNN(addr); 
+    z80.regs.BC.B.h = set_2_xnn_v(addr); 
 }
 
 static void set_2_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_2_XNN(addr);
+    z80.regs.BC.B.l = set_2_xnn_v(addr);
 }
 
 static void set_2_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_2_XNN(addr);
+    z80.regs.DE.B.h = set_2_xnn_v(addr);
 }
 
 static void set_2_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = SET_2_XNN(addr);
+    z80.regs.DE.B.l = set_2_xnn_v(addr);
 }
 
 static void set_2_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = SET_2_XNN(addr); 
+    z80.regs.HL.B.h = set_2_xnn_v(addr); 
 }
 
 static void set_2_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SET_2_XNN(addr); 
+    z80.regs.HL.B.l = set_2_xnn_v(addr); 
 }
 
-static void set_3_a() {
+static void set_3_a(void) {
     SET(3, &z80.regs.AF.B.h);
 }
 
-static void set_3_b() {
+static void set_3_b(void) {
     SET(3, &z80.regs.BC.B.h);
 }
 
-static void set_3_c() {
+static void set_3_c(void) {
     SET(3, &z80.regs.BC.B.l);
 }
 
-static void set_3_d() { 
+static void set_3_d(void) { 
     SET(3, &z80.regs.DE.B.h);
 }
 
-static void set_3_e() { 
+static void set_3_e(void) { 
     SET(3, &z80.regs.DE.B.l);
 }
 
-static void set_3_h() { 
+static void set_3_h(void) { 
     SET(3, &z80.regs.HL.B.h);
 }
 
-static void set_3_l() { 
+static void set_3_l(void) { 
     SET(3, &z80.regs.HL.B.l);
 }
 
-static void set_3_xhl() {
+static void set_3_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(3, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_3_XNN(UInt16 addr) {
+static UInt8 set_3_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(3, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_3_xnn  (UInt16 addr) {
-    SET_3_XNN(addr);
+    set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_3_XNN(addr); 
+    z80.regs.AF.B.h = set_3_xnn_v(addr); 
 }
 
 static void set_3_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_3_XNN(addr);
+    z80.regs.BC.B.h = set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_3_XNN(addr);
+    z80.regs.BC.B.l = set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_d(UInt16 addr) { 
-    z80.regs.DE.B.h = SET_3_XNN(addr);
+    z80.regs.DE.B.h = set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SET_3_XNN(addr);
+    z80.regs.DE.B.l = set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_h(UInt16 addr) { 
-    z80.regs.HL.B.h = SET_3_XNN(addr);
+    z80.regs.HL.B.h = set_3_xnn_v(addr);
 }
 
 static void set_3_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SET_3_XNN(addr);
+    z80.regs.HL.B.l = set_3_xnn_v(addr);
 }
 
-static void set_4_a() {
+static void set_4_a(void) {
     SET(4, &z80.regs.AF.B.h);
 }
 
-static void set_4_b() {
+static void set_4_b(void) {
     SET(4, &z80.regs.BC.B.h);
 }
 
-static void set_4_c() {
+static void set_4_c(void) {
     SET(4, &z80.regs.BC.B.l);
 }
 
-static void set_4_d() {
+static void set_4_d(void) {
     SET(4, &z80.regs.DE.B.h);
 }
 
-static void set_4_e() {
+static void set_4_e(void) {
     SET(4, &z80.regs.DE.B.l);
 }
 
-static void set_4_h() {
+static void set_4_h(void) {
     SET(4, &z80.regs.HL.B.h); 
 }
 
-static void set_4_l() {
+static void set_4_l(void) {
     SET(4, &z80.regs.HL.B.l); 
 }
 
-static void set_4_xhl() {
+static void set_4_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(4, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_4_XNN(UInt16 addr) {
+static UInt8 set_4_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(4, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_4_xnn  (UInt16 addr) {
-    SET_4_XNN(addr);
+    set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_4_XNN(addr);
+    z80.regs.AF.B.h = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_4_XNN(addr);
+    z80.regs.BC.B.h = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_4_XNN(addr);
+    z80.regs.BC.B.l = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_4_XNN(addr);
+    z80.regs.DE.B.h = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SET_4_XNN(addr);
+    z80.regs.DE.B.l = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SET_4_XNN(addr);
+    z80.regs.HL.B.h = set_4_xnn_v(addr);
 }
 
 static void set_4_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SET_4_XNN(addr);
+    z80.regs.HL.B.l = set_4_xnn_v(addr);
 }
 
-static void set_5_a() { 
+static void set_5_a(void) { 
     SET(5, &z80.regs.AF.B.h); 
 }
 
-static void set_5_b() {
+static void set_5_b(void) {
     SET(5, &z80.regs.BC.B.h);
 }
 
-static void set_5_c() {
+static void set_5_c(void) {
     SET(5, &z80.regs.BC.B.l);
 }
 
-static void set_5_d() { 
+static void set_5_d(void) { 
     SET(5, &z80.regs.DE.B.h);
 }
 
-static void set_5_e() { 
+static void set_5_e(void) { 
     SET(5, &z80.regs.DE.B.l); 
 }
 
-static void set_5_h() { 
+static void set_5_h(void) { 
     SET(5, &z80.regs.HL.B.h); 
 }
 
-static void set_5_l() { 
+static void set_5_l(void) { 
     SET(5, &z80.regs.HL.B.l);
 }
 
-static void set_5_xhl() {
+static void set_5_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(5, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_5_XNN(UInt16 addr) {
+static UInt8 set_5_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(5, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_5_xnn  (UInt16 addr) {
-    SET_5_XNN(addr);
+    set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_5_XNN(addr);
+    z80.regs.AF.B.h = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_5_XNN(addr);
+    z80.regs.BC.B.h = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_5_XNN(addr);
+    z80.regs.BC.B.l = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_5_XNN(addr);
+    z80.regs.DE.B.h = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_e(UInt16 addr) { 
-    z80.regs.DE.B.l = SET_5_XNN(addr);
+    z80.regs.DE.B.l = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SET_5_XNN(addr);
+    z80.regs.HL.B.h = set_5_xnn_v(addr);
 }
 
 static void set_5_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SET_5_XNN(addr);
+    z80.regs.HL.B.l = set_5_xnn_v(addr);
 }
 
-static void set_6_a() {
+static void set_6_a(void) {
     SET(6, &z80.regs.AF.B.h);
 }
 
-static void set_6_b() {
+static void set_6_b(void) {
     SET(6, &z80.regs.BC.B.h);
 }
 
-static void set_6_c() {
+static void set_6_c(void) {
     SET(6, &z80.regs.BC.B.l);
 }
 
-static void set_6_d() {
+static void set_6_d(void) {
     SET(6, &z80.regs.DE.B.h);
 }
 
-static void set_6_e() {
+static void set_6_e(void) {
     SET(6, &z80.regs.DE.B.l); 
 }
 
-static void set_6_h() {
+static void set_6_h(void) {
     SET(6, &z80.regs.HL.B.h);
 }
 
-static void set_6_l() { 
+static void set_6_l(void) { 
     SET(6, &z80.regs.HL.B.l); 
 }
 
-static void set_6_xhl() {
+static void set_6_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(6, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_6_XNN(UInt16 addr) {
+static UInt8 set_6_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(6, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_6_xnn  (UInt16 addr) {
-    SET_6_XNN(addr); 
+    set_6_xnn_v(addr); 
 }
 
 static void set_6_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_6_XNN(addr); 
+    z80.regs.AF.B.h = set_6_xnn_v(addr); 
 }
 
 static void set_6_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_6_XNN(addr);
+    z80.regs.BC.B.h = set_6_xnn_v(addr);
 }
 
 static void set_6_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_6_XNN(addr);
+    z80.regs.BC.B.l = set_6_xnn_v(addr);
 }
 
 static void set_6_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_6_XNN(addr);
+    z80.regs.DE.B.h = set_6_xnn_v(addr);
 }
 
 static void set_6_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SET_6_XNN(addr); 
+    z80.regs.DE.B.l = set_6_xnn_v(addr); 
 }
 
 static void set_6_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SET_6_XNN(addr);
+    z80.regs.HL.B.h = set_6_xnn_v(addr);
 }
 
 static void set_6_xnn_l(UInt16 addr) { 
-    z80.regs.HL.B.l = SET_6_XNN(addr);
+    z80.regs.HL.B.l = set_6_xnn_v(addr);
 }
 
-static void set_7_a() {
+static void set_7_a(void) {
     SET(7, &z80.regs.AF.B.h); 
 }
 
-static void set_7_b() {
+static void set_7_b(void) {
     SET(7, &z80.regs.BC.B.h); 
 }
 
-static void set_7_c() {
+static void set_7_c(void) {
     SET(7, &z80.regs.BC.B.l); 
 }
 
-static void set_7_d() {
+static void set_7_d(void) {
     SET(7, &z80.regs.DE.B.h); 
 }
 
-static void set_7_e() {
+static void set_7_e(void) {
     SET(7, &z80.regs.DE.B.l);
 }
 
-static void set_7_h() {
+static void set_7_h(void) {
     SET(7, &z80.regs.HL.B.h);
 }
 
-static void set_7_l() {
+static void set_7_l(void) {
     SET(7, &z80.regs.HL.B.l); 
 }
 
-static void set_7_xhl() {
+static void set_7_xhl(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     SET(7, &val); 
-    delayInc(z80);
+    DELAY_INC;
     writeMem(z80.regs.HL.W, val);
 }
 
-static UInt8 SET_7_XNN(UInt16 addr) {
+static UInt8 set_7_xnn_v(UInt16 addr) {
     UInt8 val = readMem(addr);
     z80.regs.SH.W = addr;
     SET(7, &val);
-    delayBit(z80);             // white cat append
-    delayInc(z80);
+    DELAY_BIT;             // white cat append
+    DELAY_INC;
     writeMem(addr, val);
     return val;
 }
 
 static void set_7_xnn  (UInt16 addr) {
-    SET_7_XNN(addr);
+    set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_a(UInt16 addr) {
-    z80.regs.AF.B.h = SET_7_XNN(addr);
+    z80.regs.AF.B.h = set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_b(UInt16 addr) {
-    z80.regs.BC.B.h = SET_7_XNN(addr);
+    z80.regs.BC.B.h = set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_c(UInt16 addr) {
-    z80.regs.BC.B.l = SET_7_XNN(addr);
+    z80.regs.BC.B.l = set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_d(UInt16 addr) {
-    z80.regs.DE.B.h = SET_7_XNN(addr);
+    z80.regs.DE.B.h = set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_e(UInt16 addr) {
-    z80.regs.DE.B.l = SET_7_XNN(addr); 
+    z80.regs.DE.B.l = set_7_xnn_v(addr); 
 }
 
 static void set_7_xnn_h(UInt16 addr) {
-    z80.regs.HL.B.h = SET_7_XNN(addr);
+    z80.regs.HL.B.h = set_7_xnn_v(addr);
 }
 
 static void set_7_xnn_l(UInt16 addr) {
-    z80.regs.HL.B.l = SET_7_XNN(addr);
+    z80.regs.HL.B.l = set_7_xnn_v(addr);
 }
 
-static void ex_af_af() {
+static void ex_af_af(void) {
     UInt16 regVal = z80.regs.AF.W;
     z80.regs.AF.W = z80.regs.AF1.W;
     z80.regs.AF1.W = regVal;
 }
 
-static void djnz() {
-    delayDjnz(z80);
-    z80.regs.BC.B.h--;
-    if (z80.regs.BC.B.h != 0) {
-        JR(z80);
-    }
-    else {
-        SKIP_JR(z80);
-    }
+static void djnz(void) {
+    DELAY_DJNZ;
+    JR_COND(--z80.regs.BC.B.h != 0);
 }
 
-static void jr() {
-    JR(z80);
+static void jr(void) {
+    JR_COND(1);
 }
 
-static void jr_z() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        JR(z80);
-    }
-    else {
-        SKIP_JR(z80);
-    }
+static void jr_z(void) {
+    JR_COND(z80.regs.AF.B.l & Z_FLAG);
 }
 
-static void jr_nz() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        SKIP_JR(z80);
-    }
-    else {
-        JR(z80);
-    }
+static void jr_nz(void) {
+    JR_COND(!(z80.regs.AF.B.l & Z_FLAG));
 }
 
-static void jr_c() {
-    if (z80.regs.AF.B.l & C_FLAG) {
-        JR(z80);
-    }
-    else {
-        SKIP_JR(z80);
-    }
+static void jr_c(void) {
+    JR_COND(z80.regs.AF.B.l & C_FLAG);
 }
 
-static void jr_nc() {
-    if (z80.regs.AF.B.l & C_FLAG) {
-        SKIP_JR(z80);
-    }
-    else {
-        JR(z80);
-    }
+static void jr_nc(void) {
+    JR_COND(!(z80.regs.AF.B.l & C_FLAG));
 }
 
-static void jp() {
-    JP(z80);
+static void jp(void) {
+    JP_COND(1);
 }
 
-static void jp_hl() { 
+static void jp_hl(void) { 
     z80.regs.PC.W = z80.regs.HL.W; 
 }
 
-static void jp_ix() { 
+static void jp_ix(void) { 
     z80.regs.PC.W = z80.regs.IX.W; 
 }
 
-static void jp_iy() { 
+static void jp_iy(void) { 
     z80.regs.PC.W = z80.regs.IY.W; 
 }
 
-static void jp_z() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        JP(z80);
-    }
-    else {
-        SKIP_JP(z80);
-    }
+static void jp_z(void) {
+    JP_COND(z80.regs.AF.B.l & Z_FLAG);
 }
 
-static void jp_nz() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        SKIP_JP(z80);
-    }
-    else {
-        JP(z80);
-    }
+static void jp_nz(void) {
+    JP_COND(!(z80.regs.AF.B.l & Z_FLAG));
 }
 
-static void jp_c() {
+static void jp_c(void) {
+    JP_COND(z80.regs.AF.B.l & C_FLAG);
+}
+
+static void jp_nc(void) {
+    JP_COND(!(z80.regs.AF.B.l & C_FLAG));
+}
+
+static void jp_m(void) {
+    JP_COND(z80.regs.AF.B.l & S_FLAG);
+}
+
+static void jp_p(void) {
+    JP_COND(!(z80.regs.AF.B.l & S_FLAG));
+}
+
+static void jp_pe(void) {
+    JP_COND(z80.regs.AF.B.l & V_FLAG);
+}
+
+static void jp_po(void) {
+    JP_COND(!(z80.regs.AF.B.l & V_FLAG));
+}
+
+static void call(void) {
+    CALL_COND(1);
+}
+
+static void call_z(void) {
+    CALL_COND(z80.regs.AF.B.l & Z_FLAG);
+}
+
+static void call_nz(void) {
+    CALL_COND(!(z80.regs.AF.B.l & Z_FLAG));
+}
+
+static void call_c(void) {
+    CALL_COND(z80.regs.AF.B.l & C_FLAG);
+}
+
+static void call_nc(void) {
+    CALL_COND(!(z80.regs.AF.B.l & C_FLAG));
+}
+
+static void call_m(void) {
+    CALL_COND(z80.regs.AF.B.l & S_FLAG);
+}
+
+static void call_p(void) {
+    CALL_COND(!(z80.regs.AF.B.l & S_FLAG));
+}
+
+static void call_pe(void) {
+    CALL_COND(z80.regs.AF.B.l & V_FLAG);
+}
+
+static void call_po(void) {
+    CALL_COND(!(z80.regs.AF.B.l & V_FLAG));
+}
+
+static void ret(void) {
+    RegisterPair addr;
+    addr.B.l = readMem(z80.regs.SP.W++);
+    addr.B.h = readMem(z80.regs.SP.W++);
+    z80.regs.PC.W = addr.W;
+    z80.regs.SH.W = addr.W;
+#ifdef ENABLE_CALLSTACK
+    if (z80.callstack[(z80.callstackSize - 1) & 0xff] == addr.W) {
+        z80.callstackSize--;
+    }
+#endif
+}
+
+static void ret_c(void) {
+    DELAY_RET;
     if (z80.regs.AF.B.l & C_FLAG) {
-        JP(z80);
-    }
-    else {
-        SKIP_JP(z80);
+        ret();
     }
 }
 
-static void jp_nc() {
-    if (z80.regs.AF.B.l & C_FLAG) {
-        SKIP_JP(z80);
-    }
-    else {
-        JP(z80);
-    }
-}
-
-static void jp_m() {
-    if (z80.regs.AF.B.l & S_FLAG) {
-        JP(z80);
-    }
-    else {
-        SKIP_JP(z80);
-    }
-}
-
-static void jp_p() {
-    if (z80.regs.AF.B.l & S_FLAG) {
-        SKIP_JP(z80);
-    }
-    else {
-        JP(z80);
-    }
-}
-
-static void jp_pe() {
-    if (z80.regs.AF.B.l & V_FLAG) {
-        JP(z80);
-    }
-    else {
-        SKIP_JP(z80);
-    }
-}
-
-static void jp_po() {
-    if (z80.regs.AF.B.l & V_FLAG) {
-        SKIP_JP(z80);
-    }
-    else {
-        JP(z80);
-    }
-}
-
-static void call() {
-    CALL(z80);
-}
-
-static void call_z() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        CALL(z80);
-    }
-    else {
-        SKIP_CALL(z80);
-    }
-}
-
-static void call_nz() {
-    if (z80.regs.AF.B.l & Z_FLAG) {
-        SKIP_CALL(z80);
-    }
-    else {
-        CALL(z80);
-    }
-}
-
-static void call_c() {
-    if (z80.regs.AF.B.l & C_FLAG) {
-        CALL(z80);
-    }
-    else {
-        SKIP_CALL(z80);
-    }
-}
-
-static void call_nc() {
-    if (z80.regs.AF.B.l & C_FLAG) {
-        SKIP_CALL(z80);
-    }
-    else {
-        CALL(z80);
-    }
-}
-
-static void call_m() {
-    if (z80.regs.AF.B.l & S_FLAG) {
-        CALL(z80);
-    }
-    else {
-        SKIP_CALL(z80);
-    }
-}
-
-static void call_p() {
-    if (z80.regs.AF.B.l & S_FLAG) {
-        SKIP_CALL(z80);
-    }
-    else {
-        CALL(z80);
-    }
-}
-
-static void call_pe() {
-    if (z80.regs.AF.B.l & V_FLAG) {
-        CALL(z80);
-    }
-    else {
-        SKIP_CALL(z80);
-    }
-}
-
-static void call_po() {
-    if (z80.regs.AF.B.l & V_FLAG) {
-        SKIP_CALL(z80);
-    }
-    else {
-        CALL(z80);
-    }
-}
-
-static void ret() {
-    RET(z80);
-}
-
-static void ret_c() {
-    delayRet(z80);
-    if (z80.regs.AF.B.l & C_FLAG) {
-        RET(z80);
-    }
-}
-
-static void ret_nc() {
-    delayRet(z80);
+static void ret_nc(void) {
+    DELAY_RET;
     if (!(z80.regs.AF.B.l & C_FLAG)) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_z() {
-    delayRet(z80);
+static void ret_z(void) {
+    DELAY_RET;
     if (z80.regs.AF.B.l & Z_FLAG) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_nz() {
-    delayRet(z80);
+static void ret_nz(void) {
+    DELAY_RET;
     if (!(z80.regs.AF.B.l & Z_FLAG)) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_m() {
-    delayRet(z80);
+static void ret_m(void) {
+    DELAY_RET;
     if (z80.regs.AF.B.l & S_FLAG) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_p() {
-    delayRet(z80);
+static void ret_p(void) {
+    DELAY_RET;
     if (!(z80.regs.AF.B.l & S_FLAG)) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_pe() {
-    delayRet(z80);
+static void ret_pe(void) {
+    DELAY_RET;
     if (z80.regs.AF.B.l & V_FLAG) {
-        RET(z80);
+        ret();
     }
 }
 
-static void ret_po() {
-    delayRet(z80);
+static void ret_po(void) {
+    DELAY_RET;
     if (!(z80.regs.AF.B.l & V_FLAG)) {
-        RET(z80);
+        ret();
     }
 }
 
-static void reti() {
+static void reti(void) {
     z80.regs.iff1 = z80.regs.iff2;
-    RET(z80);
+    ret();
 }
 
-static void retn() {
+static void retn(void) {
     z80.regs.iff1 = z80.regs.iff2;
-    RET(z80); 
+    ret(); 
 }
 
-static void ex_xsp_hl() { 
+static void ex_xsp_hl(void) { 
     EX_SP(&z80.regs.HL.W);
 }
 
-static void ex_xsp_ix() { 
+static void ex_xsp_ix(void) { 
     EX_SP(&z80.regs.IX.W); 
 }
 
-static void ex_xsp_iy() { 
+static void ex_xsp_iy(void) { 
 
     EX_SP(&z80.regs.IY.W); 
 
 }
 
-static void ex_de_hl() {
+static void ex_de_hl(void) {
     UInt16 tmp = z80.regs.DE.W;
     z80.regs.DE.W  = z80.regs.HL.W;
     z80.regs.HL.W  = tmp;
 }
 
 
-static void rlca() {
+static void rlca(void) {
     UInt8 regVal = z80.regs.AF.B.h;
     z80.regs.AF.B.h = (regVal << 1) | (regVal >> 7);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG)) |
         (z80.regs.AF.B.h & (Y_FLAG | X_FLAG | C_FLAG));
 }
 
-static void rrca() {
+static void rrca(void) {
 
     UInt8 regVal = z80.regs.AF.B.h;
     z80.regs.AF.B.h = (regVal >> 1) | (regVal << 7);
@@ -4846,46 +4725,46 @@ static void rrca() {
         (regVal &  C_FLAG) | (z80.regs.AF.B.h & (X_FLAG | Y_FLAG));
 }
 
-static void rla() {
+static void rla(void) {
     UInt8 regVal = z80.regs.AF.B.h;
     z80.regs.AF.B.h = (regVal << 1) | (z80.regs.AF.B.l & C_FLAG);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG)) |
         ((regVal >> 7) & C_FLAG) | (z80.regs.AF.B.h & (X_FLAG | Y_FLAG));
 }
 
-static void rra() {
+static void rra(void) {
     UInt8 regVal = z80.regs.AF.B.h;
     z80.regs.AF.B.h = (regVal >> 1) | ((z80.regs.AF.B.l & C_FLAG) << 7);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG)) |
         (regVal & C_FLAG) | (z80.regs.AF.B.h & (X_FLAG | Y_FLAG));
 }
 
-static void daa() {
-    int regVal = z80.regs.AF.B.l;
-    z80.regs.AF.W = DAATable[(int)z80.regs.AF.B.h | ((regVal & 3) << 8) | 
+static void daa(void) {
+    Int16 regVal = z80.regs.AF.B.l;
+    z80.regs.AF.W = DAATable[(Int16)z80.regs.AF.B.h | ((regVal & 3) << 8) |
         ((regVal & 0x10) << 6)];
 }
 
-static void cpl() {
+static void cpl(void) {
     z80.regs.AF.B.h ^= 0xff;
     z80.regs.AF.B.l = 
         (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG | C_FLAG)) |
         H_FLAG | N_FLAG | (z80.regs.AF.B.h & (X_FLAG | Y_FLAG));
 }
 
-static void scf() {
+static void scf(void) {
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG)) |
         C_FLAG | (z80.regs.AF.B.h & (X_FLAG | Y_FLAG));
 }
 
-static void ccf() { //DIFF
+static void ccf(void) { //DIFF
     z80.regs.AF.B.l = 
         ((z80.regs.AF.B.l & (S_FLAG | Z_FLAG | P_FLAG | C_FLAG)) |
         ((z80.regs.AF.B.l & C_FLAG) << 4) |
         (z80.regs.AF.B.h & (X_FLAG | Y_FLAG))) ^ C_FLAG;
 }
 
-static void halt() {
+static void halt(void) {
     if ((z80.intState == INT_LOW && z80.regs.iff1) || (z80.nmiState == INT_EDGE)) {
 		z80.regs.halt=0;
     }
@@ -4895,94 +4774,94 @@ static void halt() {
 	}
 }
 
-static void push_af() {
+static void push_af(void) {
     PUSH(&z80.regs.AF.W);
 }
 
-static void push_bc() {
+static void push_bc(void) {
     PUSH(&z80.regs.BC.W); 
 }
 
-static void push_de() {
+static void push_de(void) {
     PUSH(&z80.regs.DE.W);
 }
 
-static void push_hl() {
+static void push_hl(void) {
     PUSH(&z80.regs.HL.W);
 }
 
-static void push_ix() {
+static void push_ix(void) {
     PUSH(&z80.regs.IX.W);
 }
 
-static void push_iy() { 
+static void push_iy(void) { 
     PUSH(&z80.regs.IY.W);
 }
 
-static void pop_af() {
+static void pop_af(void) {
     POP(&z80.regs.AF.W);
 }
 
-static void pop_bc() {
+static void pop_bc(void) {
     POP(&z80.regs.BC.W);
 }
 
-static void pop_de() {
+static void pop_de(void) {
     POP(&z80.regs.DE.W);
 }
 
-static void pop_hl() {
+static void pop_hl(void) {
     POP(&z80.regs.HL.W); 
 }
 
-static void pop_ix() {
+static void pop_ix(void) {
     POP(&z80.regs.IX.W); 
 }
 
-static void pop_iy() {
+static void pop_iy(void) {
     POP(&z80.regs.IY.W);
 }
 
-static void rst_00() {
-    RST(0x00);
+static void rst_00(void) {
+    RST(0x0000);
 }
-static void rst_08() {
-    RST(0x08);
+static void rst_08(void) {
+    RST(0x0008);
 }
-static void rst_10() {
-    RST(0x10);
+static void rst_10(void) {
+    RST(0x0010);
 }
-static void rst_18() {
-    RST(0x18);
+static void rst_18(void) {
+    RST(0x0018);
 }
-static void rst_20() {
-    RST(0x20);
+static void rst_20(void) {
+    RST(0x0020);
 }
-static void rst_28() {
-    RST(0x28);
+static void rst_28(void) {
+    RST(0x0028);
 }
-static void rst_30() {
-    RST(0x30);
+static void rst_30(void) {
+    RST(0x0030);
 }
-static void rst_38() {
-    RST(0x38);
+static void rst_38(void) {
+    RST(0x0038);
 }
 
-static void out_byte_a() {
+static void out_byte_a(void) {
     RegisterPair port;
     port.B.l = readOpcode(z80.regs.PC.W++);
     port.B.h = z80.regs.AF.B.h;
     writePort(port.W, z80.regs.AF.B.h);
 }
 
-static void in_a_byte() {
+static void in_a_byte(void) {
     RegisterPair port;
     port.B.l = readOpcode(z80.regs.PC.W++);
     port.B.h = z80.regs.AF.B.h;
     z80.regs.AF.B.h = readPort(port.W);
 }
 
-static void exx() {
+static void exx(void) {
     UInt16 tmp;
     tmp        = z80.regs.BC.W; 
     z80.regs.BC.W  = z80.regs.BC1.W; 
@@ -4995,32 +4874,32 @@ static void exx() {
     z80.regs.HL1.W = tmp;
 }
 
-static void rld() {
+static void rld(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     z80.regs.SH.W = z80.regs.HL.W + 1;
-    delayRld(z80);
+    DELAY_RLD;
     writeMem(z80.regs.HL.W, (val << 4) | (z80.regs.AF.B.h & 0x0f));
     z80.regs.AF.B.h = (z80.regs.AF.B.h & 0xf0) | (val >> 4);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.AF.B.h];
 }
 
-static void rrd() {
+static void rrd(void) {
     UInt8 val = readMem(z80.regs.HL.W);
     z80.regs.SH.W = z80.regs.HL.W + 1;
-    delayRld(z80);
+    DELAY_RLD;
     writeMem(z80.regs.HL.W, (val >> 4) | (z80.regs.AF.B.h << 4));
     z80.regs.AF.B.h = (z80.regs.AF.B.h & 0xf0) | (val & 0x0f);
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.AF.B.h];
 }
 
-static void di() {
+static void di(void) {
     z80.regs.iff1 = 0;
     z80.regs.iff2 = 0;
 }
 
-static void ei() {
+static void ei(void) {
 /*    if (!z80.regs.iff1) {
         z80.regs.iff2 = 1;
         z80.regs.iff1 = 2;
@@ -5030,101 +4909,101 @@ static void ei() {
 		z80.regs.ei_mode=1;
 }
 
-static void im_0()  {
+static void im_0(void) {
     z80.regs.im = 0;
 }
 
-static void im_1()  {
+static void im_1(void) {
     z80.regs.im = 1;
 }
 
-static void im_2()  {
+static void im_2(void) {
     z80.regs.im = 2;
 }
 
-static void in_a_c() { 
+static void in_a_c(void) { 
     z80.regs.AF.B.h = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.AF.B.h]; 
 }
 
-static void in_b_c() { 
+static void in_b_c(void) { 
     z80.regs.BC.B.h = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.BC.B.h]; 
 }
 
-static void in_c_c() { 
+static void in_c_c(void) { 
     z80.regs.BC.B.l = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.BC.B.l]; 
 }
 
-static void in_d_c() { 
+static void in_d_c(void) { 
     z80.regs.DE.B.h = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.DE.B.h]; 
 }
 
-static void in_e_c() { 
+static void in_e_c(void) { 
     z80.regs.DE.B.l = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.DE.B.l]; 
 }
 
-static void out_c_a()   {
+static void out_c_a(void) {
     writePort(z80.regs.BC.W, z80.regs.AF.B.h); 
 }
 
-static void out_c_b()   {
+static void out_c_b(void) {
     writePort(z80.regs.BC.W, z80.regs.BC.B.h);
 }
 
-static void out_c_c()   { 
+static void out_c_c(void) { 
     writePort(z80.regs.BC.W, z80.regs.BC.B.l);
 }
 
-static void out_c_d()   {
+static void out_c_d(void) {
     writePort(z80.regs.BC.W, z80.regs.DE.B.h);
 }
 
-static void out_c_e()   {
+static void out_c_e(void) {
     writePort(z80.regs.BC.W, z80.regs.DE.B.l);
 }
 
-static void out_c_h()   {
+static void out_c_h(void) {
     writePort(z80.regs.BC.W, z80.regs.HL.B.h);
 }
 
-static void out_c_l()   {
+static void out_c_l(void) {
     writePort(z80.regs.BC.W, z80.regs.HL.B.l);
 }
 
-static void out_c_0()   { 
+static void out_c_0(void) { 
     writePort(z80.regs.BC.W, 0); 
 }
 
-static void in_h_c() { 
+static void in_h_c(void) { 
     z80.regs.HL.B.h = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.HL.B.h]; 
 }
 
-static void in_l_c() { 
+static void in_l_c(void) { 
     z80.regs.HL.B.l = readPort(z80.regs.BC.W); 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[z80.regs.HL.B.l];
 }
 
-static void in_0_c() { 
+static void in_0_c(void) { 
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
         ZSPXYTable[readPort(z80.regs.BC.W)]; 
 }
 
-static void cpi() { 
+static void cpi(void) { 
     UInt8 val = readMem(z80.regs.HL.W++);
     UInt8 rv = z80.regs.AF.B.h - val;
-    delayBlock(z80);
+    DELAY_BLOCK;
 
     z80.regs.BC.W--;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
@@ -5135,18 +5014,18 @@ static void cpi() {
         (z80.regs.BC.W ? P_FLAG : 0);
 }
 
-static void cpir() { 
-    cpi(z80);
+static void cpir(void) { 
+    cpi();
     if (z80.regs.BC.W && !(z80.regs.AF.B.l & Z_FLAG)) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2;
     }
 }
 
-static void cpd() { 
+static void cpd(void) { 
     UInt8 val = readMem(z80.regs.HL.W--);
     UInt8 rv = z80.regs.AF.B.h - val;
-    delayBlock(z80);
+    DELAY_BLOCK;
 
     z80.regs.BC.W--;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & C_FLAG) | 
@@ -5157,18 +5036,18 @@ static void cpd() {
         (z80.regs.BC.W ? P_FLAG : 0);
 }
 
-static void cpdr() { 
-    cpd(z80);
+static void cpdr(void) { 
+    cpd();
     if (z80.regs.BC.W && !(z80.regs.AF.B.l & Z_FLAG)) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2;
     }
 }
 
-static void ldi() { 
+static void ldi(void) { 
     UInt8 val = readMem(z80.regs.HL.W++);
     writeMem(z80.regs.DE.W++, val);
-    delayLdi(z80);
+    DELAY_LDI;
 
     z80.regs.BC.W--;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | C_FLAG)) |
@@ -5176,18 +5055,18 @@ static void ldi() {
         ((z80.regs.AF.B.h + val) & X_FLAG) | (z80.regs.BC.W ? P_FLAG : 0);
 }
 
-static void ldir() { 
-    ldi(z80);
+static void ldir(void) { 
+    ldi();
     if (z80.regs.BC.W != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
 
-static void ldd() { 
+static void ldd(void) { 
     UInt8 val = readMem(z80.regs.HL.W--);
     writeMem(z80.regs.DE.W--, val);
-    delayLdi(z80);
+    DELAY_LDI;
 
     z80.regs.BC.W--;
     z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | C_FLAG)) |
@@ -5195,18 +5074,18 @@ static void ldd() {
         ((z80.regs.AF.B.h + val) & X_FLAG) | (z80.regs.BC.W ? P_FLAG : 0);
 }
 
-static void lddr() { 
-    ldd(z80);
+static void lddr(void) { 
+    ldd();
     if (z80.regs.BC.W != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
 
-static void ini() {  // Diff on flags
+static void ini(void) {  // Diff on flags
     UInt8  val;
     UInt16 tmp;
-    delayInOut(z80);
+    DELAY_INOUT;
     z80.regs.BC.B.h--;
     val = readPort(z80.regs.BC.W);
     writeMem(z80.regs.HL.W++, val);
@@ -5217,19 +5096,19 @@ static void ini() {  // Diff on flags
         (ZSPXYTable[(tmp & 0x07) ^ z80.regs.BC.B.h] & P_FLAG);
 }
 
-static void inir() { 
-    ini(z80);
+static void inir(void) { 
+    ini();
     if (z80.regs.BC.B.h != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
 
 
-static void ind() {
+static void ind(void) {
     UInt8 val;
     UInt16 tmp;
-    delayInOut(z80);
+    DELAY_INOUT;
     z80.regs.BC.B.h--;
     val = readPort(z80.regs.BC.W);
     writeMem(z80.regs.HL.W--, val);
@@ -5240,18 +5119,18 @@ static void ind() {
         (ZSPXYTable[(tmp & 0x07) ^ z80.regs.BC.B.h] & P_FLAG);
 }
 
-static void indr() { 
-    ind(z80);
+static void indr(void) { 
+    ind();
     if (z80.regs.BC.B.h != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
 
-static void outi() {
+static void outi(void) {
     UInt8  val;
     UInt16 tmp;
-    delayInOut(z80);
+    DELAY_INOUT;
     val = readMem(z80.regs.HL.W++);
     writePort(z80.regs.BC.W, val);
     z80.regs.BC.B.h--;
@@ -5262,18 +5141,18 @@ static void outi() {
         (ZSPXYTable[(tmp & 0x07) ^ z80.regs.BC.B.h] & P_FLAG);
 }
 
-static void otir() { 
-    outi(z80);
+static void otir(void) { 
+    outi();
     if (z80.regs.BC.B.h != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
 
-static void outd() {
+static void outd(void) {
     UInt8 val;
     UInt16 tmp;
-    delayInOut(z80);
+    DELAY_INOUT;
     val = readMem(z80.regs.HL.W--);
     writePort(z80.regs.BC.W, val);
     z80.regs.BC.B.h--;
@@ -5284,10 +5163,10 @@ static void outd() {
         (ZSPXYTable[(tmp & 0x07) ^ z80.regs.BC.B.h] & P_FLAG);
 }
 
-static void otdr() { 
-    outd(z80);
+static void otdr(void) { 
+    outd();
     if (z80.regs.BC.B.h != 0) {
-        delayBlock(z80); 
+        DELAY_BLOCK; 
         z80.regs.PC.W -= 2; 
     }
 }
@@ -5502,52 +5381,52 @@ static OpcodeNn opcodeNnCb[256] = {
     set_7_xnn_b, set_7_xnn_c, set_7_xnn_d, set_7_xnn_e, set_7_xnn_h, set_7_xnn_l, set_7_xnn,   set_7_xnn_a,
 };
 
-static void dd_cb() {
+static void dd_cb(void) {
 	UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    int opcode = readOpcode(z80.regs.PC.W++);
-	delayM1(z80);
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+	DELAY_M1;
     opcodeNnCb[opcode](addr);
 }
 
-static void fd_cb() {
+static void fd_cb(void) {
 	UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    int opcode = readOpcode(z80.regs.PC.W++);
-	delayM1(z80);
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+	DELAY_M1;
     opcodeNnCb[opcode](addr);
 }
 
-static void cb() {
-    int opcode = readOpcode(z80.regs.PC.W++);
-    M1(z80);
-    opcodeCb[opcode](z80);
+static void cb(void) {
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    M1();
+    opcodeCb[opcode]();
 }
 
-static void dd() {
-    int opcode = readOpcode(z80.regs.PC.W++);
-    M1(z80);
-    opcodeDd[opcode](z80);
+static void dd(void) {
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    M1();
+    opcodeDd[opcode]();
 }
 
-static void ed() {
-    int opcode = readOpcode(z80.regs.PC.W++);
-    M1(z80);
-    opcodeEd[opcode](z80);
+static void ed(void) {
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    M1();
+    opcodeEd[opcode]();
 }
 
-static void fd() {
-    int opcode = readOpcode(z80.regs.PC.W++);
-    M1(z80);
-    opcodeFd[opcode](z80);
+static void fd(void) {
+    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    M1();
+    opcodeFd[opcode]();
 }
 
 static void executeInstruction(UInt8 opcode) {
-    M1(z80);
-    opcodeMain[opcode](z80);
+    M1();
+    opcodeMain[opcode]();
 }
 
 
-static void z80InitTables() {
-    int i;
+static void z80InitTables(void) {
+    Int16 i;
 
 	for (i = 0; i < 256; ++i) {
         UInt8 flags = i ^ 1;
@@ -5563,9 +5442,9 @@ static void z80InitTables() {
 	}
 
     for (i = 0; i < 0x800; ++i) {
-		int flagC = i & 0x100;
-		int flagN = i & 0x200;
-		int flagH = i & 0x400;
+		Int16 flagC = i & 0x100;
+		Int16 flagN = i & 0x200;
+		Int16 flagH = i & 0x400;
 		UInt8 a = i & 0xff;
 		UInt8 hi = a / 16;
 		UInt8 lo = a & 15;
@@ -5597,7 +5476,7 @@ static void z80InitTables() {
 	}
 }
 
-void z80Init()
+void z80Init(void)
 {
     z80InitTables();
 
@@ -5607,7 +5486,7 @@ void z80Init()
     z80Reset(0);
 }
 
-UInt32 z80GetSystemTime() {
+UInt32 z80GetSystemTime(void) {
     return z80.systemTime;
 }
 
@@ -5641,32 +5520,32 @@ void z80Reset(UInt32 cpuTime) {
     z80.nmiState        = INT_HIGH;
 }
 
-void z80SetDataBus(UInt8 value, UInt8 defaultValue, int setDefault) {
+void z80SetDataBus(UInt8 value, UInt8 defaultValue, Int8 setDefault) {
     z80.dataBus = value;
     if (setDefault) {
         z80.defaultDatabus = defaultValue;
     }
 }
 
-void z80SetInt() {
+void z80SetInt(void) {
     z80.intState = INT_LOW;
 }
 
-void z80ClearInt() {
+void z80ClearInt(void) {
     z80.intState = INT_HIGH;
 }
 
-void z80SetNmi() {
+void z80SetNmi(void) {
     if (z80.nmiState == INT_HIGH) {
         z80.nmiState = INT_EDGE;
     }
 }
 
-void z80ClearNmi() {
+void z80ClearNmi(void) {
     z80.nmiState = INT_HIGH;
 }
 
-void z80StopExecution() {
+void z80StopExecution(void) {
     z80.terminate = 1;
 }
 
@@ -5675,11 +5554,10 @@ void z80SetTimeout(SystemTime time)
     z80.timeout = time;
 }
 
-
-void z80Execute() {
+void z80Execute(void) {
     while (!z80.terminate) {
         UInt16 address;
-        int iff1 = 0;
+        //int iff1 = 0;
 
         if ((Int32)(z80.timeout - z80.systemTime) <= 0) {
             timeout();
@@ -5708,8 +5586,8 @@ void z80Execute() {
 	        writeMemory(--z80.regs.SP.W, z80.regs.PC.B.l);
             z80.regs.iff1 = 0;
             z80.regs.PC.W = 0x0066;
-            M1(z80);
-            delayNmi(z80);
+            M1();
+            DELAY_NMI;
             continue;
         }
 
@@ -5719,14 +5597,14 @@ void z80Execute() {
         switch (z80.regs.im) {
 
         case 0:
-            delayIm(z80);
+            DELAY_IM;
             address = z80.dataBus;
             z80.dataBus = z80.defaultDatabus;
             executeInstruction((UInt8)address);
             break;
 
         case 1:
-            delayIm(z80);
+            DELAY_IM;
             executeInstruction(0xff);
             break;
 
@@ -5737,8 +5615,8 @@ void z80Execute() {
 	        writeMemory(--z80.regs.SP.W, z80.regs.PC.B.l);
             z80.regs.PC.B.l = readMemory(address++);
             z80.regs.PC.B.h = readMemory(address);
-            M1(z80);
-            delayIm2(z80);
+            M1();
+            DELAY_IM2;
             break;
         }
     }

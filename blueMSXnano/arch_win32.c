@@ -22,7 +22,7 @@
 
 #include "arch.h"
 
-void setpos(int x, int y)
+void setpos(Int8 x, Int8 y)
 {
   COORD coord = { (short)x, (short)y};
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -33,12 +33,12 @@ void clearscreen(void)
     system("cls");
 }
 
-void delay(unsigned long ms)
+void delay(UInt32 ms)
 {
     Sleep(ms);
 }
 
-char pollkbd(void)
+UInt8 pollkbd(void)
 {
     if (_kbhit()) {
         char ch = _getch();
@@ -52,7 +52,7 @@ char pollkbd(void)
     return 0;
 }
 
-unsigned long gettime(void)
+UInt32 gettime(void)
 {
     static LONGLONG hfFrequency = 0;
     LARGE_INTEGER li;
@@ -69,4 +69,10 @@ unsigned long gettime(void)
     QueryPerformanceCounter(&li);
 
     return (DWORD)(li.QuadPart * 1000000 / hfFrequency);
+}
+
+void display(const char *buffer)
+{
+    setpos(0, 0);
+    printf("%s", buffer);
 }

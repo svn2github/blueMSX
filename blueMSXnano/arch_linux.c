@@ -23,9 +23,9 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
-void setpos(int x, int y)
+void setpos(Int8 x, Int8 y)
 {
-  printf("\033[%d;%dH", y, x);
+  printf("\033[%d;%dH", (int)y, (int)x);
 }
 
 void clearscreen()
@@ -33,20 +33,20 @@ void clearscreen()
   printf("\033[2J");
 }
 
-void delay(unsigned long ms)
+void delay(UInt32 ms)
 {
   struct timeval tv = { 0,  ms * 1000 };
   select(0, NULL, NULL, NULL, &tv);
 }
 
-unsigned long gettime()
+UInt32 gettime()
 {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-char pollkbd()
+UInt8 pollkbd()
 {
   static int initialized = 0;
   if (!initialized) {
@@ -81,4 +81,10 @@ char pollkbd()
     }
   }
   return ch;
+}
+
+void display(const char *buffer)
+{
+  setpos(0, 0);
+  printf("%s", buffer);
 }

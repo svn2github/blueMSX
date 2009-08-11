@@ -41,6 +41,7 @@ AUTHORS
 
 Daniel Vik        - Initial Windows version
 Wouter Vermaelen  - Linux port 
+Juha Riihimaki    - MS-DOS port
 
 
 (c) 2009 Daniel Vik and the blueMSX team 

@@ -18,36 +18,37 @@
 */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "z80.h"
 #include "arch.h"
 
 
-struct {
+static struct {
     UInt8 status;
     UInt8 latch;
     UInt16 address;
     UInt8 data;
     UInt8 regs[8];
-    int key;
+    Int8 key;
 } vdp;
 
-struct {
+static struct {
     UInt8 regs[4];
 } ppi;
 
-UInt8  memory[0x40000];
-UInt8* ram[4] = { memory, memory, memory, memory };
-UInt8  vram[0x4000];
-UInt32 z80Timeout;
-UInt64 z80Frequency = 3579545;
-UInt32 frameCounter;
-UInt32 syncTime;
-UInt32 emuTime;
-int    keyPressed = 0xffff;
-int    verbose = 0;
-int    normalSpeed = 0;
+static UInt8  FARPTR memory[4][4], FARPTR empty;
+static UInt8  FARPTR ram[4];
+static UInt8  vram[0x4000];
+static UInt32 z80Timeout;
+static UInt64 z80Frequency = 3579545;
+static UInt8  frameCounter;
+static UInt32 syncTime;
+static UInt32 emuTime;
+static UInt16 keyPressed = 0xffff;
+static Int8   verbose = 0;
+static Int8   normalSpeed = 0;
 
-static const int KeyMatrix[256] = 
+static const UInt16 KeyMatrix[256] =
 {
     0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xff75,0xffff,0xff77,0xffff,0xffff,0xff77,0xffff,0xffff,
     0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xff85,0xff86,0xff84,0xff87,
@@ -102,10 +103,10 @@ UInt8 readIoPort(UInt16 port)
 
 static void updadeSlots(void)
 {
-    int i;
-    UInt32 slotMask = (ppi.regs[3] & 0x10) ? 0 : ppi.regs[0];
+    Int8 i;
+    UInt8 slotMask = (ppi.regs[3] & 0x10) ? 0 : ppi.regs[0];
     for (i = 0; i < 4; i++) {
-        ram[i] = &memory[(slotMask & 3) << 16];
+        ram[i] = memory[(slotMask & 3)][i];
         slotMask >>= 2;
     }
 }
@@ -147,11 +148,11 @@ void  writeIoPort(UInt16 port, UInt8 value)
         	vdp.address = (UInt16)value << 8 | vdp.latch;
 		    if ((value & 0xc0) == 0x80) {
                 vdp.regs[value & 0x07] = vdp.latch;
-		    } 
+		    }
 		    if ((value & 0xc0) == 0x00) {
 				readIoPort(0x98);
 		    }
-	    } 
+	    }
         else {
 		    vdp.key = 1;
 		    vdp.latch = value;
@@ -162,14 +163,15 @@ void  writeIoPort(UInt16 port, UInt8 value)
 
 UInt8 readMemory(UInt16 address)
 {
-    return ram[address >> 14][address];
+    return ram[address >> 14][address & 0x3fff];
 }
 
 void  writeMemory(UInt16 address, UInt8 value)
 {
-    int slot = address >> 14;
-    if (ram[slot] == &memory[0x30000]) {
-        ram[slot][address] = value;
+    UInt8 page = (UInt8)(address >> 14);
+    UInt8 slot = (ppi.regs[0] >> (page << 1)) & 3;
+    if (slot == 3) {
+        ram[page][address & 0x3fff] = value;
     }
 }
 
@@ -180,12 +182,12 @@ void  patch(void)
 static void printScreen(void)
 {
     static char buffers[2][24*41+1];
-    static int viewBuf = 0;
+    static Int8 viewBuf = 0;
 
-    int width   = (vdp.regs[1] & 0x10) ? 40 : 32;
+    Int8 width   = (vdp.regs[1] & 0x10) ? 40 : 32;
     UInt8* base = vram + ((vdp.regs[2] & 0x0f) << 10);
     char* buf = buffers[viewBuf ^ 1];
-    int x, y;
+    Int8 x, y;
 
     for (y = 0; y < 24; y++) {
         for (x = 0; x < width; x++) {
@@ -203,9 +205,8 @@ static void printScreen(void)
     *buf = 0;
 
     if (memcmp(buffers[0], buffers[1], sizeof(buffers[0])) != 0) { 
-        setpos(0, 0);
         viewBuf ^= 1;
-        printf("%s", buffers[viewBuf]);
+	display(buffers[viewBuf]);
     }
 }
 
@@ -228,7 +229,7 @@ void  timeout(void)
         }
         syncTime += 20000;
     }
-    
+
     if (++frameCounter % 50 == 0) {
         UInt32 diffTime = gettime() - emuTime;
 
@@ -238,8 +239,8 @@ void  timeout(void)
         emuTime += diffTime;
 
         if (verbose) {
-            setpos(0, 26);
-            printf("=== FPS: %d    CPU: %d MHz ===    \n", 
+            setpos(0, 24);
+            printf("=== FPS: %d    CPU: %d MHz ===    \r",
                    50500000 / diffTime, (UInt32)(z80Frequency / 1000000));
         }
     }
@@ -248,34 +249,74 @@ void  timeout(void)
     z80SetTimeout(z80Timeout);
 }
 
-static void loadRom(const char* romFile, UInt32 baseAddress)
+static void loadRom(const char* romFile, int slot, int page)
 {
+    size_t n;
     FILE* f = fopen(romFile, "rb");
     if (f != NULL) {
-        fread(memory + baseAddress, 1, 0x10000, f);
+        while (page < 4 && !ferror(f) && !feof(f)) {
+            if ((n = fread(vram, 1, 0x4000, f)) > 0) {
+                if (memory[slot][page] == empty) {
+                    memory[slot][page] = FARMALLOC(0x4000);
+                    if (!memory[slot][page]) {
+                        printf("loadRom: out of memory\n");
+                        exit(-1);
+                    }
+                }
+                FARMEMCPY(memory[slot][page++], vram, n);
+            }
+        }
         fclose(f);
     }
 }
 
+static int init_memory(void)
+{
+    int slot, page;
+
+    empty = FARMALLOC(0x4000);
+    if (!empty) {
+        return 0;
+    }
+    FARMEMSET(empty, 0xff, 0x4000);
+    for (slot = 0; slot < 4; slot++) {
+        for (page = 0; page < 4; page++) {
+            if (slot < 3) {
+                memory[slot][page] = empty;
+            } else {
+                memory[slot][page] = FARMALLOC(0x4000);
+                if (!memory[slot][page]) {
+                    return 0;
+                }
+                FARMEMSET(memory[slot][page], 0x00, 0x4000);
+            }
+        }
+    }
+    return 1;
+}
+
 int main(int argc, char** argv)
 {
-    memset(memory, 0xff, sizeof(memory));
-
+    int page;
+    if (!init_memory()) {
+        printf("out of memory\n");
+        return -1;
+    }
     for (argc--, argv++; argc > 0; argc--, argv++) {
         if (0 == strcmp(argv[0], "-s") && argc > 1) {
-            loadRom(argv[1], 0x00000);
+            loadRom(argv[1], 0, 0);
             argc--, argv++;
         }
         if (0 == strcmp(argv[0], "-r") && argc > 1) {
-            loadRom(argv[1], 0x14000);
+            loadRom(argv[1], 1, 1);
             argc--, argv++;
         }
         if (0 == strcmp(argv[0], "-R") && argc > 1) {
-            loadRom(argv[1], 0x10000);
+            loadRom(argv[1], 1, 0);
             argc--, argv++;
         }
         if (0 == strcmp(argv[0], "-b") && argc > 1) {
-            loadRom(argv[1], 0x18000);
+            loadRom(argv[1], 1, 2);
             argc--, argv++;
         }
         if (0 == strcmp(argv[0], "-v")) {
@@ -297,6 +338,10 @@ int main(int argc, char** argv)
             printf("    -h             Shows help\n");
             return 0;
         }
+    }
+
+    for (page = 0; page < 4; page++) {
+        ram[page] = memory[0][page];
     }
 
     z80Init();
