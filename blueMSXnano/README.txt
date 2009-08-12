@@ -16,7 +16,11 @@ to run dos programs and cartridges up to 64kB.
 USAGE
 =====
 
+  Win32, Linux:
     bluemsxnano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h]
+
+  MS-DOS:
+    bluenano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h]
     
     -s <bios>      Loads a bios rom into address 0x0000
     -R <rom>       Loads a cartridge rom into address 0x0000
