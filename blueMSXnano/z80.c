@@ -151,7 +151,7 @@ static void ADD(UInt8 reg) {
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((z80.regs.AF.B.h ^ rv ^ reg) & H_FLAG) |
         ((((reg ^ z80.regs.AF.B.h ^ 0x80) & (reg ^ rv)) >> 5) & V_FLAG);
-    z80.regs.AF.B.h = rv;
+    z80.regs.AF.B.h = (UInt8)rv;
 }
 
 static void ADDW(UInt16* reg1, UInt16 reg2) { //DIFF
@@ -160,11 +160,11 @@ static void ADDW(UInt16* reg1, UInt16 reg2) { //DIFF
     rv += reg2;
     
     z80.regs.SH.W   = *reg1 + 1;
-    z80.regs.AF.B.l = (z80.regs.AF.B.l & (S_FLAG | Z_FLAG | V_FLAG)) |
+    z80.regs.AF.B.l = (UInt8)((z80.regs.AF.B.l & (S_FLAG | Z_FLAG | V_FLAG)) |
         (((*reg1 ^ reg2 ^ rv) >> 8) & H_FLAG) |
         ((rv >> 16) & C_FLAG) |
-        ((rv >> 8) & (X_FLAG | Y_FLAG));
-    *reg1 = rv;
+        ((rv >> 8) & (X_FLAG | Y_FLAG)));
+    *reg1 = (UInt16)rv;
     DELAY_ADD16;
 }
 
@@ -175,7 +175,7 @@ static void ADC(UInt8 reg) {
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((z80.regs.AF.B.h ^ rv ^ reg) & H_FLAG) |
         ((((reg ^ z80.regs.AF.B.h ^ 0x80) & (reg ^ rv)) >> 5) & V_FLAG);
-    z80.regs.AF.B.h = rv;
+    z80.regs.AF.B.h = (UInt8)rv;
 }
 
 static void ADCW(UInt16 reg) {
@@ -184,11 +184,11 @@ static void ADCW(UInt16 reg) {
     rv += (z80.regs.AF.B.l & C_FLAG);
     
     z80.regs.SH.W   = z80.regs.HL.W + 1;
-    z80.regs.AF.B.l = (((z80.regs.HL.W ^ reg ^ rv) >> 8) & H_FLAG) | 
+    z80.regs.AF.B.l = (UInt8)((((z80.regs.HL.W ^ reg ^ rv) >> 8) & H_FLAG) | 
         ((rv >> 16) & C_FLAG) | ((rv & 0xffff) ? 0 : Z_FLAG) |
         ((((reg ^ z80.regs.HL.W ^ 0x8000) & (reg ^ rv)) >> 13) & V_FLAG) |
-        ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG));
-    z80.regs.HL.W = rv;
+        ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG)));
+    z80.regs.HL.W = (UInt16)rv;
     DELAY_ADD16;
 }
 
@@ -198,7 +198,7 @@ static void SUB(UInt8 reg) {
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((regVal ^ rv ^ reg) & H_FLAG) | N_FLAG |
         ((((reg ^ regVal) & (rv ^ regVal)) >> 5) & V_FLAG);
-    z80.regs.AF.B.h = rv;
+    z80.regs.AF.B.h = (UInt8)rv;
 } 
 
 static void SBC(UInt8 reg) {
@@ -207,18 +207,18 @@ static void SBC(UInt8 reg) {
     z80.regs.AF.B.l = ZSXYTable[rv & 0xff] | ((rv >> 8) & C_FLAG) |
         ((regVal ^ rv ^ reg) & H_FLAG) | N_FLAG |
         ((((reg ^ regVal) & (rv ^ regVal)) >> 5) & V_FLAG);
-    z80.regs.AF.B.h = rv;
+    z80.regs.AF.B.h = (UInt8)rv;
 }
 
 static void SBCW(UInt16 reg) {
     Int32 regVal = z80.regs.HL.W;
     Int32 rv = regVal - reg - (z80.regs.AF.B.l & C_FLAG);
-    z80.regs.SH.W   = regVal + 1;
-    z80.regs.AF.B.l = (((regVal ^ reg ^ rv) >> 8) & H_FLAG) | N_FLAG |
+    z80.regs.SH.W   = (UInt16)(regVal + 1);
+    z80.regs.AF.B.l = (UInt8)((((regVal ^ reg ^ rv) >> 8) & H_FLAG) | N_FLAG |
         ((rv >> 16) & C_FLAG) | ((rv & 0xffff) ? 0 : Z_FLAG) | 
         ((((reg ^ regVal) & (regVal ^ rv)) >> 13) & V_FLAG) |
-        ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG));
-    z80.regs.HL.W = rv;
+        ((rv >> 8) & (S_FLAG | X_FLAG | Y_FLAG)));
+    z80.regs.HL.W = (UInt16)rv;
     DELAY_ADD16;
 }
 

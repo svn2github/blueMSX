@@ -39,7 +39,7 @@ Example:
 AUTHORS
 =======
 
-Daniel Vik        - Initial Windows version
+Daniel Vik        - Windows port
 Wouter Vermaelen  - Linux port 
 Juha Riihimaki    - MS-DOS port
 
