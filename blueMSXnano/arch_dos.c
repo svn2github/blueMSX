@@ -20,6 +20,8 @@
 #include <conio.h>
 #include "arch.h"
 
+static UInt8 mono = 0;
+
 void setpos(Int8 x, Int8 y)
 {
     _asm {
@@ -33,8 +35,28 @@ void setpos(Int8 x, Int8 y)
 
 void clearscreen(void)
 {
+    /* perform semi-intelligent display type detection.
+     * mda, hercules and mono ega/vga will use 80x25 mono text screen mode.
+     * others will use 40x25 color text screen mode.
+     * hides cursor.
+     */
     _asm {
-        mov ax, 1
+        mov bx, 1
+        push es
+        mov ax, 0040h
+        mov es, ax
+        mov al, byte ptr es:[00049h]
+        pop es
+        cmp al, 7
+        jne not_mono
+        int 11h
+        and al, 30h
+        cmp al, 30h
+        jne not_mono
+        mov mono, 1
+        mov bl, 7
+    not_mono:
+        mov ax, bx
         int 10h
         mov ah, 1
         mov cx, 201fh
@@ -46,28 +68,36 @@ void display(const char *buffer)
 {
     // this code works only with near pointers
     _asm {
-        push bp
-        mov bx, 0007h
-        mov cx, 0001h
-        mov dh, 0ffh
+        push es
+        cmp mono, 0
+        je display_color
+        mov ax, 0b000h
+        mov cx, 80 *2
+        mov dl, 07h
+        jmp short display_setup
+    display_color:
+        mov ax, 0b800h
+        mov cx, 40 * 2
+        mov dl, 1fh
+    display_setup:
+        mov es, ax
+        xor bx, bx
         mov si, buffer
-    arch_display_row:
-        xor dl, dl
-        inc dh
-    arch_display_char:
-        mov ah, 02h
-        int 10h
+        cld
+    display_row:
+        mov di, bx
+        add bx, cx
+    display_char:
         lodsb
         or al, al
-        jz arch_display_exit
+        jz display_exit
         cmp al, 0ah
-        je arch_display_row
-        mov ah, 0ah
-        int 10h
-        inc dl
-        jmp short arch_display_char
-    arch_display_exit:
-        pop bp
+        je display_row
+        mov ah, dl
+        stosw
+        jmp short display_char
+    display_exit:
+        pop es
     };
 }
 
@@ -102,14 +132,16 @@ UInt8 pollkbd(void)
 
 UInt32 gettime(void)
 {
-    UInt16 low = 0, high = 0;
-    // use int 1a instead of 0040:006c here to ensure atomic fetch operation
+    volatile UInt32 __far *const tick_counter = 0x0040 :> 0x006c;
+    UInt32 time;
     _asm {
-        xor ah, ah
-        int 1ah
-        mov high, cx
-        mov low, dx
+        pushf
+        cli
     };
-    return (((UInt32)high << 16) | low) * 54945;
+    time = *tick_counter * 54945;
+    _asm {
+        popf
+    };
+    return time;
 }
 
