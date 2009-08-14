@@ -30,7 +30,9 @@ void setpos(Int8 x, Int8 y)
 
 void clearscreen(void)
 {
-    system("cls");
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0);
+	system("cls");
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15 + (9 * 16));
 }
 
 void delay(UInt32 ms)
