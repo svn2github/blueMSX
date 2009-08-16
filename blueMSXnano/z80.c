@@ -140,6 +140,7 @@ static void writePort(UInt16 port, UInt8 value) {
 
 }
 
+
 static UInt8 readMem(UIntN address) {
     DELAY_MEM;
     return readMemory(address);

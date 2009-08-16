@@ -232,8 +232,10 @@ void  timeout(void)
         syncTime += 20000;
     }
 
-    if (++frameCounter % 50 == 0) {
+    if (++frameCounter == 50) {
         UInt32 diffTime = gettime() - emuTime;
+
+        frameCounter = 0;
 
         if (!normalSpeed) {
             z80Frequency = z80Frequency * 1000000 / diffTime;
