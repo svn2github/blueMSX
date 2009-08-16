@@ -9,6 +9,7 @@ extern "C" {
 #include "SaveState.h"
 }
 
+#include <stdio.h>
 #include <cmath>
 #include <cstring>
 

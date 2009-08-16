@@ -14,7 +14,7 @@ extern "C" {
 #endif
 #define assert(x)
 
-
+#include <stdio.h>
 #include <cmath>
 #include <algorithm>
 

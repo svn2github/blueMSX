@@ -4,6 +4,8 @@
 // $Id: OpenMsxYMF278.cpp,v 1.6 2008/03/31 22:07:05 hap-hap Exp $
 
 #include "OpenMsxYMF278.h"
+
+#include <stdio.h>
 #include <cmath>
 #include <cstring>
 #include <stdlib.h>
