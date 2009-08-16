@@ -107,7 +107,7 @@ static void updadeSlots(void)
     Int8 i;
     UInt8 slotMask = (ppi.regs[3] & 0x10) ? 0 : ppi.regs[0];
     for (i = 0; i < 4; i++) {
-        ram[i] = memory[(slotMask & 3)][i];
+        ram[i] = memory[(slotMask & 3)][i] - 0x4000 * i;
         slotMask >>= 2;
         slot[i] = (ppi.regs[0] >> (i << 1)) & 3;
 
@@ -345,7 +345,7 @@ int main(int argc, char** argv)
     }
 
     for (page = 0; page < 4; page++) {
-        ram[page] = memory[0][page];
+        ram[page] = memory[0][page] - 0x4000 * page;
     }
 
     z80Init();

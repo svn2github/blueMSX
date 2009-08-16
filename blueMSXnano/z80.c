@@ -85,8 +85,8 @@ extern UInt8 slot[4];
 static UIntN tmpAddr;
 static UIntN tmpPage;
 
-#define readMemory(addr) ( tmpAddr = addr, ram[tmpAddr >> 14][tmpAddr & 0x3fff] )
-#define writeMemory(addr, val) { tmpAddr = addr; tmpPage = tmpAddr >> 14; if (slot[tmpPage] == 3) ram[tmpPage][tmpAddr & 0x3fff] = val; }
+#define readMemory(addr) ( tmpAddr = addr, ram[tmpAddr >> 14][tmpAddr] )
+#define writeMemory(addr, val) { tmpAddr = addr; tmpPage = tmpAddr >> 14; if (slot[tmpPage] == 3) ram[tmpPage][tmpAddr] = val; }
 #endif
 
 static Z80 z80;
