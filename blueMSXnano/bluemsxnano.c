@@ -37,11 +37,12 @@ static struct {
 } ppi;
 
 static UInt8  FARPTR memory[4][4], FARPTR empty;
-static UInt8  FARPTR ram[4];
+UInt8  FARPTR ram[4];
+UInt8         slot[4];
 static UInt8  vram[0x4000];
 static UInt32 z80Timeout;
 static UInt64 z80Frequency = 3579545;
-static UInt8  frameCounter;
+static UInt16 frameCounter;
 static UInt32 syncTime;
 static UInt32 emuTime;
 static UInt16 keyPressed = 0xffff;
@@ -108,6 +109,8 @@ static void updadeSlots(void)
     for (i = 0; i < 4; i++) {
         ram[i] = memory[(slotMask & 3)][i];
         slotMask >>= 2;
+        slot[i] = (ppi.regs[0] >> (i << 1)) & 3;
+
     }
 }
 
@@ -168,9 +171,8 @@ UInt8 readMemory(UInt16 address)
 
 void  writeMemory(UInt16 address, UInt8 value)
 {
-    UInt8 page = (UInt8)(address >> 14);
-    UInt8 slot = (ppi.regs[0] >> (page << 1)) & 3;
-    if (slot == 3) {
+    IntN page = address >> 14;
+    if (slot[page] == 3) {
         ram[page][address & 0x3fff] = value;
     }
 }

@@ -29,6 +29,8 @@ typedef unsigned long    UInt32;
 typedef   signed long    Int32;
 typedef unsigned __int64 UInt64;
 typedef   signed __int64 Int64;
+typedef   signed int     IntN;
+typedef unsigned int     UIntN;
 #define FARPTR *
 #define FARMALLOC(n)         malloc(n)
 #define FARMEMSET(b, c, n)   memset(b, c, n)
@@ -44,6 +46,8 @@ typedef unsigned long      UInt32;
 typedef   signed long      Int32;
 typedef unsigned long long UInt64;
 typedef   signed long long Int64;
+typedef   signed int     IntN;
+typedef unsigned int     UIntN;
 #define FARPTR __far *
 #define FARMALLOC(n)         _fmalloc(n)
 #define FARMEMSET(b, c, n)   _fmemset(b, c, n)
@@ -59,6 +63,8 @@ typedef unsigned int       UInt32;
 typedef   signed int       Int32;
 typedef unsigned long long UInt64;
 typedef   signed long long Int64;
+typedef   signed int     IntN;
+typedef unsigned int     UIntN;
 #define FARPTR *
 #define FARMALLOC(n)         malloc(n)
 #define FARMEMSET(b, c, n)   memset(b, c, n)

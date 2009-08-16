@@ -70,13 +70,6 @@
 #define DELAY_LDSPHL   z80.systemTime += 2
 #define DELAY_BITIX    z80.systemTime += 2
 
-#ifdef ENABLE_CALLSTACK
-#define CALLSTACK_PUSH(address) \
-    z80.callstack[z80.callstackSize++ & 0xff] = address
-#else
-#define CALLSTACK_PUSH(address)
-#endif
-
 typedef void (*Opcode)(void);
 typedef void (*OpcodeNn)(UInt16);
 
@@ -84,6 +77,17 @@ static UInt8  ZSXYTable[256];
 static UInt8  ZSPXYTable[256];
 static UInt8  ZSPHTable[256];
 static UInt16 DAATable[0x800];
+
+#if 1
+extern UInt8 FARPTR ram[4];
+extern UInt8 slot[4];
+
+static UIntN tmpAddr;
+static UIntN tmpPage;
+
+#define readMemory(addr) ( tmpAddr = addr, ram[tmpAddr >> 14][tmpAddr & 0x3fff] )
+#define writeMemory(addr, val) { tmpAddr = addr; tmpPage = tmpAddr >> 14; if (slot[tmpPage] == 3) ram[tmpPage][tmpAddr & 0x3fff] = val; }
+#endif
 
 static Z80 z80;
 
@@ -93,6 +97,26 @@ static void ed(void);
 static void fd(void);
 static void dd_cb(void);
 static void fd_cb(void);
+
+static void updateFastLoop(void)
+{
+    if (z80.regs.halt) {
+        z80.fastTimeout = z80.timeout;
+        return;
+    }
+
+	if (z80.regs.ei_mode) {
+        z80.fastTimeout = z80.systemTime;
+        return;
+    }
+
+    if (! ((z80.intState==INT_LOW && z80.regs.iff1)||(z80.nmiState==INT_EDGE)) ) {
+        z80.fastTimeout = z80.timeout;
+        return;
+    }
+
+    z80.fastTimeout = z80.systemTime;
+}
 
 static UInt8 readPort(UInt16 port) {
     UInt8 value;
@@ -116,17 +140,17 @@ static void writePort(UInt16 port, UInt8 value) {
 
 }
 
-static UInt8 readMem(UInt16 address) {
+static UInt8 readMem(UIntN address) {
     DELAY_MEM;
     return readMemory(address);
 }
 
-static UInt8 readOpcode(UInt16 address) {
+static UIntN readOpcode(UIntN address) {
     DELAY_MEMOP;
     return readMemory(address);
 }
 
-static void writeMem(UInt16 address, UInt8 value) {
+static void writeMem(UIntN address, UInt8 value) {
     DELAY_MEM;
     writeMemory(address, value);
 }
@@ -359,7 +383,6 @@ static void SET(UInt8 bit, UInt8* reg) {
     z80.regs.SH.W = addr.W; \
     if (cond) { \
         DELAY_CALL; \
-        CALLSTACK_PUSH(z80.regs.PC.W); \
         writeMem(--z80.regs.SP.W, z80.regs.PC.B.h); \
         writeMem(--z80.regs.SP.W, z80.regs.PC.B.l); \
         z80.regs.PC.W = addr.W; \
@@ -378,7 +401,6 @@ static void POP(UInt16* reg) {
 }
 
 static void RST(UInt16 vector) {
-    CALLSTACK_PUSH(z80.regs.PC.W);
     PUSH(&z80.regs.PC.W);
     z80.regs.PC.W = vector;
     z80.regs.SH.W = vector;
@@ -397,11 +419,14 @@ static void EX_SP(UInt16* reg) {
     DELAY_EXSPHL;
 }
 
+#if 1
+#define M1() { z80.regs.R++; DELAY_M1; }
+#else
 static void M1(void) {
-    UInt8 value = z80.regs.R;
-    z80.regs.R = (value & 0x80) | ((value + 1) & 0x7f); 
+    z80.regs.R++; 
     DELAY_M1;
 }
+#endif
 
 
 static void nop(void) {
@@ -775,78 +800,6 @@ static void ld_b_a(void) {
 }
 
 static void ld_b_b(void) { 
-#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
-#if 1
-    char debugString[256];
-    UInt16 addr = z80.regs.PC.W;
-    UInt16 bpAddr = 0;
-    UInt8  size;
-    UInt16 page = 0xffff;
-    UInt16 slot = 0xffff;
-
-    if (readMemory(addr++) != 24) {
-        return;
-    }
-
-    size = readMemory(addr++);
-    switch (size) {
-    case 0:
-        bpAddr = addr;
-        break;
-    case 2:
-        bpAddr = readMemory(addr++);
-        bpAddr |= readMemory(addr++) << 8;
-        break;
-    case 3:
-        slot = readMemory(addr++);
-        bpAddr = readMemory(addr++);
-        bpAddr |= readMemory(addr++) << 8;
-        break;
-    case 4:
-        slot = readMemory(addr++);
-        page = readMemory(addr++);
-        bpAddr = readMemory(addr++);
-        bpAddr |= readMemory(addr++) << 8;
-        break;
-    default:
-        return;
-    }
-
-    sprintf(debugString, "%.4x %.4x %.4x", slot, page, bpAddr);
-    z80.debugCb(z80.ref, ASDBG_SETBP, debugString);
-
-#else
-    char debugString[256];
-    UInt16 addr = z80.regs.PC.W;
-    UInt16 end;
-    UInt16 bpAddr = 0;
-
-    if (readMemory(addr++) != 24) {
-        return;
-    }
-    end = addr + 1 + (Int8)readMemory(addr);
-    if (end < addr + 6 || end - addr > 255) {
-        return;
-    }
-    addr++;
-
-    if (readMemory(addr + 0) != 100 || 
-        readMemory(addr + 1) != 100 || 
-        readMemory(addr + 2) != 0   || 
-        readMemory(addr + 3) != 0) 
-    {
-        return;
-    }
-    addr += 4;
-    
-    bpAddr = readMemory(addr++);
-    bpAddr |= readMemory(addr++) << 8;
-
-    sprintf(debugString, "%.4x", bpAddr);
-
-    z80.debugCb(z80.ref, ASDBG_SETBP, debugString);
-#endif
-#endif
 }
 
 static void ld_b_c(void) { 
@@ -1005,43 +958,6 @@ static void ld_d_c(void) {
 }
 
 static void ld_d_d(void) { 
-#ifdef ENABLE_ASMSX_DEBUG_COMMANDS
-    char debugString[256];
-    UInt16 addr = z80.regs.PC.W;
-    UInt16 end;
-    char* ptr = debugString;
-
-    if (readMemory(addr++) != 24) {
-        return;
-    }
-
-    end = addr + 1 + (Int8)readMemory(addr);
-    addr++;
-
-    if (end - addr > 127) {
-        return;
-    }
-    else if (end - addr > 4 &&
-             readMemory(addr + 0) == 100 && 
-             readMemory(addr + 1) == 100 && 
-             readMemory(addr + 2) == 0   &&
-             readMemory(addr + 3) == 0) 
-    {
-        addr += 4;
-    }
-    
-    while (addr < end) {
-        *ptr++ = (char)readMemory(addr++);
-    }
-
-    if (ptr > debugString && ptr[-1] != 'n') {
-        *ptr++ = '\n';
-    }
-
-    *ptr = 0;
-
-    z80.debugCb(z80.ref, ASDBG_TRACE, debugString);
-#endif
 }
 
 static void ld_d_e(void) { 
@@ -4616,11 +4532,6 @@ static void ret(void) {
     addr.B.h = readMem(z80.regs.SP.W++);
     z80.regs.PC.W = addr.W;
     z80.regs.SH.W = addr.W;
-#ifdef ENABLE_CALLSTACK
-    if (z80.callstack[(z80.callstackSize - 1) & 0xff] == addr.W) {
-        z80.callstackSize--;
-    }
-#endif
 }
 
 static void ret_c(void) {
@@ -4682,11 +4593,13 @@ static void ret_po(void) {
 static void reti(void) {
     z80.regs.iff1 = z80.regs.iff2;
     ret();
+    updateFastLoop();
 }
 
 static void retn(void) {
     z80.regs.iff1 = z80.regs.iff2;
     ret(); 
+    updateFastLoop();
 }
 
 static void ex_xsp_hl(void) { 
@@ -4772,6 +4685,7 @@ static void halt(void) {
 		z80.regs.PC.W--;
 		z80.regs.halt=1;
 	}
+    updateFastLoop();
 }
 
 static void push_af(void) {
@@ -4897,6 +4811,7 @@ static void rrd(void) {
 static void di(void) {
     z80.regs.iff1 = 0;
     z80.regs.iff2 = 0;
+    updateFastLoop();
 }
 
 static void ei(void) {
@@ -4907,6 +4822,8 @@ static void ei(void) {
         z80.regs.iff2 = 1;
         z80.regs.iff1 = 1;
 		z80.regs.ei_mode=1;
+        
+    updateFastLoop();
 }
 
 static void im_0(void) {
@@ -5383,43 +5300,43 @@ static OpcodeNn opcodeNnCb[256] = {
 
 static void dd_cb(void) {
 	UInt16 addr = z80.regs.IX.W + (Int8)readOpcode(z80.regs.PC.W++);
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
 	DELAY_M1;
     opcodeNnCb[opcode](addr);
 }
 
 static void fd_cb(void) {
 	UInt16 addr = z80.regs.IY.W + (Int8)readOpcode(z80.regs.PC.W++);
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
 	DELAY_M1;
     opcodeNnCb[opcode](addr);
 }
 
 static void cb(void) {
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
     M1();
     opcodeCb[opcode]();
 }
 
 static void dd(void) {
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
     M1();
     opcodeDd[opcode]();
 }
 
 static void ed(void) {
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
     M1();
     opcodeEd[opcode]();
 }
 
 static void fd(void) {
-    UInt8 opcode = readOpcode(z80.regs.PC.W++);
+    IntN opcode = readOpcode(z80.regs.PC.W++);
     M1();
     opcodeFd[opcode]();
 }
 
-static void executeInstruction(UInt8 opcode) {
+static void executeInstruction(IntN opcode) {
     M1();
     opcodeMain[opcode]();
 }
@@ -5518,6 +5435,8 @@ void z80Reset(UInt32 cpuTime) {
     z80.defaultDatabus  = 0xff;
     z80.intState        = INT_HIGH;
     z80.nmiState        = INT_HIGH;
+    
+    updateFastLoop();
 }
 
 void z80SetDataBus(UInt8 value, UInt8 defaultValue, Int8 setDefault) {
@@ -5529,20 +5448,24 @@ void z80SetDataBus(UInt8 value, UInt8 defaultValue, Int8 setDefault) {
 
 void z80SetInt(void) {
     z80.intState = INT_LOW;
+    updateFastLoop();
 }
 
 void z80ClearInt(void) {
     z80.intState = INT_HIGH;
+    updateFastLoop();
 }
 
 void z80SetNmi(void) {
     if (z80.nmiState == INT_HIGH) {
         z80.nmiState = INT_EDGE;
+        updateFastLoop();
     }
 }
 
 void z80ClearNmi(void) {
     z80.nmiState = INT_HIGH;
+    updateFastLoop();
 }
 
 void z80StopExecution(void) {
@@ -5552,18 +5475,20 @@ void z80StopExecution(void) {
 void z80SetTimeout(SystemTime time)
 {
     z80.timeout = time;
+    updateFastLoop();
 }
 
 void z80Execute(void) {
     while (!z80.terminate) {
         UInt16 address;
-        //int iff1 = 0;
 
         if ((Int32)(z80.timeout - z80.systemTime) <= 0) {
             timeout();
         }
 
-        executeInstruction(readOpcode(z80.regs.PC.W++));
+        while ((Int32)(z80.fastTimeout - z80.systemTime) > 0) {
+            executeInstruction(readOpcode(z80.regs.PC.W++));
+        }
 
         if (z80.regs.halt) {
 			continue;
@@ -5571,6 +5496,7 @@ void z80Execute(void) {
 
 		if (z80.regs.ei_mode) {
 			z80.regs.ei_mode=0;
+            updateFastLoop();
 			continue;
 		}
 
@@ -5588,36 +5514,37 @@ void z80Execute(void) {
             z80.regs.PC.W = 0x0066;
             M1();
             DELAY_NMI;
-            continue;
         }
+        else {
+            z80.regs.iff1 = 0;
+            z80.regs.iff2 = 0;
 
-        z80.regs.iff1 = 0;
-        z80.regs.iff2 = 0;
+            switch (z80.regs.im) {
 
-        switch (z80.regs.im) {
+            case 0:
+                DELAY_IM;
+                address = z80.dataBus;
+                z80.dataBus = z80.defaultDatabus;
+                executeInstruction(address);
+                break;
 
-        case 0:
-            DELAY_IM;
-            address = z80.dataBus;
-            z80.dataBus = z80.defaultDatabus;
-            executeInstruction((UInt8)address);
-            break;
+            case 1:
+                DELAY_IM;
+                executeInstruction(0xff);
+                break;
 
-        case 1:
-            DELAY_IM;
-            executeInstruction(0xff);
-            break;
-
-        case 2:
-            address = z80.dataBus | ((Int16)z80.regs.I << 8);
-            z80.dataBus = z80.defaultDatabus;
-	        writeMemory(--z80.regs.SP.W, z80.regs.PC.B.h);
-	        writeMemory(--z80.regs.SP.W, z80.regs.PC.B.l);
-            z80.regs.PC.B.l = readMemory(address++);
-            z80.regs.PC.B.h = readMemory(address);
-            M1();
-            DELAY_IM2;
-            break;
+            case 2:
+                address = z80.dataBus | ((Int16)z80.regs.I << 8);
+                z80.dataBus = z80.defaultDatabus;
+	            writeMemory(--z80.regs.SP.W, z80.regs.PC.B.h);
+	            writeMemory(--z80.regs.SP.W, z80.regs.PC.B.l);
+                z80.regs.PC.B.l = readMemory(address++);
+                z80.regs.PC.B.h = readMemory(address);
+                M1();
+                DELAY_IM2;
+                break;
+            }
         }
+        updateFastLoop();
     }
 }

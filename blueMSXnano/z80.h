@@ -38,8 +38,10 @@
 
 extern UInt8 readIoPort(UInt16 port);
 extern void  writeIoPort(UInt16 port, UInt8 value);
+#if 0
 extern UInt8 readMemory(UInt16 address);
 extern void  writeMemory(UInt16 address, UInt8 value);
+#endif
 extern void  patch(void);
 extern void  timeout(void);
 
@@ -103,14 +105,14 @@ typedef struct {
     RegisterPair HL1;
     RegisterPair SH;
     UInt8 I;
-    UInt8 R;
-    UInt8 R2;
+    IntN  R;
+    IntN  R2;
 
-    UInt8 iff1;
-    UInt8 iff2;
-    UInt8 im;
-    UInt8 halt;
-	UInt8 ei_mode;
+    IntN iff1;
+    IntN iff2;
+    IntN im;
+    IntN halt;
+	IntN ei_mode;
 } CpuRegs;
 
 
@@ -142,11 +144,12 @@ typedef struct
     CpuRegs       regs;             /* Active register bank            */
     UInt8         dataBus;          /* Current value on the data bus   */
     UInt8         defaultDatabus;   /* Value that is set after im2     */
-    Int8          intState;         /* Sate of interrupt line          */
-    Int8          nmiState;         /* Current NMI state               */
+    IntN          intState;         /* Sate of interrupt line          */
+    IntN          nmiState;         /* Current NMI state               */
 
-    Int8          terminate;        /* Termination flag                */
+    IntN          terminate;        /* Termination flag                */
     SystemTime    timeout;          /* User scheduled timeout          */
+    SystemTime    fastTimeout;
 } Z80;
 
 
