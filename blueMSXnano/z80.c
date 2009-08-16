@@ -73,10 +73,10 @@
 typedef void (*Opcode)(void);
 typedef void (*OpcodeNn)(UInt16);
 
-static UInt8  ZSXYTable[256];
-static UInt8  ZSPXYTable[256];
-static UInt8  ZSPHTable[256];
-static UInt16 DAATable[0x800];
+static UIntN  ZSXYTable[256];
+static UIntN  ZSPXYTable[256];
+static UIntN  ZSPHTable[256];
+static UIntN DAATable[0x800];
 
 #if 1
 extern UInt8 FARPTR ram[4];
