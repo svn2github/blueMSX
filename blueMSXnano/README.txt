@@ -20,7 +20,7 @@ USAGE
     bluemsxnano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h]
 
   MS-DOS:
-    bluenano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h]
+    bluenano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h] [-nodirect]
     
     -s <bios>      Loads a bios rom into address 0x0000
     -R <rom>       Loads a cartridge rom into address 0x0000
@@ -29,6 +29,7 @@ USAGE
     -v             Verbose, shows FPS and Z80 frequency
     -n             Run emulation in normal speed (3.57MHz)
     -h             Shows help
+    -nodirect      (MS-DOS only) Do not use direct access to PC video memory
     
 Example:
     Run emulator at normal speed:
