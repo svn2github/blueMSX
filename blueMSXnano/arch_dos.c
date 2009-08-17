@@ -17,10 +17,13 @@
  *****************************************************************************
 */
 #include <stdio.h>
+#include <string.h>
 #include <conio.h>
 #include "arch.h"
 
-static UInt8 mono = 0;
+#define VIDEO_MONO   0x01
+#define VIDEO_DIRECT 0x02
+static UInt8 videoflags = VIDEO_DIRECT;
 
 void setpos(Int8 x, Int8 y)
 {
@@ -35,29 +38,35 @@ void setpos(Int8 x, Int8 y)
 
 void clearscreen(void)
 {
-    /* perform semi-intelligent display type detection.
-     * mda, hercules and mono ega/vga will use 80x25 mono text screen mode.
-     * others will use 40x25 color text screen mode.
-     * hides cursor.
-     */
+    if (videoflags & VIDEO_DIRECT) {
+        /* perform semi-intelligent display type detection.
+         * mda, hercules and mono ega/vga will use 80x25 mono text screen mode.
+         * others will use 40x25 color text screen mode.
+         */
+        _asm {
+            mov bx, 1
+            push es
+            mov ax, 0040h
+            mov es, ax
+            mov al, byte ptr es:[00049h]
+            pop es
+            cmp al, 7
+            jne not_mono
+            int 11h
+            and al, 30h
+            cmp al, 30h
+            jne not_mono
+            or videoflags, VIDEO_MONO
+            mov bl, 7
+        not_mono:
+            mov ax, bx
+            int 10h
+        };
+    } else {
+        videoflags |= VIDEO_MONO;
+    }
+    /* hide cursor */
     _asm {
-        mov bx, 1
-        push es
-        mov ax, 0040h
-        mov es, ax
-        mov al, byte ptr es:[00049h]
-        pop es
-        cmp al, 7
-        jne not_mono
-        int 11h
-        and al, 30h
-        cmp al, 30h
-        jne not_mono
-        mov mono, 1
-        mov bl, 7
-    not_mono:
-        mov ax, bx
-        int 10h
         mov ah, 1
         mov cx, 201fh
         int 10h
@@ -67,38 +76,66 @@ void clearscreen(void)
 void display(const char *buffer)
 {
     // this code works only with near pointers
-    _asm {
-        push es
-        cmp mono, 0
-        je display_color
-        mov ax, 0b000h
-        mov cx, 80 *2
-        mov dl, 07h
-        jmp short display_setup
-    display_color:
-        mov ax, 0b800h
-        mov cx, 40 * 2
-        mov dl, 1fh
-    display_setup:
-        mov es, ax
-        xor bx, bx
-        mov si, buffer
-        cld
-    display_row:
-        mov di, bx
-        add bx, cx
-    display_char:
-        lodsb
-        or al, al
-        jz display_exit
-        cmp al, 0ah
-        je display_row
-        mov ah, dl
-        stosw
-        jmp short display_char
-    display_exit:
-        pop es
-    };
+    if (videoflags & VIDEO_DIRECT) {
+        _asm {
+            push es
+            test videoflags, VIDEO_MONO
+            jz display_color
+            mov ax, 0b000h
+            mov cx, 80 *2
+            mov dl, 07h
+            jmp short display_setup
+        display_color:
+            mov ax, 0b800h
+            mov cx, 40 * 2
+            mov dl, 1fh
+        display_setup:
+            mov es, ax
+            xor bx, bx
+            mov si, buffer
+            cld
+        display_row:
+            mov di, bx
+            add bx, cx
+        display_char:
+            lodsb
+            or al, al
+            jz display_exit
+            cmp al, 0ah
+            je display_row
+            mov ah, dl
+            stosw
+            jmp short display_char
+        display_exit:
+            pop es
+        };
+    } else {
+        _asm {
+            push bp
+            mov bx, 0007h
+            mov cx, 0001h
+            mov dh, 0ffh
+            mov si, buffer
+            cld
+        display_bios_row:
+            xor dl, dl
+            inc dh
+        display_bios_char:
+            mov ah, 02h
+            int 10h
+            lodsb
+            or al, al
+            jz display_bios_exit
+            cmp al,0ah
+            je display_bios_row
+            mov ah, 0ah
+            int 10h
+            inc dl
+            jmp short display_bios_char
+        display_bios_exit:
+            pop bp
+        };
+    }
 }
 
 void delay(UInt32 ms)
@@ -145,3 +182,15 @@ UInt32 gettime(void)
     return time;
 }
 
+void arch_optionhelp(void)
+{
+    printf("    -nodirect      Do not access PC video memory directly\n");
+}
+
+int arch_option(int argc, char **argv)
+{
+    if (!strcmp(argv[0], "-nodirect")) {
+        videoflags &= ~VIDEO_DIRECT;
+    }
+    return 0;
+}
