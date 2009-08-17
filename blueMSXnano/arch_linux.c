@@ -88,3 +88,12 @@ void display(const char *buffer)
   setpos(0, 0);
   printf("%s", buffer);
 }
+
+void arch_optionhelp(void)
+{
+}
+
+int arch_option(int argc, char **argv)
+{
+  return 0;
+}

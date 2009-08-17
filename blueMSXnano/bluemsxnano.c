@@ -164,6 +164,7 @@ void  writeIoPort(UInt16 port, UInt8 value)
     }
 }
 
+#if 0
 UInt8 readMemory(UInt16 address)
 {
     return ram[address >> 14][address & 0x3fff];
@@ -176,6 +177,7 @@ void  writeMemory(UInt16 address, UInt8 value)
         ram[page][address & 0x3fff] = value;
     }
 }
+#endif
 
 void  patch(void)
 {
@@ -208,7 +210,7 @@ static void printScreen(void)
 
     if (memcmp(buffers[0], buffers[1], sizeof(buffers[0])) != 0) { 
         viewBuf ^= 1;
-	display(buffers[viewBuf]);
+        display(buffers[viewBuf]);
     }
 }
 
@@ -310,26 +312,20 @@ int main(int argc, char** argv)
         if (0 == strcmp(argv[0], "-s") && argc > 1) {
             loadRom(argv[1], 0, 0);
             argc--, argv++;
-        }
-        if (0 == strcmp(argv[0], "-r") && argc > 1) {
+        } else if (0 == strcmp(argv[0], "-r") && argc > 1) {
             loadRom(argv[1], 1, 1);
             argc--, argv++;
-        }
-        if (0 == strcmp(argv[0], "-R") && argc > 1) {
+        } else if (0 == strcmp(argv[0], "-R") && argc > 1) {
             loadRom(argv[1], 1, 0);
             argc--, argv++;
-        }
-        if (0 == strcmp(argv[0], "-b") && argc > 1) {
+        } else if (0 == strcmp(argv[0], "-b") && argc > 1) {
             loadRom(argv[1], 1, 2);
             argc--, argv++;
-        }
-        if (0 == strcmp(argv[0], "-v")) {
+        } else if (0 == strcmp(argv[0], "-v")) {
             verbose = 1;
-        }
-        if (0 == strcmp(argv[0], "-n")) {
+        } else if (0 == strcmp(argv[0], "-n")) {
             normalSpeed = 1;
-        }
-        if (0 == strcmp(argv[0], "-h")) {
+        } else if (0 == strcmp(argv[0], "-h")) {
             printf("bluemsxnano v0.9 is a compact MSX1 emulator for execution in a console\n\n");
             printf("Usage:\n\n");
             printf("    bluemsxnano [-s <bios>] [-r <rom>] [-R <rom>] [-b <rom>] [-v] [-n] [-h]\n\n");
@@ -339,8 +335,12 @@ int main(int argc, char** argv)
             printf("    -b <rom>       Loads a cartridge rom into address 0x8000\n");
             printf("    -v             Verbose, shows FPS and Z80 frequency\n");
             printf("    -n             Run emulation in normal speed (3.57MHz)\n");
+            arch_optionhelp();
             printf("    -h             Shows help\n");
             return 0;
+        } else {
+            page = arch_option(argc, argv);
+            argc -= page, argv += page;
         }
     }
 

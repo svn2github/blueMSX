@@ -91,4 +91,8 @@ void clearscreen(void);
 // Displays the specified "framebuffer"
 void display(const char *buffer);
 
+// Handle architecture specific options
+void arch_optionhelp(void);
+int arch_option(int argc, char **argv);
+
 #endif
