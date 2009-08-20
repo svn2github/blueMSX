@@ -73,10 +73,10 @@
 typedef void (*Opcode)(void);
 typedef void (*OpcodeNn)(UInt16);
 
-static UIntN  ZSXYTable[256];
-static UIntN  ZSPXYTable[256];
-static UIntN  ZSPHTable[256];
-static UIntN DAATable[0x800];
+static UInt8  ZSXYTable[256];
+static UInt8  ZSPXYTable[256];
+static UInt8  ZSPHTable[256];
+static UIntN  DAATable[0x800];
 
 #if 1
 extern UInt8 FARPTR ram[4];
@@ -85,8 +85,8 @@ extern UInt8 slot[4];
 static UIntN tmpAddr;
 static UIntN tmpPage;
 
-#define readMemory(addr) ( tmpAddr = addr, ram[tmpAddr >> 14][tmpAddr] )
-#define writeMemory(addr, val) { tmpAddr = addr; tmpPage = tmpAddr >> 14; if (slot[tmpPage] == 3) ram[tmpPage][tmpAddr] = val; }
+#define readMemory(addr) ( tmpAddr = addr, ram[tmpAddr >> 14][tmpAddr & 0x3fff] )
+#define writeMemory(addr, val) { tmpAddr = addr; tmpPage = tmpAddr >> 14; if (slot[tmpPage] == 3) ram[tmpPage][tmpAddr & 0x3fff] = val; }
 #endif
 
 static Z80 z80;

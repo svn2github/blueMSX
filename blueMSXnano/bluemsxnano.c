@@ -48,6 +48,7 @@ static UInt32 emuTime;
 static UInt16 keyPressed = 0xffff;
 static Int8   verbose = 0;
 static Int8   normalSpeed = 0;
+static Int8   vramDirtyFlag = 1;
 
 static const UInt16 KeyMatrix[256] =
 {
@@ -107,7 +108,7 @@ static void updadeSlots(void)
     Int8 i;
     UInt8 slotMask = (ppi.regs[3] & 0x10) ? 0 : ppi.regs[0];
     for (i = 0; i < 4; i++) {
-        ram[i] = memory[(slotMask & 3)][i] - 0x4000 * i;
+        ram[i] = memory[(slotMask & 3)][i];
         slotMask >>= 2;
         slot[i] = (ppi.regs[0] >> (i << 1)) & 3;
 
@@ -141,6 +142,7 @@ void  writeIoPort(UInt16 port, UInt8 value)
         }
         break;
     case 0x98:
+        vramDirtyFlag = 1;
         vram[vdp.address++ & 0x3fff] = value;
         vdp.key = 0;
         vdp.data = value;
@@ -151,6 +153,7 @@ void  writeIoPort(UInt16 port, UInt8 value)
         	vdp.address = (UInt16)value << 8 | vdp.latch;
 		    if ((value & 0xc0) == 0x80) {
                 vdp.regs[value & 0x07] = vdp.latch;
+                vramDirtyFlag = 1;
 		    }
 		    if ((value & 0xc0) == 0x00) {
 				readIoPort(0x98);
@@ -224,7 +227,10 @@ void  timeout(void)
 
     keyPressed = KeyMatrix[pollkbd()];
 
-    printScreen();
+    if (vramDirtyFlag && (frameCounter & 3) == 0) {
+        vramDirtyFlag = 0;
+        printScreen();
+    }
 
     if (normalSpeed) {
         Int32 diffTime = (Int32)(syncTime - gettime());
@@ -345,7 +351,7 @@ int main(int argc, char** argv)
     }
 
     for (page = 0; page < 4; page++) {
-        ram[page] = memory[0][page] - 0x4000 * page;
+        ram[page] = memory[0][page];
     }
 
     z80Init();
