@@ -5,8 +5,8 @@ Next release
 - ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
 
 
-v 2.8.2     July 31, 2009
-=========================
+v 2.8.2     August 14, 2009
+===========================
 - Added support for MSX1 VDP timing checks in the debugger
 - Added support for .der copy protected disk files
 - Fixed multiple bugs in DRAM management that fixes many known Turbo R issues

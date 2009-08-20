@@ -179,57 +179,118 @@ UInt8* spritesLine(VDP* vdp, int line) {
         color      = attrib[3] & 0x0f;
         patternPtr = &vdp->vram[(vdp->sprGenBase & (-1 << 11)) + ((int)(attrib[2] & patternMask) << 3) + spriteLine[visibleCnt]];
 
-#if 0
         if (!vdpIsColor0Solid(vdp->vdpRegs) && color == 0) {
-            continue;
-        }
-#endif
-        if (scale == 1) {
-            pattern = patternPtr[0]; 
-            if (pattern & 0x80) { linePtr[0] = color; collision |= colPtr[0]; colPtr[0] = colChck[0]; }
-            if (pattern & 0x40) { linePtr[1] = color; collision |= colPtr[1]; colPtr[1] = colChck[1]; }
-            if (pattern & 0x20) { linePtr[2] = color; collision |= colPtr[2]; colPtr[2] = colChck[2]; }
-            if (pattern & 0x10) { linePtr[3] = color; collision |= colPtr[3]; colPtr[3] = colChck[3]; }
-            if (pattern & 0x08) { linePtr[4] = color; collision |= colPtr[4]; colPtr[4] = colChck[4]; }
-            if (pattern & 0x04) { linePtr[5] = color; collision |= colPtr[5]; colPtr[5] = colChck[5]; }
-            if (pattern & 0x02) { linePtr[6] = color; collision |= colPtr[6]; colPtr[6] = colChck[6]; }
-            if (pattern & 0x01) { linePtr[7] = color; collision |= colPtr[7]; colPtr[7] = colChck[7]; }
+            if (scale == 1) {
+                pattern = patternPtr[0]; 
+                if (pattern) {
+                    if (pattern & 0x80) { collision |= colPtr[0]; colPtr[0] = colChck[0]; }
+                    if (pattern & 0x40) { collision |= colPtr[1]; colPtr[1] = colChck[1]; }
+                    if (pattern & 0x20) { collision |= colPtr[2]; colPtr[2] = colChck[2]; }
+                    if (pattern & 0x10) { collision |= colPtr[3]; colPtr[3] = colChck[3]; }
+                    if (pattern & 0x08) { collision |= colPtr[4]; colPtr[4] = colChck[4]; }
+                    if (pattern & 0x04) { collision |= colPtr[5]; colPtr[5] = colChck[5]; }
+                    if (pattern & 0x02) { collision |= colPtr[6]; colPtr[6] = colChck[6]; }
+                    if (pattern & 0x01) { collision |= colPtr[7]; colPtr[7] = colChck[7]; }
+                }
 
-            if (vdpIsSprites16x16(vdp->vdpRegs)) {
-                pattern = patternPtr[16];
+                if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                    pattern = patternPtr[16];
 
-                if (pattern & 0x80) { linePtr[8]  = color; collision |= colPtr[8];  colPtr[8]  = colChck[8]; }
-                if (pattern & 0x40) { linePtr[9]  = color; collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
-                if (pattern & 0x20) { linePtr[10] = color; collision |= colPtr[10]; colPtr[10] = colChck[10]; }
-                if (pattern & 0x10) { linePtr[11] = color; collision |= colPtr[11]; colPtr[11] = colChck[11]; }
-                if (pattern & 0x08) { linePtr[12] = color; collision |= colPtr[12]; colPtr[12] = colChck[12]; }
-                if (pattern & 0x04) { linePtr[13] = color; collision |= colPtr[13]; colPtr[13] = colChck[13]; }
-                if (pattern & 0x02) { linePtr[14] = color; collision |= colPtr[14]; colPtr[14] = colChck[14]; }
-                if (pattern & 0x01) { linePtr[15] = color; collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+                    if (pattern) {
+                        if (pattern & 0x80) { collision |= colPtr[8];  colPtr[8]  = colChck[8]; }
+                        if (pattern & 0x40) { collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
+                        if (pattern & 0x20) { collision |= colPtr[10]; colPtr[10] = colChck[10]; }
+                        if (pattern & 0x10) { collision |= colPtr[11]; colPtr[11] = colChck[11]; }
+                        if (pattern & 0x08) { collision |= colPtr[12]; colPtr[12] = colChck[12]; }
+                        if (pattern & 0x04) { collision |= colPtr[13]; colPtr[13] = colChck[13]; }
+                        if (pattern & 0x02) { collision |= colPtr[14]; colPtr[14] = colChck[14]; }
+                        if (pattern & 0x01) { collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+                    }
+                }
+            }
+            else {
+                pattern = patternPtr[0];
+                if (pattern) {
+                    if (pattern & 0x80) { collision |= colPtr[0];  colPtr[0]  = colChck[0];  collision |= colPtr[1];  colPtr[1]  = colChck[1]; }
+                    if (pattern & 0x40) { collision |= colPtr[2];  colPtr[2]  = colChck[2];  collision |= colPtr[3];  colPtr[3]  = colChck[3]; }
+                    if (pattern & 0x20) { collision |= colPtr[4];  colPtr[4]  = colChck[4];  collision |= colPtr[5];  colPtr[5]  = colChck[5]; }
+                    if (pattern & 0x10) { collision |= colPtr[6];  colPtr[6]  = colChck[6];  collision |= colPtr[7];  colPtr[7]  = colChck[7]; }
+                    if (pattern & 0x08) { collision |= colPtr[8];  colPtr[8]  = colChck[8];  collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
+                    if (pattern & 0x04) { collision |= colPtr[10]; colPtr[10] = colChck[10]; collision |= colPtr[11]; colPtr[11] = colChck[11]; }
+                    if (pattern & 0x02) { collision |= colPtr[12]; colPtr[12] = colChck[12]; collision |= colPtr[13]; colPtr[13] = colChck[13]; }
+                    if (pattern & 0x01) { collision |= colPtr[14]; colPtr[14] = colChck[14]; collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+                }
+                if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                    pattern = patternPtr[16];
+
+                    if (pattern) {
+                        if (pattern & 0x80) { collision |= colPtr[16]; colPtr[16] = colChck[16]; collision |= colPtr[17]; colPtr[17] = colChck[17]; }
+                        if (pattern & 0x40) { collision |= colPtr[18]; colPtr[18] = colChck[18]; collision |= colPtr[19]; colPtr[19] = colChck[19]; }
+                        if (pattern & 0x20) { collision |= colPtr[20]; colPtr[20] = colChck[20]; collision |= colPtr[21]; colPtr[21] = colChck[21]; }
+                        if (pattern & 0x10) { collision |= colPtr[22]; colPtr[22] = colChck[22]; collision |= colPtr[23]; colPtr[23] = colChck[23]; }
+                        if (pattern & 0x08) { collision |= colPtr[24]; colPtr[24] = colChck[24]; collision |= colPtr[25]; colPtr[25] = colChck[25]; }
+                        if (pattern & 0x04) { collision |= colPtr[26]; colPtr[26] = colChck[26]; collision |= colPtr[27]; colPtr[27] = colChck[27]; }
+                        if (pattern & 0x02) { collision |= colPtr[28]; colPtr[28] = colChck[28]; collision |= colPtr[29]; colPtr[29] = colChck[29]; }
+                        if (pattern & 0x01) { collision |= colPtr[30]; colPtr[30] = colChck[30]; collision |= colPtr[31]; colPtr[31] = colChck[31]; }
+                    }
+                }
             }
         }
         else {
-            pattern = patternPtr[0];
-            if (pattern & 0x80) { linePtr[0]  = linePtr[1]  = color; collision |= colPtr[0];  colPtr[0]  = colChck[0];  collision |= colPtr[1];  colPtr[1]  = colChck[1]; }
-            if (pattern & 0x40) { linePtr[2]  = linePtr[3]  = color; collision |= colPtr[2];  colPtr[2]  = colChck[2];  collision |= colPtr[3];  colPtr[3]  = colChck[3]; }
-            if (pattern & 0x20) { linePtr[4]  = linePtr[5]  = color; collision |= colPtr[4];  colPtr[4]  = colChck[4];  collision |= colPtr[5];  colPtr[5]  = colChck[5]; }
-            if (pattern & 0x10) { linePtr[6]  = linePtr[7]  = color; collision |= colPtr[6];  colPtr[6]  = colChck[6];  collision |= colPtr[7];  colPtr[7]  = colChck[7]; }
-            if (pattern & 0x08) { linePtr[8]  = linePtr[9]  = color; collision |= colPtr[8];  colPtr[8]  = colChck[8];  collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
-            if (pattern & 0x04) { linePtr[10] = linePtr[11] = color; collision |= colPtr[10]; colPtr[10] = colChck[10]; collision |= colPtr[11]; colPtr[11] = colChck[11]; }
-            if (pattern & 0x02) { linePtr[12] = linePtr[13] = color; collision |= colPtr[12]; colPtr[12] = colChck[12]; collision |= colPtr[13]; colPtr[13] = colChck[13]; }
-            if (pattern & 0x01) { linePtr[14] = linePtr[15] = color; collision |= colPtr[14]; colPtr[14] = colChck[14]; collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+            if (scale == 1) {
+                pattern = patternPtr[0]; 
+                if (pattern) {
+                    if (pattern & 0x80) { linePtr[0] = color; collision |= colPtr[0]; colPtr[0] = colChck[0]; }
+                    if (pattern & 0x40) { linePtr[1] = color; collision |= colPtr[1]; colPtr[1] = colChck[1]; }
+                    if (pattern & 0x20) { linePtr[2] = color; collision |= colPtr[2]; colPtr[2] = colChck[2]; }
+                    if (pattern & 0x10) { linePtr[3] = color; collision |= colPtr[3]; colPtr[3] = colChck[3]; }
+                    if (pattern & 0x08) { linePtr[4] = color; collision |= colPtr[4]; colPtr[4] = colChck[4]; }
+                    if (pattern & 0x04) { linePtr[5] = color; collision |= colPtr[5]; colPtr[5] = colChck[5]; }
+                    if (pattern & 0x02) { linePtr[6] = color; collision |= colPtr[6]; colPtr[6] = colChck[6]; }
+                    if (pattern & 0x01) { linePtr[7] = color; collision |= colPtr[7]; colPtr[7] = colChck[7]; }
+                }
 
-            if (vdpIsSprites16x16(vdp->vdpRegs)) {
-                pattern = patternPtr[16];
+                if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                    pattern = patternPtr[16];
 
-                if (pattern & 0x80) { linePtr[16] = linePtr[17] = color; collision |= colPtr[16]; colPtr[16] = colChck[16]; collision |= colPtr[17]; colPtr[17] = colChck[17]; }
-                if (pattern & 0x40) { linePtr[18] = linePtr[19] = color; collision |= colPtr[18]; colPtr[18] = colChck[18]; collision |= colPtr[19]; colPtr[19] = colChck[19]; }
-                if (pattern & 0x20) { linePtr[20] = linePtr[21] = color; collision |= colPtr[20]; colPtr[20] = colChck[20]; collision |= colPtr[21]; colPtr[21] = colChck[21]; }
-                if (pattern & 0x10) { linePtr[22] = linePtr[23] = color; collision |= colPtr[22]; colPtr[22] = colChck[22]; collision |= colPtr[23]; colPtr[23] = colChck[23]; }
-                if (pattern & 0x08) { linePtr[24] = linePtr[25] = color; collision |= colPtr[24]; colPtr[24] = colChck[24]; collision |= colPtr[25]; colPtr[25] = colChck[25]; }
-                if (pattern & 0x04) { linePtr[26] = linePtr[27] = color; collision |= colPtr[26]; colPtr[26] = colChck[26]; collision |= colPtr[27]; colPtr[27] = colChck[27]; }
-                if (pattern & 0x02) { linePtr[28] = linePtr[29] = color; collision |= colPtr[28]; colPtr[28] = colChck[28]; collision |= colPtr[29]; colPtr[29] = colChck[29]; }
-                if (pattern & 0x01) { linePtr[30] = linePtr[31] = color; collision |= colPtr[30]; colPtr[30] = colChck[30]; collision |= colPtr[31]; colPtr[31] = colChck[31]; }
+                    if (pattern) {
+                        if (pattern & 0x80) { linePtr[8]  = color; collision |= colPtr[8];  colPtr[8]  = colChck[8]; }
+                        if (pattern & 0x40) { linePtr[9]  = color; collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
+                        if (pattern & 0x20) { linePtr[10] = color; collision |= colPtr[10]; colPtr[10] = colChck[10]; }
+                        if (pattern & 0x10) { linePtr[11] = color; collision |= colPtr[11]; colPtr[11] = colChck[11]; }
+                        if (pattern & 0x08) { linePtr[12] = color; collision |= colPtr[12]; colPtr[12] = colChck[12]; }
+                        if (pattern & 0x04) { linePtr[13] = color; collision |= colPtr[13]; colPtr[13] = colChck[13]; }
+                        if (pattern & 0x02) { linePtr[14] = color; collision |= colPtr[14]; colPtr[14] = colChck[14]; }
+                        if (pattern & 0x01) { linePtr[15] = color; collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+                    }
+                }
+            }
+            else {
+                pattern = patternPtr[0];
+                if (pattern) {
+                    if (pattern & 0x80) { linePtr[0]  = linePtr[1]  = color; collision |= colPtr[0];  colPtr[0]  = colChck[0];  collision |= colPtr[1];  colPtr[1]  = colChck[1]; }
+                    if (pattern & 0x40) { linePtr[2]  = linePtr[3]  = color; collision |= colPtr[2];  colPtr[2]  = colChck[2];  collision |= colPtr[3];  colPtr[3]  = colChck[3]; }
+                    if (pattern & 0x20) { linePtr[4]  = linePtr[5]  = color; collision |= colPtr[4];  colPtr[4]  = colChck[4];  collision |= colPtr[5];  colPtr[5]  = colChck[5]; }
+                    if (pattern & 0x10) { linePtr[6]  = linePtr[7]  = color; collision |= colPtr[6];  colPtr[6]  = colChck[6];  collision |= colPtr[7];  colPtr[7]  = colChck[7]; }
+                    if (pattern & 0x08) { linePtr[8]  = linePtr[9]  = color; collision |= colPtr[8];  colPtr[8]  = colChck[8];  collision |= colPtr[9];  colPtr[9]  = colChck[9]; }
+                    if (pattern & 0x04) { linePtr[10] = linePtr[11] = color; collision |= colPtr[10]; colPtr[10] = colChck[10]; collision |= colPtr[11]; colPtr[11] = colChck[11]; }
+                    if (pattern & 0x02) { linePtr[12] = linePtr[13] = color; collision |= colPtr[12]; colPtr[12] = colChck[12]; collision |= colPtr[13]; colPtr[13] = colChck[13]; }
+                    if (pattern & 0x01) { linePtr[14] = linePtr[15] = color; collision |= colPtr[14]; colPtr[14] = colChck[14]; collision |= colPtr[15]; colPtr[15] = colChck[15]; }
+                }
+                if (vdpIsSprites16x16(vdp->vdpRegs)) {
+                    pattern = patternPtr[16];
+
+                    if (pattern) {
+                        if (pattern & 0x80) { linePtr[16] = linePtr[17] = color; collision |= colPtr[16]; colPtr[16] = colChck[16]; collision |= colPtr[17]; colPtr[17] = colChck[17]; }
+                        if (pattern & 0x40) { linePtr[18] = linePtr[19] = color; collision |= colPtr[18]; colPtr[18] = colChck[18]; collision |= colPtr[19]; colPtr[19] = colChck[19]; }
+                        if (pattern & 0x20) { linePtr[20] = linePtr[21] = color; collision |= colPtr[20]; colPtr[20] = colChck[20]; collision |= colPtr[21]; colPtr[21] = colChck[21]; }
+                        if (pattern & 0x10) { linePtr[22] = linePtr[23] = color; collision |= colPtr[22]; colPtr[22] = colChck[22]; collision |= colPtr[23]; colPtr[23] = colChck[23]; }
+                        if (pattern & 0x08) { linePtr[24] = linePtr[25] = color; collision |= colPtr[24]; colPtr[24] = colChck[24]; collision |= colPtr[25]; colPtr[25] = colChck[25]; }
+                        if (pattern & 0x04) { linePtr[26] = linePtr[27] = color; collision |= colPtr[26]; colPtr[26] = colChck[26]; collision |= colPtr[27]; colPtr[27] = colChck[27]; }
+                        if (pattern & 0x02) { linePtr[28] = linePtr[29] = color; collision |= colPtr[28]; colPtr[28] = colChck[28]; collision |= colPtr[29]; colPtr[29] = colChck[29]; }
+                        if (pattern & 0x01) { linePtr[30] = linePtr[31] = color; collision |= colPtr[30]; colPtr[30] = colChck[30]; collision |= colPtr[31]; colPtr[31] = colChck[31]; }
+                    }
+                }
             }
         }
 
