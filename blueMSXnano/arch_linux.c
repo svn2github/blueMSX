@@ -55,15 +55,24 @@ UInt8 pollkbd()
     struct termios term;
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag &= ~(ICANON | ECHO);
+#ifndef FIONREAD
+    term.c_cc[VMIN] = 0;
+    term.c_cc[VTIME] = 0;
+#endif
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
     setbuf(stdin, NULL);
   }
-  
+
+#ifdef FIONREAD
   int bytesWaiting;
   ioctl(STDIN_FILENO, FIONREAD, &bytesWaiting);
   if (!bytesWaiting) return 0;
-  
   char ch = getchar();
+#else
+  int ch_int = getchar();
+  if (ch_int == EOF) return 0;
+  char ch = (char)ch_int;
+#endif
   if (ch == 27) {
     ch = getchar();
     if (ch == 91) {
