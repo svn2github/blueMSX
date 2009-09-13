@@ -121,7 +121,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuCartHBI55           = "Cartucho Sony HBI-55"; 
     ls->menuCartInsertSpecial   = "Inserir Especial";                     
     ls->menuCartMegaRam         = "MegaRAM";                            
-    ls->menuCartExternalRam     = "RAM esterno";
+    ls->menuCartExternalRam     = "RAM Externo";
     ls->menuCartEseRam          = "Ese-RAM";             // New in 2.7
     ls->menuCartEseSCC          = "Ese-SCC";             // New in 2.7
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
@@ -132,14 +132,14 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuDiskAutoStart       = "Reset após inserir";
     ls->menuCartAutoReset       = "Reset após inserir/remover";
     
-    ls->menuCasRewindAfterInsert = "Rebobinar Apos Inserir";
-    ls->menuCasUseReadOnly       = "Usar Cassete Como Somente Leitura";
-    ls->lmenuCasSaveAs           = "Salvar Imagem do Cassete Como...";
+    ls->menuCasRewindAfterInsert = "Rebobinar após inserir";
+    ls->menuCasUseReadOnly       = "Usar fita cassete somente para leitura";
+    ls->lmenuCasSaveAs           = "Salvar imagem da fita cassete como...";
     ls->menuCasSetPosition      = "Ajustar Posição";
     ls->menuCasRewind           = "Rebobinar";
 
     ls->menuVideoLoad           = "Carregar...";             
-    ls->menuVideoPlay           = "Ver mais recente captura";   
+    ls->menuVideoPlay           = "Visualizar captura mais recente";   
     ls->menuVideoRecord         = "Salvar";              
     ls->menuVideoRecording      = "Salvar em curso";           
     ls->menuVideoRecAppend      = "Salvar (adicionar)";     
@@ -153,7 +153,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuZoomFullscreen      = "Tela Cheia";
     
     ls->menuPropsEmulation      = "Emulação";
-    ls->menuPropsVideo          = "Video";
+    ls->menuPropsVideo          = "Vídeo";
     ls->menuPropsSound          = "Som";
     ls->menuPropsControls       = "Controles";
     ls->menuPropsPerformance    = "Performance";
@@ -163,32 +163,32 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuPropsLanguage       = "Linguagem";
     ls->menuPropsPorts          = "Portas"; 
     
-    ls->menuVideoSource         = "Fonte vídeo";                   
-    ls->menuVideoSourceDefault  = "Fonte vídeo não conectada";      
-    ls->menuVideoInSource       = "Entrada vídeo";                    
+    ls->menuVideoSource         = "Fonte de vídeo";                   
+    ls->menuVideoSourceDefault  = "Fonte de vídeo não conectada";      
+    ls->menuVideoInSource       = "Entrada de vídeo";                    
     ls->menuVideoInBitmap       = "Arquivo Bitmap";                        
     ls->menuVideoChipAutodetect = "Detecção automática"; 
     
-    ls->menuEthInterface        = "Relação Do Ethernet"; 
+    ls->menuEthInterface        = "Ethernet"; 
 
     ls->menuHelpHelp            = "Tópicos Ajuda";
-    ls->menuHelpAbout           = "Sobre blueMSX";
+    ls->menuHelpAbout           = "Sobre o blueMSX";
 
     ls->menuFileCart            = "Cartucho Slot";
     ls->menuFileDisk            = "Disco drive";
-    ls->menuFileCas             = "Cassette";
+    ls->menuFileCas             = "Fita Cassete";
     ls->menuFilePrn             = "Impressora"; 
     ls->menuFileLoadState       = "Carregar Status da CPU";
     ls->menuFileSaveState       = "Salvar Status da CPU";
     ls->menuFileQLoadState      = "Carregar rápido Status";
     ls->menuFileQSaveState      = "Salvar rápido Status";
-    ls->menuFileCaptureAudio    = "Capturar áudio";
+    ls->menuFileCaptureAudio    = "Capturar audio";
     ls->menuFileCaptureVideo    = "Capturar vídeo"; 
     ls->menuFileScreenShot      = "Salvar Tela";
     ls->menuFileExit            = "Sair";
 
-    ls->menuFileHarddisk        = "Disco duro";                          
-    ls->menuFileHarddiskNoPesent= "Não controladores";             
+    ls->menuFileHarddisk        = "Disco Rígido";                          
+    ls->menuFileHarddiskNoPesent= "Não há controladores";             
     ls->menuFileHarddiskRemoveAll= "Ejetar todos os discos duros";    // New in 2.7
 
     ls->menuRunRun              = "Executar";
@@ -307,12 +307,12 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propEmuVramSizeText     = "Tamanho VRAM :";
     ls->propEmuSpeedGB          = "Velocidade da Emulação ";
     ls->propEmuSpeedText        = "Velocidade da Emulação:";
-    ls->propEmuFrontSwitchGB    = "Botão Panasonic "; 
+    ls->propEmuFrontSwitchGB    = "Botões dos MSX Panasonic "; 
     ls->propEmuFrontSwitch      = " Botão Frontal"; 
     ls->propEmuFdcTiming        = " Não sincronizar disco do drive"; 
     ls->propEmuPauseSwitch      = " Botão Pause"; 
     ls->propEmuAudioSwitch      = " Botão Cartucho MSX-AUDIO"; 
-    ls->propVideoFreqText       = "Freqüência video:"; 
+    ls->propVideoFreqText       = "Frequência de vídeo:"; 
     ls->propVideoFreqAuto       = "Auto"; 
     ls->propSndOversampleText   = "Oversample:"; 
     ls->propSndYkInGB           = "YK-01/YK-10/YK-20 In ";                
@@ -323,13 +323,13 @@ void langInitPortuguese(LanguageStrings* ls)
 
     ls->propMonMonGB            = "Monitor: ";
     ls->propMonTypeText         = "Tipo de Monitor:";
-    ls->propMonEmuText          = "Emulacão de Monitor:";
+    ls->propMonEmuText          = "Emulação de Monitor:";
     ls->propVideoTypeText       = "Tipo de Video:";
     ls->propWindowSizeText      = "Tamanho Janela:";
     ls->propMonHorizStretch     = " Estiramento Horizontal"; 
     ls->propMonVertStretch      = " Estiramento Vertical"; 
     ls->propMonDeInterlace      = " De-entrelaçar";
-    ls->propBlendFrames         = " Misturar frames consecutivas";           
+    ls->propBlendFrames         = " Misturar frames consecutivos";           
     ls->propMonBrightness       = "Brilho:";
     ls->propMonContrast         = "Contraste:";
     ls->propMonSaturation       = "Saturação:";
@@ -338,15 +338,15 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propMonColorGhosting    = " Modulador RF:"; 
     ls->propMonEffectsGB        = "Efeitos "; 
 
-    ls->propPerfVideoDrvGB      = "Driver de Video ";
+    ls->propPerfVideoDrvGB      = "Driver de Vídeo ";
     ls->propPerfVideoDispDrvText= "Driver do Display:";
     ls->propPerfFrameSkipText   = "Frame skipping:";
     ls->propPerfAudioDrvGB      = "Driver de Audio ";
     ls->propPerfAudioDrvText    = "Driver de Som:";
-    ls->propPerfAudioBufSzText  = "Tamanho buffer Som:";
+    ls->propPerfAudioBufSzText  = "Tamanho do buffer de som:";
     ls->propPerfEmuGB           = "Emulação ";
-    ls->propPerfSyncModeText    = "Modo Sincronismo:";
-    ls->propFullscreenResText   = "Resolução tela cheia:"; 
+    ls->propPerfSyncModeText    = "Modo de sincronismo:";
+    ls->propFullscreenResText   = "Resolução de Tela Cheia:"; 
 
     ls->propSndChipEmuGB        = "Emulação do Chip de Som ";
     ls->propSndMsxMusic         = " MSX-MUSIC";
@@ -366,7 +366,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propPortsEmulateMsxPrn  = "Emulação:"; 
 
     ls->propSetFileHistoryGB    = "Histórico ";
-    ls->propSetFileHistorySize  = "Numero de itens no Histórico:";
+    ls->propSetFileHistorySize  = "Número de itens no histórico:";
     ls->propSetFileHistoryClear = "Limpar Histórico";
     ls->propFileTypes           = " Associar certos tipos de arquivo com blueMSX";
     ls->propWindowsEnvGB        = "Ambiente Windows ";
@@ -374,7 +374,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Função MSX automática para as teclas Windows"; 
     ls->propPriorityBoost       = " Dar ao blueMSX uma prioridade elevada";
     ls->propScreenshotPng       = " Utilizar o formato PNG para as capturas da tela";  
-    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
+    ls->propEjectMediaOnExit    = " Ejetar a mídia quando o blueMSX encerrar";        // New in 2.8
     ls->propClearHistory        = "Deseja realmente limpar histórico?";
     ls->propOpenRomGB           = "Abrir arquivo rom "; 
     ls->propDefaultRomType      = "Tipo de ROM Padrão:"; 

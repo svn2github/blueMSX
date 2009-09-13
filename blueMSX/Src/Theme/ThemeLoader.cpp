@@ -490,6 +490,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "port1-gunstick"))        return t | THEME_TRIGGER_JOY1_GUNSTICK;
     if (0 == strcmp(s, "port1-asciilaser"))      return t | THEME_TRIGGER_JOY1_ASCIILASER;
     if (0 == strcmp(s, "port1-colecojoystick"))  return t | THEME_TRIGGER_JOY1_COLECOJOY;
+    if (0 == strcmp(s, "port1-superaction"))     return t | THEME_TRIGGER_JOY1_SUPERACTION;
     if (0 == strcmp(s, "port2-enable"))          return t | THEME_TRIGGER_JOY2_ENABLE;
     if (0 == strcmp(s, "port2-none"))            return t | THEME_TRIGGER_JOY2_NONE;
     if (0 == strcmp(s, "port2-joystick"))        return t | THEME_TRIGGER_JOY2_JOYSTICK;
@@ -500,6 +501,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "port2-gunstick"))        return t | THEME_TRIGGER_JOY2_GUNSTICK;
     if (0 == strcmp(s, "port2-asciilaser"))      return t | THEME_TRIGGER_JOY2_ASCIILASER;
     if (0 == strcmp(s, "port2-colecojoystick"))  return t | THEME_TRIGGER_JOY2_COLECOJOY;
+    if (0 == strcmp(s, "port2-superaction"))     return t | THEME_TRIGGER_JOY2_SUPERACTION;
 
     if (0 == strcmp(s, "text-scanlinespct"))        return t | THEME_TRIGGER_TEXT_SCANLINESPCT;
     if (0 == strcmp(s, "text-videogamma"))          return t | THEME_TRIGGER_TEXT_VIDEOGAMMA;

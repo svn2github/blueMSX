@@ -2268,6 +2268,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Input\ColecoJoystickDevice.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Input\ColecoSuperAction.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\ColecoSuperAction.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Input\InputEvent.c">
 			</File>
 			<File

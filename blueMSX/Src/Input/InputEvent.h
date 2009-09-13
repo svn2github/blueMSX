@@ -158,6 +158,8 @@ const char* inputEventCodeToString(int eventCode);
 #define EC_JOY1_BUTTON4 107
 #define EC_JOY1_BUTTON5 108
 #define EC_JOY1_BUTTON6 109
+#define EC_JOY1_WHEELA  136
+#define EC_JOY1_WHEELB  137
 
 #define EC_JOY2_UP      110
 #define EC_JOY2_DOWN    111
@@ -169,6 +171,8 @@ const char* inputEventCodeToString(int eventCode);
 #define EC_JOY2_BUTTON4 117
 #define EC_JOY2_BUTTON5 118
 #define EC_JOY2_BUTTON6 119
+#define EC_JOY2_WHEELA  138
+#define EC_JOY2_WHEELB  139
 
 #define EC_COLECO1_0    120
 #define EC_COLECO1_1    121

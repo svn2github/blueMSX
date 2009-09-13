@@ -69,6 +69,12 @@ static char currentConfigFile[MAX_PATH];
 
 #define DIK_JOY1_BUTTON1  256
 #define DIK_JOY1_BUTTON2  257
+#define DIK_JOY1_BUTTON3  258
+#define DIK_JOY1_BUTTON4  259
+#define DIK_JOY1_BUTTON5  260
+#define DIK_JOY1_BUTTON6  261
+#define DIK_JOY1_WHEELA   262
+#define DIK_JOY1_WHEELB   263
 #define DIK_JOY1_UP       284
 #define DIK_JOY1_DOWN     285
 #define DIK_JOY1_LEFT     286
@@ -76,6 +82,12 @@ static char currentConfigFile[MAX_PATH];
 
 #define DIK_JOY2_BUTTON1  288
 #define DIK_JOY2_BUTTON2  289
+#define DIK_JOY2_BUTTON3  290
+#define DIK_JOY2_BUTTON4  291
+#define DIK_JOY2_BUTTON5  292
+#define DIK_JOY2_BUTTON6  293
+#define DIK_JOY2_WHEELA   294
+#define DIK_JOY2_WHEELB   295
 #define DIK_JOY2_UP       316
 #define DIK_JOY2_DOWN     317
 #define DIK_JOY2_LEFT     318
@@ -372,6 +384,12 @@ static void initKbdTable()
 
     kbdTable[1][DIK_JOY1_BUTTON1] = EC_JOY1_BUTTON1;
     kbdTable[1][DIK_JOY1_BUTTON2] = EC_JOY1_BUTTON2;
+    kbdTable[1][DIK_JOY1_BUTTON3] = EC_JOY1_BUTTON3;
+    kbdTable[1][DIK_JOY1_BUTTON4] = EC_JOY1_BUTTON4;
+    kbdTable[1][DIK_JOY1_BUTTON5] = EC_JOY1_BUTTON5;
+    kbdTable[1][DIK_JOY1_BUTTON6] = EC_JOY1_BUTTON6;
+    kbdTable[1][DIK_JOY1_WHEELA]  = EC_JOY1_WHEELA;
+    kbdTable[1][DIK_JOY1_WHEELB]  = EC_JOY1_WHEELB;
     kbdTable[1][DIK_JOY1_UP     ] = EC_JOY1_UP;
     kbdTable[1][DIK_JOY1_DOWN   ] = EC_JOY1_DOWN;
     kbdTable[1][DIK_JOY1_LEFT   ] = EC_JOY1_LEFT;
@@ -392,6 +410,12 @@ static void initKbdTable()
 
     kbdTable[2][DIK_JOY2_BUTTON1] = EC_JOY2_BUTTON1;
     kbdTable[2][DIK_JOY2_BUTTON2] = EC_JOY2_BUTTON2;
+    kbdTable[2][DIK_JOY2_BUTTON3] = EC_JOY2_BUTTON3;
+    kbdTable[2][DIK_JOY2_BUTTON4] = EC_JOY2_BUTTON4;
+    kbdTable[2][DIK_JOY2_BUTTON5] = EC_JOY2_BUTTON5;
+    kbdTable[2][DIK_JOY2_BUTTON6] = EC_JOY2_BUTTON6;
+    kbdTable[2][DIK_JOY2_WHEELA]  = EC_JOY2_WHEELA;
+    kbdTable[2][DIK_JOY2_WHEELB]  = EC_JOY2_WHEELB;
     kbdTable[2][DIK_JOY2_UP     ] = EC_JOY2_UP;
     kbdTable[2][DIK_JOY2_DOWN   ] = EC_JOY2_DOWN;
     kbdTable[2][DIK_JOY2_LEFT   ] = EC_JOY2_LEFT;

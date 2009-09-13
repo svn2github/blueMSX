@@ -47,6 +47,7 @@
 #include "MegaromCartridge.h"
 #include "JoystickPort.h"
 #include "ColecoJoystick.h"
+#include "ColecoSuperAction.h"
 
 
 /* Hardware */
@@ -60,6 +61,12 @@ static R800*       r800;
 static ColecoJoystickDevice* joyDevice[2];
 static int joyDeviceHandle;
 static int joyMode;
+static BoardTimer* rollerTimer;
+
+
+static UInt8 sliderVal[2] = { 0x30, 0x30 };
+static UInt32 joyIntState = 0;
+
 
 static void colecoSN76489Write(void* dummy, UInt16 ioPort, UInt8 value) 
 {
@@ -73,8 +80,10 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 
 static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 {
-    ColecoJoystickDevice* device = joyDevice[(ioPort >> 1) & 1];
-    UInt8 joyState = 0x3f;
+    int devNo = (ioPort >> 1) & 1;
+    ColecoJoystickDevice* device = joyDevice[devNo];
+    UInt16 joyState = 0xffff;
+    static UInt8 oldValue[2] = { 0, 0 };
     UInt8 value;
 
     if (device != NULL && device->read != NULL) {
@@ -82,48 +91,59 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
     }
 
     if (joyMode != 0) {
-        return boardCaptureUInt8(ioPort & 2, ((joyState & 0x01) ? 0x01 : 0) |
-                                             ((joyState & 0x08) ? 0x02 : 0) |
-                                             ((joyState & 0x02) ? 0x04 : 0) |
-                                             ((joyState & 0x04) ? 0x08 : 0) |
-                                             ((joyState & 0x10) ? 0x40 : 0) |
-                                             0x30);
-    }
-
-    value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
-
-	if (ioPort & 2) {
-		if      (inputEventGetState(EC_COLECO2_0))    value |= 0x0A;
-		else if (inputEventGetState(EC_COLECO2_1))    value |= 0x0D;
-		else if (inputEventGetState(EC_COLECO2_2))    value |= 0x07;
-		else if (inputEventGetState(EC_COLECO2_3))    value |= 0x0C;
-		else if (inputEventGetState(EC_COLECO2_4))    value |= 0x02;
-		else if (inputEventGetState(EC_COLECO2_5))    value |= 0x03;
-		else if (inputEventGetState(EC_COLECO2_6))    value |= 0x0E;
-		else if (inputEventGetState(EC_COLECO2_7))    value |= 0x05;
-		else if (inputEventGetState(EC_COLECO2_8))    value |= 0x01;
-		else if (inputEventGetState(EC_COLECO2_9))    value |= 0x0B;
-		else if (inputEventGetState(EC_COLECO2_STAR)) value |= 0x09;
-		else if (inputEventGetState(EC_COLECO2_HASH)) value |= 0x06;
-        else                                          value |= 0x0f;
+        value =  boardCaptureUInt8(2 * devNo, sliderVal[devNo] |
+                                              ((joyState & 0x001) ? 0x01 : 0) |
+                                              ((joyState & 0x008) ? 0x02 : 0) |
+                                              ((joyState & 0x002) ? 0x04 : 0) |
+                                              ((joyState & 0x004) ? 0x08 : 0) |
+                                              ((joyState & 0x010) ? 0x40 : 0));
     }
     else {
-		if      (inputEventGetState(EC_COLECO1_0))    value |= 0x0A;
-		else if (inputEventGetState(EC_COLECO1_1))    value |= 0x0D;
-		else if (inputEventGetState(EC_COLECO1_2))    value |= 0x07;
-		else if (inputEventGetState(EC_COLECO1_3))    value |= 0x0C;
-		else if (inputEventGetState(EC_COLECO1_4))    value |= 0x02;
-		else if (inputEventGetState(EC_COLECO1_5))    value |= 0x03;
-		else if (inputEventGetState(EC_COLECO1_6))    value |= 0x0E;
-		else if (inputEventGetState(EC_COLECO1_7))    value |= 0x05;
-		else if (inputEventGetState(EC_COLECO1_8))    value |= 0x01;
-		else if (inputEventGetState(EC_COLECO1_9))    value |= 0x0B;
-		else if (inputEventGetState(EC_COLECO1_STAR)) value |= 0x09;
-		else if (inputEventGetState(EC_COLECO1_HASH)) value |= 0x06;
-        else                                          value |= 0x0f;
-	}
+        value = sliderVal[devNo] |
+                ((joyState & 0x020) ? 0x40 : 0) |
+                ((joyState & 0x040) ? 0 : 0x0d) |
+                ((joyState & 0x080) ? 0 : 0x0b) ;
 
-    return boardCaptureUInt8(4 + (ioPort & 2), value);
+	    if (devNo == 1) {
+		    if      (inputEventGetState(EC_COLECO2_0))    value |= 0x0A;
+		    else if (inputEventGetState(EC_COLECO2_1))    value |= 0x0D;
+		    else if (inputEventGetState(EC_COLECO2_2))    value |= 0x07;
+		    else if (inputEventGetState(EC_COLECO2_3))    value |= 0x0C;
+		    else if (inputEventGetState(EC_COLECO2_4))    value |= 0x02;
+		    else if (inputEventGetState(EC_COLECO2_5))    value |= 0x03;
+		    else if (inputEventGetState(EC_COLECO2_6))    value |= 0x0E;
+		    else if (inputEventGetState(EC_COLECO2_7))    value |= 0x05;
+		    else if (inputEventGetState(EC_COLECO2_8))    value |= 0x01;
+		    else if (inputEventGetState(EC_COLECO2_9))    value |= 0x0B;
+		    else if (inputEventGetState(EC_COLECO2_STAR)) value |= 0x09;
+		    else if (inputEventGetState(EC_COLECO2_HASH)) value |= 0x06;
+            else                                          value |= 0x0f;
+        }
+        else {
+		    if      (inputEventGetState(EC_COLECO1_0))    value |= 0x0A;
+		    else if (inputEventGetState(EC_COLECO1_1))    value |= 0x0D;
+		    else if (inputEventGetState(EC_COLECO1_2))    value |= 0x07;
+		    else if (inputEventGetState(EC_COLECO1_3))    value |= 0x0C;
+		    else if (inputEventGetState(EC_COLECO1_4))    value |= 0x02;
+		    else if (inputEventGetState(EC_COLECO1_5))    value |= 0x03;
+		    else if (inputEventGetState(EC_COLECO1_6))    value |= 0x0E;
+		    else if (inputEventGetState(EC_COLECO1_7))    value |= 0x05;
+		    else if (inputEventGetState(EC_COLECO1_8))    value |= 0x01;
+		    else if (inputEventGetState(EC_COLECO1_9))    value |= 0x0B;
+		    else if (inputEventGetState(EC_COLECO1_STAR)) value |= 0x09;
+		    else if (inputEventGetState(EC_COLECO1_HASH)) value |= 0x06;
+            else                                          value |= 0x0f;
+	    }
+
+        value = boardCaptureUInt8(4 + 2 * devNo, value);
+    }
+
+    joyIntState &= ~(1 << devNo);
+    if (joyIntState == 0) {
+        r800ClearInt(r800);
+    }
+
+    return value;
 }
 
 static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
@@ -144,11 +164,41 @@ static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
     case JOYSTICK_PORT_COLECOJOYSTICK:
         joyDevice[port] = colecoJoystickCreate(port);
         break;
+    case JOYSTICK_PORT_SUPERACTION:
+        joyDevice[port] = colecoSuperActionCreate(port);
+        break;
     }
+}
+
+static void onRollerPoll(void* ref, UInt32 time)
+{
+    int devNo;
+
+    for (devNo = 0; devNo < 2; devNo++) {
+        ColecoJoystickDevice* device = joyDevice[devNo];
+        if (device != NULL && device->read != NULL) {
+            UInt8 val = (UInt8)(device->read(device) >> 4) & 0x30;
+            if ((sliderVal[devNo] & 0x10) != 0 && (val & 0x10) == 0) {
+                joyIntState |= 1 << devNo;
+            }
+            sliderVal[devNo] =  val;
+        }
+    }
+    if (joyIntState != 0) {
+        r800SetInt(r800);
+    }
+    
+    boardTimerAdd(rollerTimer, boardSystemTime() + boardFrequency() / 200);
 }
 
 static void colecoJoyIoLoadState(void* dummy)
 {
+    SaveState* state = saveStateOpenForRead("colecoJoyIo");
+    sliderVal[0] = (UInt8)saveStateGet(state, "sliderVal0", 0);
+    sliderVal[1] = (UInt8)saveStateGet(state, "sliderVal1", 0);
+    joyIntState  =        saveStateGet(state, "joyIntState", 0);
+    saveStateClose(state);
+
     if (joyDevice[0] != NULL && joyDevice[0]->loadState != NULL) {
         joyDevice[0]->loadState(joyDevice[0]);
     }
@@ -159,6 +209,12 @@ static void colecoJoyIoLoadState(void* dummy)
 
 static void colecoJoyIoSaveState(void* dummy)
 {
+    SaveState* state = saveStateOpenForWrite("colecoJoyIo");
+    saveStateSet(state, "sliderVal0", sliderVal[0]);
+    saveStateSet(state, "sliderVal1", sliderVal[1]);
+    saveStateSet(state, "joyIntState", joyIntState);
+    saveStateClose(state);
+
     if (joyDevice[0] != NULL && joyDevice[0]->saveState != NULL) {
         joyDevice[0]->saveState(joyDevice[0]);
     }
@@ -169,6 +225,10 @@ static void colecoJoyIoSaveState(void* dummy)
 
 static void colecoJoyIoReset(void* dummy)
 {
+    sliderVal[0] = 0x30;
+    sliderVal[1] = 0x30;
+    joyIntState = 0;
+
     if (joyDevice[0] != NULL && joyDevice[0]->reset != NULL) {
         joyDevice[0]->reset(joyDevice[0]);
     }
@@ -194,6 +254,8 @@ static void colecoJoyIoDestroy(void* dummy)
     joystickPortUpdateHandlerUnregister();
 
     deviceManagerUnregister(joyDeviceHandle);
+
+    boardTimerDestroy(rollerTimer);
 }
 
 static void colecoJoyIoCreate()
@@ -218,6 +280,10 @@ static void colecoJoyIoCreate()
     
     joystickPortUpdateHandlerRegister(colecoJoyIoHandler, NULL);
     joyDeviceHandle = deviceManagerRegister(ROM_UNKNOWN, &callbacks, NULL);
+
+    rollerTimer = boardTimerCreate(onRollerPoll, NULL);
+        
+    boardTimerAdd(rollerTimer, boardSystemTime() + boardFrequency() / 200);
 }
 
 static void reset()

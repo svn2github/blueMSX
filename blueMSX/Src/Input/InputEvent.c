@@ -140,6 +140,8 @@ static void initKeyNameTable()
     eventNames[EC_JOY1_BUTTON4] = "joy1-button4";
     eventNames[EC_JOY1_BUTTON5] = "joy1-button5";
     eventNames[EC_JOY1_BUTTON6] = "joy1-button6";
+    eventNames[EC_JOY1_WHEELA]  = "joy1-quadwheelA";
+    eventNames[EC_JOY1_WHEELB]  = "joy1-quadwheelB";
 
     eventNames[EC_JOY2_UP     ] = "joy2-up";
     eventNames[EC_JOY2_DOWN   ] = "joy2-down";
@@ -151,6 +153,8 @@ static void initKeyNameTable()
     eventNames[EC_JOY2_BUTTON4] = "joy2-button4";
     eventNames[EC_JOY2_BUTTON5] = "joy2-button5";
     eventNames[EC_JOY2_BUTTON6] = "joy2-button6";
+    eventNames[EC_JOY2_WHEELA]  = "joy2-quadwheelA";
+    eventNames[EC_JOY2_WHEELB]  = "joy2-quadwheelB";
 
     eventNames[EC_COLECO1_0]    = "coleco1-0";
     eventNames[EC_COLECO1_1]    = "coleco1-1";

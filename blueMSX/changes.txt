@@ -4,6 +4,20 @@ Next release
 - ** Fixed Z80 IRQ timing (not yet)
 - ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
 
+- Fix DER files in panasonic FDC
+- Add support for coleco driving module
+- Add search for numbers (byte, word, dword) in degugger
+
+- Wildcard search (part of numbers or strings)
+- Memory watchpoint
+
+
+v 2.8.3     November 30, 2009
+=============================
+
+- Fixed bug in handling of transparent sprites
+- Fix ARTRAGs VDP command engine bug
+- Added support for Super Action Controller
 
 v 2.8.2     August 14, 2009
 ===========================

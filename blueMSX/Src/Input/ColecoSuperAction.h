@@ -1,5 +1,5 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/ColecoJoystickDevice.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Input/ColecoJoystick.h,v $
 **
 ** $Revision: 1.3 $
 **
@@ -25,21 +25,14 @@
 **
 ******************************************************************************
 */
-#ifndef COLECO_JOYSTICK_DEVICE_H
-#define COLECO_JOYSTICK_DEVICE_H
+#ifndef COLECO_SUPER_ACTION_H
+#define COLECO_SUPER_ACTION_H
 
 #include "MsxTypes.h"
+#include "ColecoJoystickDevice.h"
 
-// Base class for Coleco Joystick devices. 
+typedef struct ColecoSuperAction ColecoSuperAction;
 
-typedef struct {
-    UInt16 (*read)(void*);
-    void   (*write)(void*, UInt8);
-    void   (*destroy)(void*);
-    void   (*reset)(void*);
-    void   (*saveState)(void*);
-    void   (*loadState)(void*);
-} ColecoJoystickDevice;
-
+ColecoJoystickDevice* colecoSuperActionCreate(int controller);
 
 #endif 

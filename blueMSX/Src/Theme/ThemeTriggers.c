@@ -63,6 +63,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
         sprintf(text, 
                 "                                 "
                 "%s"
+                "Tim Brugman,  "
                 "Oleg Malyshev,  "
                 "Manuel Soler,  "
                 "Alexandre Souza,  "
@@ -84,6 +85,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Rob Hiep,  "
                 "Fabio Albergaria Dias,  "
                 "SLotman,  "
+                "Marcelo Tini,  "
                 "Tanni,  "
                 "Eduardo Mello,  "
                 "Jon Cortázar Abraido,  "
@@ -521,6 +523,10 @@ int themeTriggerJoyPort1IsColecoJoystick() {
     return joystickPortGetType(0) == JOYSTICK_PORT_COLECOJOYSTICK ? 1 : 0;
 }
 
+int themeTriggerJoyPort1IsSuperAction() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_SUPERACTION ? 1 : 0;
+}
+
 int themeTriggerJoyPort2Enabled() {
     return joystickPortGetType(1) != JOYSTICK_PORT_NONE ? 1 : 0;
 }
@@ -559,6 +565,10 @@ int themeTriggerJoyPort2IsAsciiLaser() {
 
 int themeTriggerJoyPort2IsColecoJoystick() {
     return joystickPortGetType(1) == JOYSTICK_PORT_COLECOJOYSTICK ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsSuperAction() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_SUPERACTION ? 1 : 0;
 }
 
 

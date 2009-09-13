@@ -47,6 +47,7 @@
 #include "MegaromCartridge.h"
 #include "JoystickPort.h"
 #include "ColecoJoystick.h"
+#include "ColecoSuperAction.h"
 
 
 /* Hardware */
@@ -152,7 +153,7 @@ static void colecoJoyIoWrite(void* dummy, UInt16 ioPort, UInt8 value)
 static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
 {
     ColecoJoystickDevice* device = joyDevice[(ioPort >> 1) & 1];
-    UInt8 joyState = 0x3f;
+    UInt16 joyState = 0xffff;
     UInt8 value;
 
     if (device != NULL && device->read != NULL) {
@@ -160,15 +161,21 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
     }
 
     if (joyMode != 0) {
-        return ((joyState & 0x01) ? 0x01 : 0) |
-               ((joyState & 0x08) ? 0x02 : 0) |
-               ((joyState & 0x02) ? 0x04 : 0) |
-               ((joyState & 0x04) ? 0x08 : 0) |
-               ((joyState & 0x10) ? 0x40 : 0) |
-               0x30;
+        return boardCaptureUInt8(ioPort & 2, ((joyState & 0x100) ? 0x10 : 0) |
+                                             ((joyState & 0x200) ? 0x20 : 0) |
+                                             ((joyState & 0x001) ? 0x01 : 0) |
+                                             ((joyState & 0x008) ? 0x02 : 0) |
+                                             ((joyState & 0x002) ? 0x04 : 0) |
+                                             ((joyState & 0x004) ? 0x08 : 0) |
+                                             ((joyState & 0x010) ? 0x40 : 0) |
+                                             0x30);
     }
 
-    value = 0x30 | ((joyState & 0x20) ? 0x40 : 0);
+    value = ((joyState & 0x100) ? 0x10 : 0) |
+            ((joyState & 0x200) ? 0x20 : 0) |
+            ((joyState & 0x020) ? 0x40 : 0) |
+            ((joyState & 0x040) ? 0x0d : 0) |
+            ((joyState & 0x080) ? 0x0b : 0) ;
 
 	if (ioPort & 2) {
 		if      (inputEventGetState(EC_COLECO2_0))    value |= 0x0A;
@@ -219,6 +226,9 @@ static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
         break;
     case JOYSTICK_PORT_COLECOJOYSTICK:
         joyDevice[port] = colecoJoystickCreate(port);
+        break;
+    case JOYSTICK_PORT_SUPERACTION:
+        joyDevice[port] = colecoSuperActionCreate(port);
         break;
     }
 }

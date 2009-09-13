@@ -81,6 +81,7 @@ void joystickPortUpdateBoardInfo()
     case BOARD_COLECO:
         for (i = 0; i < 2; i++) {
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_COLECOJOYSTICK] = 1;
+            joystickConfig.typeEnabled[i][JOYSTICK_PORT_SUPERACTION] = 1;
             joystickConfig.defaultType[i] = JOYSTICK_PORT_COLECOJOYSTICK;
         }
         joystickConfig.keyboardEnabled = 0;
@@ -182,6 +183,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
         case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
         case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
         case JOYSTICK_PORT_ARKANOID_PAD:    return langEnumControlsJoyArkanoidPad();
+        case JOYSTICK_PORT_SUPERACTION:     return "super action controller";
         }
 
         return langTextUnknown();
@@ -198,6 +200,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
     case JOYSTICK_PORT_MAGICKEYDONGLE:  return "magic key dongle";
     case JOYSTICK_PORT_ASCIILASER:      return "ascii laser";
     case JOYSTICK_PORT_ARKANOID_PAD:    return "arkanoid pad";
+    case JOYSTICK_PORT_SUPERACTION:     return "super action controller";
     }
 
     return "unknown";
@@ -219,6 +222,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
         if (0 == strcmp(name, langEnumControlsJoyMagicKeyDongle())) return JOYSTICK_PORT_MAGICKEYDONGLE;
         if (0 == strcmp(name, langEnumControlsJoyAsciiLaser())) return JOYSTICK_PORT_ASCIILASER;
         if (0 == strcmp(name, langEnumControlsJoyArkanoidPad())) return JOYSTICK_PORT_ARKANOID_PAD;
+        if (0 == strcmp(name, "super action controller")) return JOYSTICK_PORT_SUPERACTION;
 
         return JOYSTICK_PORT_NONE;
     }
@@ -231,6 +235,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
     if (0 == strcmp(name, "magic key dongle")) return JOYSTICK_PORT_MAGICKEYDONGLE;
     if (0 == strcmp(name, "ascii laser")) return JOYSTICK_PORT_ASCIILASER;
     if (0 == strcmp(name, "arkanoid pad")) return JOYSTICK_PORT_ARKANOID_PAD;
+    if (0 == strcmp(name, "super action controller")) return JOYSTICK_PORT_SUPERACTION;
 
     return JOYSTICK_PORT_NONE;
 }
