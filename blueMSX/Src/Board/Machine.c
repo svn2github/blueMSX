@@ -136,6 +136,7 @@
 #include "romMapperNet.h"
 #include "romMapperJoyrexPsg.h"
 #include "romMapperOpcodePsg.h"
+#include "romMapperArc.h"
 
 
 
@@ -1399,6 +1400,9 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         case ROM_MICROSOL:
             success &= romMapperMicrosolCreate(romName, buf, size, slot, subslot, startPage);
             break;
+
+        case ROM_ARC:
+            success &= romMapperArcCreate(romName, buf, size, slot, subslot, startPage);
 
         case ROM_NATIONALFDC:
             success &= romMapperNationalFdcCreate(romName, buf, size, slot, subslot, startPage);

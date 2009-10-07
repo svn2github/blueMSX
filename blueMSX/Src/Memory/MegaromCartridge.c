@@ -106,6 +106,7 @@
 #include "romMapperNettouYakyuu.h"
 #include "romMapperNet.h"
 #include "romMapperJoyrexPsg.h"
+#include "romMapperArc.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -629,6 +630,9 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
         case ROM_MICROSOL:
             success &= romMapperMicrosolCreate(romName, buf, size, slot, sslot, 2);
             break;
+
+        case ROM_ARC:
+            success &= romMapperArcCreate(romName, buf, size, slot, sslot, 2);
 
         case ROM_NATIONALFDC:
             success &= romMapperNationalFdcCreate(romName, buf, size, slot, sslot, 2);

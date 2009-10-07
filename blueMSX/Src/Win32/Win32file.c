@@ -77,6 +77,7 @@ static RomType romTypeList[] = {
     ROM_KOREAN80,
     ROM_KOREAN90,
     ROM_KOREAN126,
+    ROM_ARC,
     
     ROM_DISKPATCH,
     ROM_TC8566AF,

@@ -148,6 +148,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "TC8566AFTR")   return ROM_TC8566AF_TR;
     if (name == "WD2793")       return ROM_PHILIPSFDC;
     if (name == "Microsol")     return ROM_MICROSOL;
+    if (name == "ARC")          return ROM_ARC;
     if (name == "MoonSound")    return ROM_MOONSOUND;
 
     if (name == "SunriseIDE")   return ROM_SUNRISEIDE;
@@ -585,6 +586,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_TC8566AF:    return langRomTypeTc8566afFdc();
     case ROM_TC8566AF_TR: return langRomTypeTc8566afTrFdc();
     case ROM_MICROSOL:    return langRomTypeMicrosolFdc();
+    case ROM_ARC:         return "Parallax ARC";
     case ROM_NATIONALFDC: return langRomTypeNationalFdc();
     case ROM_PHILIPSFDC:  return langRomTypePhilipsFdc();
     case ROM_SVI738FDC:   return langRomTypeSvi738Fdc();
@@ -743,6 +745,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_TC8566AF:    return "TC8566AF";
     case ROM_TC8566AF_TR: return "TC8566AF";
     case ROM_MICROSOL:    return "MICROSOL";
+    case ROM_ARC:         return "ARC";
     case ROM_NATIONALFDC: return "NATNL FDC";
     case ROM_PHILIPSFDC:  return "PHILIPSFDC";
     case ROM_SVI738FDC:   return "SVI738 FDC";
@@ -874,6 +877,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_DISKPATCH:   return 1;
     case ROM_CASPATCH:    return 1;
     case ROM_MICROSOL:    return 1;
+    case ROM_ARC:         return 1;
     case ROM_NATIONALFDC: return 1;
     case ROM_PHILIPSFDC:  return 1;
     case ROM_SVI738FDC:   return 1;

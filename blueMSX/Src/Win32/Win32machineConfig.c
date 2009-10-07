@@ -1277,6 +1277,7 @@ static void setEditControls(HWND hDlg)
     case ROM_PLAYBALL:
     case ROM_NETTOUYAKYUU:
     case ROM_YAMAHANET:
+    case ROM_ARC:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x4000 - 0xBFFF");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1479,6 +1480,7 @@ static RomType romTypeList[] = {
     ROM_KOREAN80,
     ROM_KOREAN90,
     ROM_KOREAN126,
+    ROM_ARC,
     
     /* no msx */
     ROM_SVI328FDC,

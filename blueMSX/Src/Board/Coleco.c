@@ -99,40 +99,39 @@ static UInt8 colecoJoyIoRead(void* dummy, UInt16 ioPort)
                                               ((joyState & 0x010) ? 0x40 : 0));
     }
     else {
-        value = sliderVal[devNo] |
-                ((joyState & 0x020) ? 0x40 : 0) |
-                ((joyState & 0x040) ? 0 : 0x0d) |
-                ((joyState & 0x080) ? 0 : 0x0b) ;
+        value = sliderVal[devNo] | ((joyState & 0x020) ? 0x40 : 0) | 0x0f;
 
 	    if (devNo == 1) {
-		    if      (inputEventGetState(EC_COLECO2_0))    value |= 0x0A;
-		    else if (inputEventGetState(EC_COLECO2_1))    value |= 0x0D;
-		    else if (inputEventGetState(EC_COLECO2_2))    value |= 0x07;
-		    else if (inputEventGetState(EC_COLECO2_3))    value |= 0x0C;
-		    else if (inputEventGetState(EC_COLECO2_4))    value |= 0x02;
-		    else if (inputEventGetState(EC_COLECO2_5))    value |= 0x03;
-		    else if (inputEventGetState(EC_COLECO2_6))    value |= 0x0E;
-		    else if (inputEventGetState(EC_COLECO2_7))    value |= 0x05;
-		    else if (inputEventGetState(EC_COLECO2_8))    value |= 0x01;
-		    else if (inputEventGetState(EC_COLECO2_9))    value |= 0x0B;
-		    else if (inputEventGetState(EC_COLECO2_STAR)) value |= 0x09;
-		    else if (inputEventGetState(EC_COLECO2_HASH)) value |= 0x06;
-            else                                          value |= 0x0f;
+		    if (inputEventGetState(EC_COLECO2_0))    value &= 0xFA;
+		    if (inputEventGetState(EC_COLECO2_1))    value &= 0xFD;
+		    if (inputEventGetState(EC_COLECO2_2))    value &= 0xF7;
+		    if (inputEventGetState(EC_COLECO2_3))    value &= 0xFC;
+		    if (inputEventGetState(EC_COLECO2_4))    value &= 0xF2;
+		    if (inputEventGetState(EC_COLECO2_5))    value &= 0xF3;
+		    if (inputEventGetState(EC_COLECO2_6))    value &= 0xFE;
+		    if (inputEventGetState(EC_COLECO2_7))    value &= 0xF5;
+		    if (inputEventGetState(EC_COLECO2_8))    value &= 0xF1;
+		    if (inputEventGetState(EC_COLECO2_9))    value &= 0xFB;
+		    if (inputEventGetState(EC_COLECO2_STAR)) value &= 0xF9;
+		    if (inputEventGetState(EC_COLECO2_HASH)) value &= 0xF6;
+		    if ((joyState & 0x040) == 0)             value &= 0xF8;
+		    if ((joyState & 0x080) == 0)             value &= 0xF4;
         }
         else {
-		    if      (inputEventGetState(EC_COLECO1_0))    value |= 0x0A;
-		    else if (inputEventGetState(EC_COLECO1_1))    value |= 0x0D;
-		    else if (inputEventGetState(EC_COLECO1_2))    value |= 0x07;
-		    else if (inputEventGetState(EC_COLECO1_3))    value |= 0x0C;
-		    else if (inputEventGetState(EC_COLECO1_4))    value |= 0x02;
-		    else if (inputEventGetState(EC_COLECO1_5))    value |= 0x03;
-		    else if (inputEventGetState(EC_COLECO1_6))    value |= 0x0E;
-		    else if (inputEventGetState(EC_COLECO1_7))    value |= 0x05;
-		    else if (inputEventGetState(EC_COLECO1_8))    value |= 0x01;
-		    else if (inputEventGetState(EC_COLECO1_9))    value |= 0x0B;
-		    else if (inputEventGetState(EC_COLECO1_STAR)) value |= 0x09;
-		    else if (inputEventGetState(EC_COLECO1_HASH)) value |= 0x06;
-            else                                          value |= 0x0f;
+		    if (inputEventGetState(EC_COLECO1_0))    value &= 0xFA;
+		    if (inputEventGetState(EC_COLECO1_1))    value &= 0xFD;
+		    if (inputEventGetState(EC_COLECO1_2))    value &= 0xF7;
+		    if (inputEventGetState(EC_COLECO1_3))    value &= 0xFC;
+		    if (inputEventGetState(EC_COLECO1_4))    value &= 0xF2;
+		    if (inputEventGetState(EC_COLECO1_5))    value &= 0xF3;
+		    if (inputEventGetState(EC_COLECO1_6))    value &= 0xFE;
+		    if (inputEventGetState(EC_COLECO1_7))    value &= 0xF5;
+		    if (inputEventGetState(EC_COLECO1_8))    value &= 0xF1;
+		    if (inputEventGetState(EC_COLECO1_9))    value &= 0xFB;
+		    if (inputEventGetState(EC_COLECO1_STAR)) value &= 0xF9;
+		    if (inputEventGetState(EC_COLECO1_HASH)) value &= 0xF6;
+		    if ((joyState & 0x040) == 0)             value &= 0xF8;
+		    if ((joyState & 0x080) == 0)             value &= 0xF4;
 	    }
 
         value = boardCaptureUInt8(4 + 2 * devNo, value);
