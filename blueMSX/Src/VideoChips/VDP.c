@@ -1131,7 +1131,7 @@ static void writeLatch(VDP* vdp, UInt16 ioPort, UInt8 value)
 	switch (vdp->vdpVersion) {
 		
 		/* MSX1 VDP: address always updates */
-		case VDP_TMS9929A: case VDP_TMS99x8A:
+        case VDP_TMS9929A: case VDP_TMS99x8A:
 			if (vdp->vdpKey) {
 				vdp->vramAddress = ((UInt16)value << 8 | (vdp->vramAddress & 0xff)) & 0x3fff;
 				if (!(value & 0x40)) {

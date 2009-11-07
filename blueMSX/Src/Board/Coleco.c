@@ -187,7 +187,7 @@ static void onRollerPoll(void* ref, UInt32 time)
         r800SetInt(r800);
     }
     
-    boardTimerAdd(rollerTimer, boardSystemTime() + boardFrequency() / 200);
+    boardTimerAdd(rollerTimer, boardSystemTime() + boardFrequency() / 1000);
 }
 
 static void colecoJoyIoLoadState(void* dummy)

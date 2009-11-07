@@ -183,7 +183,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
         case JOYSTICK_PORT_MAGICKEYDONGLE:  return langEnumControlsJoyMagicKeyDongle();
         case JOYSTICK_PORT_ASCIILASER:      return langEnumControlsJoyAsciiLaser();
         case JOYSTICK_PORT_ARKANOID_PAD:    return langEnumControlsJoyArkanoidPad();
-        case JOYSTICK_PORT_SUPERACTION:     return "super action controller";
+        case JOYSTICK_PORT_SUPERACTION:     return "Super Action Controller";
         }
 
         return langTextUnknown();
@@ -200,7 +200,7 @@ char* joystickPortGetDescription(JoystickPortType type, int translate)
     case JOYSTICK_PORT_MAGICKEYDONGLE:  return "magic key dongle";
     case JOYSTICK_PORT_ASCIILASER:      return "ascii laser";
     case JOYSTICK_PORT_ARKANOID_PAD:    return "arkanoid pad";
-    case JOYSTICK_PORT_SUPERACTION:     return "super action controller";
+    case JOYSTICK_PORT_SUPERACTION:     return "Super Action Controller";
     }
 
     return "unknown";
@@ -222,7 +222,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
         if (0 == strcmp(name, langEnumControlsJoyMagicKeyDongle())) return JOYSTICK_PORT_MAGICKEYDONGLE;
         if (0 == strcmp(name, langEnumControlsJoyAsciiLaser())) return JOYSTICK_PORT_ASCIILASER;
         if (0 == strcmp(name, langEnumControlsJoyArkanoidPad())) return JOYSTICK_PORT_ARKANOID_PAD;
-        if (0 == strcmp(name, "super action controller")) return JOYSTICK_PORT_SUPERACTION;
+        if (0 == strcmp(name, "Super Action Controller")) return JOYSTICK_PORT_SUPERACTION;
 
         return JOYSTICK_PORT_NONE;
     }
@@ -235,7 +235,7 @@ JoystickPortType joystickPortNameToType(int port, char* name, int translate)
     if (0 == strcmp(name, "magic key dongle")) return JOYSTICK_PORT_MAGICKEYDONGLE;
     if (0 == strcmp(name, "ascii laser")) return JOYSTICK_PORT_ASCIILASER;
     if (0 == strcmp(name, "arkanoid pad")) return JOYSTICK_PORT_ARKANOID_PAD;
-    if (0 == strcmp(name, "super action controller")) return JOYSTICK_PORT_SUPERACTION;
+    if (0 == strcmp(name, "Super Action Controller")) return JOYSTICK_PORT_SUPERACTION;
 
     return JOYSTICK_PORT_NONE;
 }

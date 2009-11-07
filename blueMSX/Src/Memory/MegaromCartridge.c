@@ -633,6 +633,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
 
         case ROM_ARC:
             success &= romMapperArcCreate(romName, buf, size, slot, sslot, 2);
+            break;
 
         case ROM_NATIONALFDC:
             success &= romMapperNationalFdcCreate(romName, buf, size, slot, sslot, 2);

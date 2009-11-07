@@ -230,6 +230,10 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "korean90")     return ROM_KOREAN90;
     if (name == "korean126")    return ROM_KOREAN126;
     if (name == "holyquran")    return ROM_HOLYQURAN;  
+    if (name == "opcodesave")   return ROM_OPCODESAVE;
+    if (name == "opcodebios")   return ROM_OPCODEBIOS;
+    if (name == "opcodeslot")   return ROM_OPCODESLOT;
+    if (name == "opcodeega")    return ROM_OPCODEMEGA;
     if (name == "coleco")       return ROM_COLECO;
     if (name == "sg1000")       return ROM_SG1000;
     if (name == "castle")       return ROM_SG1000CASTLE;
@@ -673,6 +677,10 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
     case ROM_YAMAHANET:   return "Yamaha Net";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
+    case ROM_OPCODEBIOS:  return "ColecoVision Opcode Bios";
+    case ROM_OPCODEMEGA:  return "ColecoVision Opcode MegaRam";
+    case ROM_OPCODESAVE:  return "ColecoVision Opcode SaveRam";
+    case ROM_OPCODESLOT:  return "ColecoVision Opcode Slot Manager";
     case ROM_CVMEGACART:  return "ColecoVision MegaCart(R)";
     case SRAM_MEGASCSI:   return langRomTypeMegaSCSI();
     case SRAM_MEGASCSI128:return langRomTypeMegaSCSI128();
@@ -816,6 +824,10 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_TURBORPCM:   return "TURBOR PCM";
     case ROM_JOYREXPSG:   return "JOYREX PSG";
     case ROM_OPCODEPSG:   return "OPCODE PSG";
+    case ROM_OPCODEBIOS:  return "OPCODE BIOS";
+    case ROM_OPCODEMEGA:  return "OPCODE MEGA";
+    case ROM_OPCODESAVE:  return "OPCODE SAVE";
+    case ROM_OPCODESLOT:  return "OPCODE SLOT";
     case ROM_GAMEREADER:  return "GAMEREADER";
     case ROM_SUNRISEIDE:  return "SUNRISEIDE";
     case ROM_BEERIDE:     return "BEER IDE";

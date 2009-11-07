@@ -931,10 +931,34 @@
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeBios.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeBios.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeMegaRam.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeMegaRam.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSaveRam.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSaveRam.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSlotManager.c">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSlotManager.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.c">

@@ -55,14 +55,13 @@ static void loadState(RomMapperOpcodePsg* rm)
 
 static void destroy(RomMapperOpcodePsg* rm)
 {
-    int i;
     deviceManagerUnregister(rm->deviceHandle);
     debugDeviceUnregister(rm->debugHandle);
     ay8910Destroy(rm->ay8910);
 
-    for (i = 0; i < 16; i++) {
-        ioPortUnregister(0x60 + i);
-    }
+    ioPortUnregister(0x50);
+    ioPortUnregister(0x51);
+    ioPortUnregister(0x52);
 
     free(rm);
 }
@@ -95,23 +94,16 @@ static void reset(RomMapperOpcodePsg* rm)
 static void getDebugInfo(RomMapperOpcodePsg* rm, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
-    int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 16);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
 
-    for (i = 0; i < 16; i += 4) {
-        UInt8 ioPort = 0x60 + i;
-        dbgIoPortsAddPort(ioPorts, i + 0, ioPort + 0, DBG_IO_WRITE, 0xff);
-        dbgIoPortsAddPort(ioPorts, i + 1, ioPort + 1, DBG_IO_WRITE, 0xff);
-        dbgIoPortsAddPort(ioPorts, i + 2, ioPort + 2, DBG_IO_READ,  peek(rm, ioPort + 2));
-        dbgIoPortsAddPort(ioPorts, i + 3, ioPort + 3, DBG_IO_NONE,  0xff);
-    }
+    dbgIoPortsAddPort(ioPorts, 0, 0x50, DBG_IO_WRITE, 0xff);
+    dbgIoPortsAddPort(ioPorts, 1, 0x51, DBG_IO_WRITE, 0xff);
+    dbgIoPortsAddPort(ioPorts, 2, 0x52, DBG_IO_READ,  peek(rm, 0x52));
 }
 
 int romMapperOpcodePsgCreate() 
 {
-    int i;
-
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperOpcodePsg* rm = malloc(sizeof(RomMapperOpcodePsg));
@@ -121,11 +113,9 @@ int romMapperOpcodePsgCreate()
 
     rm->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, PSGTYPE_AY8910);
 
-    for (i = 0; i < 16; i += 4) {
-        ioPortRegister(0x60 + i, NULL, write, rm);
-        ioPortRegister(0x61 + i, NULL, write, rm);
-        ioPortRegister(0x62 + i, read, NULL, rm);
-    }
+    ioPortRegister(0x50, NULL, write, rm);
+    ioPortRegister(0x51, NULL, write, rm);
+    ioPortRegister(0x52, read, NULL, rm);
 
     reset(rm);
 

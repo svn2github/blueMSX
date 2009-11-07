@@ -523,7 +523,7 @@ static void getSizeControl(HWND hDlg)
     }
 
     if (editSlotInfo.romType == RAM_NORMAL) {
-        if (value == 8 || value == 16 || value == 32 || value == 64) {
+        if (value == 8 || value == 16 || value == 24 || value == 32 || value == 64) {
             editRamNormalSize = 1024 * value;
             editSlotInfo.startPage = 8 - editRamNormalSize / 0x2000;
         }
@@ -614,7 +614,8 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
         editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC ||
-        editSlotInfo.romType == ROM_JOYREXPSG || editSlotInfo.romType == ROM_OPCODEPSG ||
+        editSlotInfo.romType == ROM_JOYREXPSG || 
+        editSlotInfo.romType == ROM_OPCODEPSG || editSlotInfo.romType == ROM_OPCODESLOT ||
         editSlotInfo.romType == ROM_SVI80COL || editSlotInfo.romType == ROM_SVI328PRN ||
         editSlotInfo.romType == ROM_SVI727 ||
         editSlotInfo.romType == ROM_MSXPRN || editSlotInfo.romType == ROM_SVI328RS232) {
@@ -763,6 +764,7 @@ static void endEditControls(HWND hDlg)
     case ROM_TURBORPCM:
     case ROM_JOYREXPSG:
     case ROM_OPCODEPSG:
+    case ROM_OPCODESLOT:
     case ROM_TURBORTIMER:
     case ROM_TURBORIO:
     case ROM_SVI328FDC:
@@ -835,6 +837,17 @@ static void endEditControls(HWND hDlg)
     case ROM_BASIC:
         editSlotInfo.startPage = 4;
         editSlotInfo.pageCount = 2;
+        break;
+
+    case ROM_OPCODEBIOS:
+        editSlotInfo.startPage = 0;
+        editSlotInfo.pageCount = 1;
+        break;
+
+    case ROM_OPCODEMEGA:
+    case ROM_OPCODESAVE:
+        editSlotInfo.startPage = 4;
+        editSlotInfo.pageCount = 4;
         break;
 
     case ROM_0x4000:
@@ -926,7 +939,8 @@ static void setEditControls(HWND hDlg)
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE && romType != ROM_NMS1210 && 
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
-        romType != ROM_MSXMIDI && romType != ROM_MSXPRN && romType != ROM_JOYREXPSG && romType != ROM_OPCODEPSG &&
+        romType != ROM_MSXMIDI && romType != ROM_MSXPRN && romType != ROM_JOYREXPSG && 
+        romType != ROM_OPCODEPSG && romType != ROM_OPCODESLOT && romType != ROM_OPCODEMEGA &&
         romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
         romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
@@ -948,10 +962,11 @@ static void setEditControls(HWND hDlg)
         romType == ROM_S1990 || romType == ROM_KANJI ||  romType == ROM_GIDE ||
         romType == ROM_TURBORTIMER || romType == ROM_TURBORIO || romType == ROM_NMS1210 ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
-        romType == ROM_NMS8280DIGI ||
+        romType == ROM_NMS8280DIGI || 
         romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM || romType == ROM_JOYREXPSG ||
-        romType == ROM_KANJI12 || romType == ROM_JISYO || romType == ROM_OPCODEPSG ||
+        romType == ROM_KANJI12 || romType == ROM_JISYO || 
+        romType == ROM_OPCODEPSG || romType == ROM_OPCODESLOT ||
         romType == ROM_SVI328FDC || romType == ROM_SVI80COL || romType == ROM_SVI727 ||
         romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232)
     {
@@ -1033,11 +1048,12 @@ static void setEditControls(HWND hDlg)
 
     case RAM_NORMAL:
         {
+            static int RamSizes[] = { 8, 16, 24, 32, 48, 64 };
             int index = 0;
-            for (i = 8; i <= 64; i *= 2) {
-                sprintf(buffer, "%d kB", i);
+            for (i = 0; i < sizeof(RamSizes) / sizeof(RamSizes[0]); i++) {
+                sprintf(buffer, "%d kB", RamSizes[i]);
                 SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_ADDSTRING, 0, (LPARAM)buffer);
-                if (index == 0 || i == editRamNormalSize / 1024) {
+                if (index == 0 || RamSizes[i] == editRamNormalSize / 1024) {
                     SendDlgItemMessage(hDlg, IDC_ROMSIZE, CB_SETCURSEL, index, 0);
                 }
                 index++;
@@ -1231,6 +1247,19 @@ static void setEditControls(HWND hDlg)
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
         break;
 
+    case ROM_OPCODEBIOS:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x0000 - 0x1FFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
+    case ROM_OPCODEMEGA:
+    case ROM_OPCODESAVE:
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
+        SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "0x8000 - 0xFFFF");
+        EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
+        break;
+
     case ROM_0x4000:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         if (romPages > 6) romPages = 6;
@@ -1346,6 +1375,7 @@ static void setEditControls(HWND hDlg)
     case ROM_TURBORPCM:
     case ROM_JOYREXPSG:
     case ROM_OPCODEPSG:
+    case ROM_OPCODESLOT:
     case ROM_SVI328FDC:
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
@@ -1488,6 +1518,10 @@ static RomType romTypeList[] = {
     ROM_SVI328RS232,
     ROM_SVI80COL,
     ROM_SF7000IPL,
+    ROM_OPCODEBIOS,
+    ROM_OPCODEMEGA,
+    ROM_OPCODESAVE,
+    ROM_OPCODESLOT,
     
     ROM_UNKNOWN,
 };

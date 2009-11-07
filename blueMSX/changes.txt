@@ -15,10 +15,12 @@ Next release
 v 2.8.3     November 30, 2009
 =============================
 
+- Added support for ColecoVision Super Action Controller
+- Added support for ColecoVision Super Expansion Module hardware
+- Added support for Parallax ARC cartridge
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
-- Added support for Super Action Controller
-- Added support for Parallax ARC cartridge
+- Fixed 'no frequency' bug in SN76489 emulation
 
 v 2.8.2     August 14, 2009
 ===========================

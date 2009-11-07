@@ -137,7 +137,10 @@
 #include "romMapperJoyrexPsg.h"
 #include "romMapperOpcodePsg.h"
 #include "romMapperArc.h"
-
+#include "romMapperOpcodeBios.h"
+#include "romMapperOpcodeMegaRam.h"
+#include "romMapperOpcodeSaveRam.h"
+#include "romMapperOpcodeSlotManager.h"
 
 
 // PacketFileSystem.h Need to be included after all other includes
@@ -1029,6 +1032,22 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             continue;
         }
 
+        // --------- ColecoVision Super Expansion Module specific mappers
+        if (machine->slotInfo[i].romType == ROM_OPCODEMEGA) {
+            success &= romMapperOpcodeMegaRamCreate(slot, subslot, startPage);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_OPCODESAVE) {
+            success &= romMapperOpcodeSaveRamCreate(slot, subslot, startPage);
+            continue;
+        }
+        
+        if (machine->slotInfo[i].romType == ROM_OPCODESLOT) {
+            success &= romMapperOpcodeSlotManagerCreate();
+            continue;
+        }
+
         // --------- SVI specific mappers
         if (machine->slotInfo[i].romType == ROM_SVI328FDC) {
             success &= svi328FdcCreate();
@@ -1403,6 +1422,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_ARC:
             success &= romMapperArcCreate(romName, buf, size, slot, subslot, startPage);
+            break;
 
         case ROM_NATIONALFDC:
             success &= romMapperNationalFdcCreate(romName, buf, size, slot, subslot, startPage);
@@ -1446,6 +1466,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_PLAYBALL:
             success &= romMapperPlayBallCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_OPCODEBIOS:
+            success &= romMapperOpcodeBiosCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
         case ROM_MICROSOL80:

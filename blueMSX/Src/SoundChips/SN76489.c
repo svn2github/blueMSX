@@ -163,11 +163,30 @@ void sn76489SaveState(SN76489* sn76489)
     saveStateClose(state);
 }
 
-static void setDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
+static void getDebugInfo(SN76489* sn76489, DbgDevice* dbgDevice)
 {
     DbgRegisterBank* regBank;
+    int i;
 
-    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 16);
+    regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegs(), 8);
+
+    for (i = 0; i < 4; i++) {
+        char reg[4];
+        sprintf(reg, "V%d", i + 1);
+        dbgRegisterBankAddRegister(regBank,  i, reg, 8, sn76489->regs[2 * i + 1] & 0x0f);
+    }
+    
+    for (i = 0; i < 4; i++) {
+        char reg[4];
+        sprintf(reg, "T%d", i + 1);
+        if (i < 3) {
+            dbgRegisterBankAddRegister(regBank,  i + 4, reg, 16, sn76489->regs[2 * i] & 0x03ff);
+        }
+        else {
+            dbgRegisterBankAddRegister(regBank,  i + 4, reg, 8, sn76489->regs[2 * i] & 0x03);
+        }
+    }
+
 }
 
 void sn76489Destroy(SN76489* sn76489)
@@ -199,11 +218,14 @@ void sn76489Reset(SN76489* sn76489)
 
 SN76489* sn76489Create(Mixer* mixer)
 {
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     SN76489* sn76489 = (SN76489*)calloc(1, sizeof(SN76489));
 
     sn76489->mixer = mixer;
 
     sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
+    sn76489->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SN76489 PSG", &dbgCallbacks, sn76489);
+
 
     sn76489->voltTableIdx       = VOL_FULL;
     sn76489->whiteNoiseFeedback = FB_COLECO;
@@ -236,9 +258,6 @@ void sn76489WriteData(SN76489* sn76489, UInt16 ioPort, UInt8 data)
     case 0:
     case 2:
     case 4:
-        if ( p->regs[p->latch] == 0 ) {
-            p->regs[p->latch] = 1;
-        }
         if (p->latch == 4 && (p->regs[6] & 3) == 0x03) {
             p->noiseFreq = p->regs[4];
         }
@@ -303,7 +322,12 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
         }
     
         for (i = 0; i <= 2; i++) {
-            if (p->toneFrequency[i] <= 0) {
+            if (p->regs[2 * i] == 0) {
+                p->toneFlipFlop[i] = 1;
+                p->toneInterpol[i] = FLT_MIN;
+                p->toneFrequency[i] = 0;
+            }
+            else if (p->toneFrequency[i] <= 0) {
                 if (p->regs[i * 2] > PSG_CUTOFF) {
                     p->toneInterpol[i] = (clocksPerSample - p->clock + 2 * p->toneFrequency[i]) * p->toneFlipFlop[i] / (clocksPerSample + p->clock);
                     p->toneFlipFlop[i] = -p->toneFlipFlop[i];
@@ -319,7 +343,11 @@ static Int32* sn76489Sync(void* ref, UInt32 count)
             }
         }
 
-        if (p->toneFrequency[3] <= 0) {
+        if (p->noiseFreq == 0) {
+            p->toneFlipFlop[3] = 1;
+            p->toneFrequency[3] = 0;
+        }
+        else if (p->toneFrequency[3] <= 0) {
             p->toneFlipFlop[3] = -p->toneFlipFlop[3];
             if (p->noiseFreq != 0x80) {
                 p->toneFrequency[3] += p->noiseFreq * (clocksPerSample / p->noiseFreq + 1);

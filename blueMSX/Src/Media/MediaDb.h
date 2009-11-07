@@ -182,7 +182,11 @@ enum  {
     ROM_EXTRAM64KB  = 152,
     ROM_NMS1210     = 153,
     ROM_ARC         = 154,
-    ROM_MAXROMID    = 154
+    ROM_OPCODEBIOS  = 155,
+    ROM_OPCODESLOT  = 156,
+    ROM_OPCODESAVE  = 157,
+    ROM_OPCODEMEGA  = 158,
+    ROM_MAXROMID    = 158
 };
 
 typedef struct MediaType MediaType;
