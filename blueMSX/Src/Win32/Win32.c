@@ -2458,6 +2458,15 @@ int emuCheckLanguageArgument(char* cmdLine, int defaultLang){
 }
 
 ////////////////////////////////////////////////////////////////////
+
+static int getScreenBitDepth()
+{
+    HDC hdc;
+    hdc = GetDC(GetDesktopWindow());
+    return GetDeviceCaps(hdc, BITSPIXEL) * GetDeviceCaps(hdc, PLANES);
+}
+
+////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
 #ifdef _CONSOLE
@@ -2489,6 +2498,10 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         strcat(szLine, " ");
     }
 #endif
+
+    if (getScreenBitDepth() == 24) {
+        MessageBox(NULL, "blueMSX works best in 16 or 32 bits color depth", "blueMSX Info", MB_OK);
+    }
 
     hwnd = FindWindow("blueMSX", "  blueMSX");
     if (hwnd != NULL && *szLine) {
