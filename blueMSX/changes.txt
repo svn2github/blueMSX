@@ -18,7 +18,7 @@ v 2.8.3     May 30, 2010
 - Added support for ColecoVision Super Expansion Module hardware
 - Added support for ColecoVision Expansion Module #2 using mouse
 - Added support for Parallax ARC cartridge
-- Added support for stereo PSG
+- Added support for stereo PSG in MSX machine configuration
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
 - Fixed 'no frequency' bug in SN76489 emulation

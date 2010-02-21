@@ -248,6 +248,17 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else if (0 == strcmp(buffer, "1")) machine->audio.psgstereo = 1;
     else { iniFileClose(); return 0; }
 
+    for (i = 0; i < sizeof(machine->audio.psgpan) / sizeof(machine->audio.psgpan[0]); i++) {
+        char s[32];
+        sprintf(s, "PSG Pan channel %d", i);
+        iniFileGetString("AUDIO", s, "none", buffer, 10000);
+        if (0 == strcmp(buffer, "none")) machine->audio.psgpan[i] = i == 0 ? 0 : i == 1 ? -1 : 1;
+        else if (0 == strcmp(buffer, "left")) machine->audio.psgpan[i] = -1;
+        else if (0 == strcmp(buffer, "center")) machine->audio.psgpan[i] = 0;
+        else if (0 == strcmp(buffer, "right")) machine->audio.psgpan[i] = 1;
+        else { iniFileClose(); return 0; }
+    }
+
     // Read subslot info
     iniFileGetString("Subslotted Slots", "slot 0", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[0].subslotted = 0;
@@ -348,6 +359,15 @@ void machineSave(Machine* machine)
     // Write Audio info
     iniFileWriteString("AUDIO", "PSG Stereo", machine->audio.psgstereo ? "1" : "0");
     
+    if (machine->audio.psgstereo) {
+        for (i = 0; i < sizeof(machine->audio.psgpan) / sizeof(machine->audio.psgpan[0]); i++) {
+            char s[32];
+            int pan = machine->audio.psgpan[i];
+            sprintf(s, "PSG Pan channel %d", i);
+            iniFileWriteString("AUDIO", s,  pan < 0 ? "left" : pan > 0 ? "right" : "center");
+        }
+    }
+
     // Write FDC info
     sprintf(buffer, "%d", machine->fdc.count);
     iniFileWriteString("FDC", "Count", buffer);
@@ -674,7 +694,13 @@ void machineLoadState(Machine* machine)
     machine->cmos.batteryBacked    = saveStateGet(state, "cmosBatteryBacked", 0);
 
     machine->audio.psgstereo       = saveStateGet(state, "audioPsgStereo", 0);
-    
+
+    for (i = 0; i < sizeof(machine->audio.psgpan) / sizeof(machine->audio.psgpan[0]); i++) {
+        char s[32];
+        sprintf(s, "audioPsgStereo%d", i);
+        machine->audio.psgpan[i] = saveStateGet(state, s, i == 0 ? 0 : i == 1 ? -1 : 1);
+    }
+
     machine->fdc.count             = saveStateGet(state, "fdcCount",          2);
     machine->cpu.freqZ80           = saveStateGet(state, "cpuFreqZ80",        3579545);
     machine->cpu.freqR800          = saveStateGet(state, "cpuFreqR800",       7159090);
@@ -745,6 +771,13 @@ void machineSaveState(Machine* machine)
     saveStateSet(state, "cmosBatteryBacked", machine->cmos.batteryBacked);
 
     saveStateSet(state, "audioPsgStereo",    machine->audio.psgstereo);
+
+    for (i = 0; i < sizeof(machine->audio.psgpan) / sizeof(machine->audio.psgpan[0]); i++) {
+        char s[32];
+        sprintf(s, "audioPsgStereo%d", i);
+        saveStateSet(state, s, machine->audio.psgpan[i]);
+    }
+
     
     saveStateSet(state, "fdcCount",          machine->fdc.count);
     saveStateSet(state, "cpuFreqZ80",        machine->cpu.freqZ80);

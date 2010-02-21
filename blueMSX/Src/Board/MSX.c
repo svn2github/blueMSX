@@ -250,6 +250,7 @@ int msxCreate(Machine* machine,
                           machine->board.type == BOARD_MSX_FORTE_II 
                           ? PSGTYPE_AY8910 : PSGTYPE_YM2149,
                           machine->audio.psgstereo,
+                          machine->audio.psgpan,
                           machine->board.type == BOARD_MSX_FORTE_II ? 1 : 2);
 
     if (machine->board.type == BOARD_MSX_FORTE_II) {

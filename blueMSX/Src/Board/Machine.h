@@ -81,6 +81,7 @@ typedef struct {
     } video;
     struct {
         int psgstereo;
+        int psgpan[3];
     } audio;
     struct {
         int enable;

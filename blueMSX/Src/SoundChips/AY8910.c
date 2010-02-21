@@ -81,6 +81,7 @@ struct AY8910 {
     Int32  daVolume[2];
 
     Int32  stereo;
+    Int32  pan[3];
 
     Int32  buffer[AUDIO_STEREO_BUFFER_SIZE];
 };
@@ -209,7 +210,7 @@ static int dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 val
     return 1;
 }
 
-AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int32 stereo)
+AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int32 stereo, Int32* pan)
 {
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
@@ -243,6 +244,9 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int3
     ay8910->noiseRand = 1;
     ay8910->noiseVolume = 1;
     ay8910->stereo = stereo;
+    ay8910->pan[0] = pan[0];
+    ay8910->pan[1] = pan[1];
+    ay8910->pan[2] = pan[2];
 
     ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, stereo, ay8910Sync, ay8910);
 
@@ -490,8 +494,18 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
         }
 
         if (ay8910->stereo) {
-            Int32 sampleVolumeL = sampleVolume[0] + sampleVolume[1];
-            Int32 sampleVolumeR = sampleVolume[0] + sampleVolume[2];
+            Int32 sampleVolumeL = 0;
+            Int32 sampleVolumeR = 0;
+            int i;
+
+            for (i = 0; i < 3; i++) {
+                if (ay8910->pan[i] <= 0) {
+                    sampleVolumeL += sampleVolume[i];
+                }
+                if (ay8910->pan[i] >= 0) {
+                    sampleVolumeR += sampleVolume[i];
+                }
+            }
 
             /* Perform DC offset filtering */
             ay8910->ctrlVolume[0] = sampleVolumeL - ay8910->oldSampleVolume[0] + 0x3fe7 * ay8910->ctrlVolume[0] / 0x4000;
@@ -504,8 +518,8 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
             ay8910->daVolume[1] += 2 * (ay8910->ctrlVolume[1] - ay8910->daVolume[1]) / 3;
             
             /* Store calclulated sample value */
-            ay8910->buffer[2 * index + 0] = 9 * ay8910->daVolume[0] * 3 / 2;
-            ay8910->buffer[2 * index + 1] = 9 * ay8910->daVolume[1] * 3 / 2;
+            ay8910->buffer[2 * index + 0] = 9 * ay8910->daVolume[0];
+            ay8910->buffer[2 * index + 1] = 9 * ay8910->daVolume[1];
         }
         else {
             Int32 sampleVolumes = sampleVolume[0] + sampleVolume[1] + sampleVolume[2];
