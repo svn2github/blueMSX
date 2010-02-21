@@ -153,6 +153,10 @@
                     <key code="joy1-quadwheelB" x="20" y="104" width="24" height="5" />
                 </keyboard>
 	        </block>
+
+		    <block x="80" y="115" visible="port1-steeringwheel">
+	            <image x="100" y="17" src="TurboRN/EOS-STEERINGWHEEL.bmp"/>
+	        </block>
 	        
 	        
         </page>
@@ -310,6 +314,10 @@
                     <key code="joy2-quadwheelA" x="20" y="99" width="24" height="5" />
                     <key code="joy2-quadwheelB" x="20" y="104" width="24" height="5" />
                 </keyboard>
+	        </block>
+
+		    <block x="80" y="115" visible="port2-steeringwheel">
+	            <image x="100" y="17" src="TurboRN/EOS-STEERINGWHEEL.bmp"/>
 	        </block>
 	        	        
         </page>
