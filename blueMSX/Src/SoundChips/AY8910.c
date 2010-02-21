@@ -76,11 +76,13 @@ struct AY8910 {
 
     UInt8  enable;
     UInt8  ampVolume[3];
-    Int32  ctrlVolume;
-    Int32  oldSampleVolume;
-    Int32  daVolume;
+    Int32  ctrlVolume[2];
+    Int32  oldSampleVolume[2];
+    Int32  daVolume[2];
 
-    Int32  buffer[AUDIO_MONO_BUFFER_SIZE];
+    Int32  stereo;
+
+    Int32  buffer[AUDIO_STEREO_BUFFER_SIZE];
 };
 
 void ay8910LoadState(AY8910* ay8910)
@@ -100,9 +102,12 @@ void ay8910LoadState(AY8910* ay8910)
     ay8910->envPhase         =         saveStateGet(state, "envPhase",        0);
 
     ay8910->enable           = (UInt8) saveStateGet(state, "enable",          0);
-    ay8910->ctrlVolume       =         saveStateGet(state, "ctrlVolume",      0);
-    ay8910->oldSampleVolume  =         saveStateGet(state, "oldSampleVolume", 0);
-    ay8910->daVolume         =         saveStateGet(state, "daVolume",        0);
+    ay8910->ctrlVolume[0]       =         saveStateGet(state, "ctrlVolume",      0);
+    ay8910->oldSampleVolume[0]  =         saveStateGet(state, "oldSampleVolume", 0);
+    ay8910->daVolume[0]         =         saveStateGet(state, "daVolume",        0);
+    ay8910->ctrlVolume[1]       =         saveStateGet(state, "ctrlVolume1",      0);
+    ay8910->oldSampleVolume[1]  =         saveStateGet(state, "oldSampleVolume1", 0);
+    ay8910->daVolume[1]         =         saveStateGet(state, "daVolume1",        0);
 
     for (i = 0; i < 16; i++) {
         sprintf(tag, "reg%d", i);
@@ -140,9 +145,12 @@ void ay8910SaveState(AY8910* ay8910)
     saveStateSet(state, "envPhase",        ay8910->envPhase);
 
     saveStateSet(state, "enable",          ay8910->enable);
-    saveStateSet(state, "ctrlVolume",      ay8910->ctrlVolume);
-    saveStateSet(state, "oldSampleVolume", ay8910->oldSampleVolume);
-    saveStateSet(state, "daVolume",        ay8910->daVolume);
+    saveStateSet(state, "ctrlVolume",      ay8910->ctrlVolume[0]);
+    saveStateSet(state, "oldSampleVolume", ay8910->oldSampleVolume[0]);
+    saveStateSet(state, "daVolume",        ay8910->daVolume[0]);
+    saveStateSet(state, "ctrlVolume1",      ay8910->ctrlVolume[1]);
+    saveStateSet(state, "oldSampleVolume1", ay8910->oldSampleVolume[1]);
+    saveStateSet(state, "daVolume1",        ay8910->daVolume[1]);
 
     for (i = 0; i < 16; i++) {
         sprintf(tag, "reg%d", i);
@@ -201,7 +209,7 @@ static int dbgWriteRegister(AY8910* ay8910, char* name, int regIndex, UInt32 val
     return 1;
 }
 
-AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
+AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int32 stereo)
 {
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, dbgWriteRegister, NULL };
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
@@ -234,8 +242,9 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type)
     ay8910->connector = connector;
     ay8910->noiseRand = 1;
     ay8910->noiseVolume = 1;
+    ay8910->stereo = stereo;
 
-    ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, ay8910Sync, ay8910);
+    ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, stereo, ay8910Sync, ay8910);
 
     ay8910Reset(ay8910);
     for (i = 0; i < 16; i++) {
@@ -427,7 +436,7 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
     UInt32  index;
 
     for (index = 0; index < count; index++) {
-        Int32 sampleVolume = 0;
+        Int32 sampleVolume[3] = { 0, 0, 0 };
         Int16 envVolume;
 
         /* Update noise generator */
@@ -473,22 +482,44 @@ static Int32* ay8910Sync(void* ref, UInt32 count)
 
             /* Amplify sample using either envelope volume or channel volume */
             if (ay8910->ampVolume[channel] & 0x10) {
-                sampleVolume += (Int16)tone * voltEnvTable[envVolume] / 16;
+                sampleVolume[channel] += (Int16)tone * voltEnvTable[envVolume] / 16;
             }
             else {
-                sampleVolume += (Int16)tone * voltTable[ay8910->ampVolume[channel]] / 16;
+                sampleVolume[channel] += (Int16)tone * voltTable[ay8910->ampVolume[channel]] / 16;
             }
         }
 
-        /* Perform DC offset filtering */
-        ay8910->ctrlVolume = sampleVolume - ay8910->oldSampleVolume + 0x3fe7 * ay8910->ctrlVolume / 0x4000;
-        ay8910->oldSampleVolume = sampleVolume;
+        if (ay8910->stereo) {
+            Int32 sampleVolumeL = sampleVolume[0] + sampleVolume[1];
+            Int32 sampleVolumeR = sampleVolume[0] + sampleVolume[2];
 
-        /* Perform simple 1 pole low pass IIR filtering */
-        ay8910->daVolume += 2 * (ay8910->ctrlVolume - ay8910->daVolume) / 3;
-        
-        /* Store calclulated sample value */
-        ay8910->buffer[index] = 9 * ay8910->daVolume;
+            /* Perform DC offset filtering */
+            ay8910->ctrlVolume[0] = sampleVolumeL - ay8910->oldSampleVolume[0] + 0x3fe7 * ay8910->ctrlVolume[0] / 0x4000;
+            ay8910->oldSampleVolume[0] = sampleVolumeL;
+            ay8910->ctrlVolume[1] = sampleVolumeR - ay8910->oldSampleVolume[1] + 0x3fe7 * ay8910->ctrlVolume[1] / 0x4000;
+            ay8910->oldSampleVolume[1] = sampleVolumeR;
+
+            /* Perform simple 1 pole low pass IIR filtering */
+            ay8910->daVolume[0] += 2 * (ay8910->ctrlVolume[0] - ay8910->daVolume[0]) / 3;
+            ay8910->daVolume[1] += 2 * (ay8910->ctrlVolume[1] - ay8910->daVolume[1]) / 3;
+            
+            /* Store calclulated sample value */
+            ay8910->buffer[2 * index + 0] = 9 * ay8910->daVolume[0] * 3 / 2;
+            ay8910->buffer[2 * index + 1] = 9 * ay8910->daVolume[1] * 3 / 2;
+        }
+        else {
+            Int32 sampleVolumes = sampleVolume[0] + sampleVolume[1] + sampleVolume[2];
+
+            /* Perform DC offset filtering */
+            ay8910->ctrlVolume[0] = sampleVolumes - ay8910->oldSampleVolume[0] + 0x3fe7 * ay8910->ctrlVolume[0] / 0x4000;
+            ay8910->oldSampleVolume[0] = sampleVolumes;
+
+            /* Perform simple 1 pole low pass IIR filtering */
+            ay8910->daVolume[0] += 2 * (ay8910->ctrlVolume[0] - ay8910->daVolume[0]) / 3;
+            
+            /* Store calclulated sample value */
+            ay8910->buffer[index] = 9 * ay8910->daVolume[0];
+        }
     }
 
     return ay8910->buffer;

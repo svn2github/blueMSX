@@ -39,7 +39,7 @@ typedef enum { AY8910_MSX, AY8910_SVI } Ay8910Connector;
 typedef enum { PSGTYPE_AY8910, PSGTYPE_YM2149, PSGTYPE_SN76489 } PsgType;
 
 /* Constructor and destructor */
-AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type);
+AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int32 stereo);
 void ay8910Destroy(AY8910* ay8910);
 
 /* Reset chip */

@@ -36,7 +36,7 @@ typedef struct MsxPsg MsxPsg;
 typedef UInt8 (*CassetteCb)(void*);
 
 void msxPsgRegisterCassetteRead(MsxPsg* msxPsg, CassetteCb cb, void* ref);
-MsxPsg* msxPsgCreate(PsgType type, int maxPorts);
+MsxPsg* msxPsgCreate(PsgType type, int stereo, int maxPorts);
 
 #endif // MSX_PSG_H
 

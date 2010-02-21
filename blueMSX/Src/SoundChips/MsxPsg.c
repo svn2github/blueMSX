@@ -239,12 +239,12 @@ void msxPsgRegisterCassetteRead(MsxPsg* msxPsg, CassetteCb cb, void* ref)
     msxPsg->casRef = ref;
 }
 
-MsxPsg* msxPsgCreate(PsgType type, int maxPorts)
+MsxPsg* msxPsgCreate(PsgType type, int stereo, int maxPorts)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     MsxPsg* msxPsg = (MsxPsg*)calloc(1, sizeof(MsxPsg));
 
-    msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, type);
+    msxPsg->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, type, stereo);
     msxPsg->maxPorts = maxPorts;
 
     msxPsg->dac = dacCreate(boardGetMixer(), DAC_MONO);

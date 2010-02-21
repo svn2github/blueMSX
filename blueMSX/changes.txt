@@ -5,20 +5,19 @@ Next release
 - ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
 
 - Fix DER files in panasonic FDC
-- Add support for coleco driving module
 - Add search for numbers (byte, word, dword) in degugger
 
 - Wildcard search (part of numbers or strings)
 - Memory watchpoint
 
 
-v 2.8.3     November 30, 2009
+v 2.8.3     May 30, 2010
 =============================
 
 - Added support for ColecoVision Super Action Controller
 - Added support for ColecoVision Super Expansion Module hardware
-- Added support for Parallax ARC cartridge
 - Added support for ColecoVision Expansion Module #2 using mouse
+- Added support for Parallax ARC cartridge
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
 - Fixed 'no frequency' bug in SN76489 emulation
