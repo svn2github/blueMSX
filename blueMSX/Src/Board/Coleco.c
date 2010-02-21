@@ -48,7 +48,7 @@
 #include "JoystickPort.h"
 #include "ColecoJoystick.h"
 #include "ColecoSuperAction.h"
-
+#include "ColecoSteeringWheel.h"
 
 /* Hardware */
 static SN76489*    sn76489;
@@ -165,6 +165,9 @@ static void colecoJoyIoHandler(void* dummy, int port, JoystickPortType type)
         break;
     case JOYSTICK_PORT_SUPERACTION:
         joyDevice[port] = colecoSuperActionCreate(port);
+        break;
+    case JOYSTICK_PORT_STEERINGWHEEL:
+        joyDevice[port] = colecoSteeringWheelCreate(port);
         break;
     }
 }

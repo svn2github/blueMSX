@@ -588,7 +588,7 @@ static void ld_a_i(R800* r800) {
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         ZSXYTable[r800->regs.AF.B.h] | (r800->regs.iff2 << 2);
     
-    if (r800->cpuMode == CPU_Z80 && ((r800->intState == INT_LOW && r800->regs.iff1) || (r800->nmiState == INT_EDGE))) r800->regs.AF.B.l &= 0xfb;
+    if (r800->cpuMode == CPU_Z80 && ((r800->intState == INT_LOW && r800->regs.iff1) || r800->nmiEdge)) r800->regs.AF.B.l &= 0xfb;
 }
 
 static void ld_a_r(R800* r800) {
@@ -597,7 +597,7 @@ static void ld_a_r(R800* r800) {
     r800->regs.AF.B.l = (r800->regs.AF.B.l & C_FLAG) | 
         ZSXYTable[r800->regs.AF.B.h] | (r800->regs.iff2 << 2);
     
-    if (r800->cpuMode == CPU_Z80 && ((r800->intState == INT_LOW && r800->regs.iff1) || (r800->nmiState == INT_EDGE))) r800->regs.AF.B.l &= 0xfb;
+    if (r800->cpuMode == CPU_Z80 && ((r800->intState == INT_LOW && r800->regs.iff1) || r800->nmiEdge)) r800->regs.AF.B.l &= 0xfb;
 }
 
 static void inc_bc(R800* r800) {
@@ -4945,7 +4945,7 @@ static void ccf(R800* r800) { //DIFF
 }
 
 static void halt(R800* r800) {
-    if ((r800->intState == INT_LOW && r800->regs.iff1) || (r800->nmiState == INT_EDGE)) {
+    if ((r800->intState == INT_LOW && r800->regs.iff1) || r800->nmiEdge) {
 		r800->regs.halt=0;
     }
 	else {
@@ -5911,6 +5911,7 @@ void r800Reset(R800 *r800, UInt32 cpuTime) {
     r800->defaultDatabus = 0xff;
     r800->intState       = INT_HIGH;
     r800->nmiState       = INT_HIGH;
+    r800->nmiEdge        = 0;
 
     r800->callstackSize = 0;
 }
@@ -5932,8 +5933,9 @@ void r800ClearInt(R800* r800) {
 
 void r800SetNmi(R800* r800) {
     if (r800->nmiState == INT_HIGH) {
-        r800->nmiState = INT_EDGE;
+        r800->nmiEdge = 1;
     }
+    r800->nmiState = INT_LOW;
 }
 
 void r800ClearNmi(R800* r800) {
@@ -6043,14 +6045,14 @@ void r800Execute(R800* r800) {
 			continue;
 		}
 
-        if (! ((r800->intState==INT_LOW && r800->regs.iff1)||(r800->nmiState==INT_EDGE)) ) {
+        if (! ((r800->intState==INT_LOW && r800->regs.iff1)||r800->nmiEdge) ) {
 			continue;
         }
 
         /* If it is NMI... */
 
-        if (r800->nmiState == INT_EDGE) {
-            r800->nmiState = INT_LOW;
+        if (r800->nmiEdge) {
+            r800->nmiEdge = 0;
 #ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
@@ -6133,7 +6135,7 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
             r800->regs.iff1 >>= iff1;
         }
 
-        if (r800->nmiState != INT_EDGE && (iff1 || r800->intState != INT_HIGH || !r800->regs.iff1)) {
+        if (! ((r800->intState==INT_LOW && r800->regs.iff1)||r800->nmiEdge) ) {
             continue;
         }
 
@@ -6143,8 +6145,8 @@ void r800ExecuteUntil(R800* r800, UInt32 endTime) {
         }
 
         /* If it is NMI... */
-        if (r800->nmiState == INT_EDGE) {
-            r800->nmiState = INT_LOW;
+        if (r800->nmiEdge) {
+            r800->nmiEdge = 0;
 #ifdef ENABLE_CALLSTACK
             r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif
@@ -6221,7 +6223,7 @@ void r800ExecuteInstruction(R800* r800) {
         r800->regs.iff1 >>= iff1;
     }
 
-    if (r800->nmiState != INT_EDGE && (iff1 || r800->intState != INT_HIGH || !r800->regs.iff1)) {
+        if (! ((r800->intState==INT_LOW && r800->regs.iff1)||r800->nmiEdge) ) {
         return;
     }
 
@@ -6231,8 +6233,8 @@ void r800ExecuteInstruction(R800* r800) {
     }
 
     /* If it is NMI... */
-    if (r800->nmiState == INT_EDGE) {
-        r800->nmiState = INT_LOW;
+    if (r800->nmiEdge) {
+        r800->nmiEdge = 0;
 #ifdef ENABLE_CALLSTACK
         r800->callstack[r800->callstackSize++ & 0xff] = r800->regs.PC.W;
 #endif

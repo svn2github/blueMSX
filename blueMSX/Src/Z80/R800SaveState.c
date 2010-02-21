@@ -94,6 +94,7 @@ void r800LoadState(R800* r800)
     r800->dataBus    = (UInt8) saveStateGet(state, "dataBus",    0);
     r800->intState   =         saveStateGet(state, "intState",   0);
     r800->nmiState   =         saveStateGet(state, "nmiState",   0);
+    r800->nmiEdge    =         saveStateGet(state, "nmiEdge",    0);
     r800->cpuMode    =         saveStateGet(state, "cpuMode",    0);
     r800->oldCpuMode =         saveStateGet(state, "oldCpuMode", 0);
     
@@ -121,6 +122,7 @@ void r800SaveState(R800* r800)
     saveStateSet(state, "dataBus",    r800->dataBus);
     saveStateSet(state, "intState",   r800->intState);
     saveStateSet(state, "nmiState",   r800->nmiState);
+    saveStateSet(state, "nmiEdge",    r800->nmiEdge);
     saveStateSet(state, "cpuMode",    r800->cpuMode);
     saveStateSet(state, "oldCpuMode", r800->oldCpuMode);
 

@@ -201,6 +201,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY1_ASCIILASER:idx = TEST(actionType, themeTriggerJoyPort1IsAsciiLaser()); break;
     case THEME_TRIGGER_JOY1_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort1IsColecoJoystick()); break;
     case THEME_TRIGGER_JOY1_SUPERACTION: idx = TEST(actionType, themeTriggerJoyPort1IsSuperAction()); break;
+    case THEME_TRIGGER_JOY1_STEERINGWHEEL: idx = TEST(actionType, themeTriggerJoyPort1IsSteeringWheel()); break;
 
     case THEME_TRIGGER_JOY2_ENABLE:    idx = TEST(actionType, themeTriggerJoyPort2Enabled()); break;
     case THEME_TRIGGER_JOY2_NONE:      idx = TEST(actionType, themeTriggerJoyPort2IsNone()); break;
@@ -213,6 +214,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_JOY2_ASCIILASER:idx = TEST(actionType, themeTriggerJoyPort2IsAsciiLaser()); break;
     case THEME_TRIGGER_JOY2_COLECOJOY: idx = TEST(actionType, themeTriggerJoyPort2IsColecoJoystick()); break;
     case THEME_TRIGGER_JOY2_SUPERACTION: idx = TEST(actionType, themeTriggerJoyPort2IsSuperAction()); break;
+    case THEME_TRIGGER_JOY2_STEERINGWHEEL: idx = TEST(actionType, themeTriggerJoyPort2IsSteeringWheel()); break;
     }
 
     key = (actionType & THEME_TRIGGER_MASK) - THEME_TRIGGER_FIRST_KEY_PRESSED;

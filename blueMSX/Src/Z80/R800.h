@@ -243,6 +243,7 @@ typedef struct
     UInt8         defaultDatabus;   /* Value that is set after im2     */
     int           intState;         /* Sate of interrupt line          */
     int           nmiState;         /* Current NMI state               */
+    int           nmiEdge;          /* Current NMI state               */
 
     CpuMode       cpuMode;          /* Current CPU mode                */
     CpuMode       oldCpuMode;       /* CPU mode before CPU switch      */

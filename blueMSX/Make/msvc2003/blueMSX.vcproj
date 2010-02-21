@@ -2298,6 +2298,12 @@ buildnumber.exe
 				RelativePath="..\..\Src\Input\ColecoJoystickDevice.h">
 			</File>
 			<File
+				RelativePath="..\..\Src\Input\ColecoSteeringWheel.c">
+			</File>
+			<File
+				RelativePath="..\..\Src\Input\ColecoSteeringWheel.h">
+			</File>
+			<File
 				RelativePath="..\..\Src\Input\ColecoSuperAction.c">
 			</File>
 			<File

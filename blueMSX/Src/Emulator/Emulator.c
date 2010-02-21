@@ -387,12 +387,13 @@ static void emulatorThread() {
 
     archEventSet(emuStartEvent);
 }
+//extern int xxxx;
 
 void emulatorStart(const char* stateName) {
         dbgEnable();
 
     archEmulationStartNotification();
-
+//xxxx = 0;
     emulatorResume();
 
     emuExitFlag = 0;

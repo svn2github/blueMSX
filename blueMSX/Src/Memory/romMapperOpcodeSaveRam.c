@@ -31,6 +31,7 @@
 #include "DebugDeviceManager.h"
 #include "SlotManager.h"
 #include "SaveState.h"
+#include "sramLoader.h"
 #include "AY8910.h"
 #include "Board.h"
 #include "IoPort.h"
@@ -43,11 +44,16 @@ typedef struct {
     int     sslot;
     int     startPage;
 
+    int     cmdIdx;
+    int     protectEnable;
+
     int    deviceHandle;
     int    debugHandle;
 
     UInt8   saveRam[0x8000];
+    char    saveRamFilename[512];
 } RomMapperOpcodeSaveRam;
+
 
 
 static void saveState(RomMapperOpcodeSaveRam* rm)
@@ -71,28 +77,56 @@ static void loadState(RomMapperOpcodeSaveRam* rm)
 
 static void destroy(RomMapperOpcodeSaveRam* rm)
 {
+    sramSave(rm->saveRamFilename, rm->saveRam, sizeof(rm->saveRam), NULL, 0);
+
     deviceManagerUnregister(rm->deviceHandle);
     debugDeviceUnregister(rm->debugHandle);
 
     free(rm);
 }
 
-static UInt8 peek(RomMapperOpcodeSaveRam* rm, UInt16 ioPort)
+static void write(RomMapperOpcodeSaveRam* rm, UInt16 address, UInt8 value)
 {
-    return 0xff;
-}
+    switch (rm->cmdIdx++) {
+    case 0: 
+        if (address == 0x5555 && value == 0xaa) return;
+        break;
+    case 1:
+        if (address == 0x2aaa && value == 0x55) return;
+        break;
+    case 2: 
+        if (address == 0x5555 && value == 0xa0) {
+            rm->protectEnable = 1;
+            rm->cmdIdx = 0;
+            return;
+        }
+        if (address == 0x5555 && value == 0x80) return;
+        break;
+    case 3:
+        if (address == 0x5555 && value == 0xaa) return;
+        break;
+    case 4: 
+        if (address == 0x2aaa && value == 0x55) return;
+        break;
+    case 5:
+        if (address == 0x5555 && value == 0x20) {
+            rm->protectEnable = 0;
+            rm->cmdIdx = 0;
+            return;
+        }
+        break;
+    }
 
-static UInt8 read(RomMapperOpcodeSaveRam* rm, UInt16 ioPort)
-{
-    return 0xff;
-}
-
-static void write(RomMapperOpcodeSaveRam* rm, UInt16 ioPort, UInt8 value)
-{
+    if (!rm->protectEnable) {
+        rm->saveRam[address] = value;
+    }
+    rm->cmdIdx = 0;
 }
 
 static void reset(RomMapperOpcodeSaveRam* rm)
 {
+    rm->protectEnable = 0;
+    rm->cmdIdx = 0;
 }
 
 static void getDebugInfo(RomMapperOpcodeSaveRam* rm, DbgDevice* dbgDevice)
@@ -112,6 +146,8 @@ int romMapperOpcodeSaveRamCreate(int slot, int sslot, int startPage)
     rm->startPage = startPage;
     
     memset(rm->saveRam, 0xff, sizeof(rm->saveRam));
+    
+    slotRegister(rm->slot, rm->sslot, rm->startPage, 4, NULL, NULL, write, destroy, rm);
 
     rm->deviceHandle = deviceManagerRegister(ROM_OPCODESAVE, &callbacks, rm);
     rm->debugHandle = debugDeviceRegister(DBGTYPE_RAM, "SAVERAM", &dbgCallbacks, rm);
@@ -120,6 +156,10 @@ int romMapperOpcodeSaveRamCreate(int slot, int sslot, int startPage)
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, rm->saveRam + 0x2000, 1, 1);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 2, rm->saveRam + 0x4000, 1, 1);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 3, rm->saveRam + 0x6000, 1, 1);
+
+    strcpy(rm->saveRamFilename, sramCreateFilename("SaveRam"));
+
+    sramLoad(rm->saveRamFilename, rm->saveRam, sizeof(rm->saveRam), NULL, 0);
 
     reset(rm);
 

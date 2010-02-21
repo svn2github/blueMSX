@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+//int xxxx = 0;
+
 #ifdef WII
 #define MAX_FRAMES_PER_FRAMEBUFFER 3
 #else
@@ -341,6 +344,10 @@ FrameBuffer* frameBufferFlipDrawFrame()
     else if (mixMode == MIXMODE_NONE) {
         frameBufferBlack(currentBuffer->frame + currentBuffer->drawFrame);
     }
+
+//    ++xxxx;
+    //printf("%d\n", xxxx);
+//    confBlendFrames = xxxx < 2100 || (xxxx >= 7900 && xxxx <= 9400);
 
     switch (frameBufferCount) {
     case 2:

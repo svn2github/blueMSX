@@ -115,6 +115,7 @@ typedef enum {
     THEME_TRIGGER_JOY1_ASCIILASER,
     THEME_TRIGGER_JOY1_COLECOJOY,
     THEME_TRIGGER_JOY1_SUPERACTION,
+    THEME_TRIGGER_JOY1_STEERINGWHEEL,
     THEME_TRIGGER_JOY2_ENABLE,
     THEME_TRIGGER_JOY2_NONE,
     THEME_TRIGGER_JOY2_JOYSTICK,
@@ -126,6 +127,7 @@ typedef enum {
     THEME_TRIGGER_JOY2_ASCIILASER,
     THEME_TRIGGER_JOY2_COLECOJOY,
     THEME_TRIGGER_JOY2_SUPERACTION,
+    THEME_TRIGGER_JOY2_STEERINGWHEEL,
 
     THEME_TRIGGER_TEXT_SCANLINESPCT,
     THEME_TRIGGER_TEXT_VIDEOGAMMA,
@@ -292,6 +294,7 @@ int themeTriggerJoyPort1IsGunstick();
 int themeTriggerJoyPort1IsAsciiLaser();
 int themeTriggerJoyPort1IsColecoJoystick();
 int themeTriggerJoyPort1IsSuperAction();
+int themeTriggerJoyPort1IsSteeringWheel();
 int themeTriggerJoyPort2Enabled();
 int themeTriggerJoyPort2IsNone();
 int themeTriggerJoyPort2IsJoystick();
@@ -303,6 +306,7 @@ int themeTriggerJoyPort2IsGunstick();
 int themeTriggerJoyPort2IsAsciiLaser();
 int themeTriggerJoyPort2IsColecoJoystick();
 int themeTriggerJoyPort2IsSuperAction();
+int themeTriggerJoyPort2IsSteeringWheel();
 
 int themeTriggerConfDiskRI();
 int themeTriggerConfCartRI();

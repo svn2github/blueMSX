@@ -527,6 +527,10 @@ int themeTriggerJoyPort1IsSuperAction() {
     return joystickPortGetType(0) == JOYSTICK_PORT_SUPERACTION ? 1 : 0;
 }
 
+int themeTriggerJoyPort1IsSteeringWheel() {
+    return joystickPortGetType(0) == JOYSTICK_PORT_STEERINGWHEEL ? 1 : 0;
+}
+
 int themeTriggerJoyPort2Enabled() {
     return joystickPortGetType(1) != JOYSTICK_PORT_NONE ? 1 : 0;
 }
@@ -569,6 +573,10 @@ int themeTriggerJoyPort2IsColecoJoystick() {
 
 int themeTriggerJoyPort2IsSuperAction() {
     return joystickPortGetType(1) == JOYSTICK_PORT_SUPERACTION ? 1 : 0;
+}
+
+int themeTriggerJoyPort2IsSteeringWheel() {
+    return joystickPortGetType(1) == JOYSTICK_PORT_STEERINGWHEEL ? 1 : 0;
 }
 
 

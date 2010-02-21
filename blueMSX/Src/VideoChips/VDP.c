@@ -514,12 +514,13 @@ static void onVint(VDP* vdp, UInt32 time)
 
     vdp->timeVintEn = 0;
 
+    framecounter++;
+
 //    vdp->lineOffset = -1;
     vdp->vdpStatus[0] |= 0x80;
     vdp->vdpStatus[2] |= 0x40;
 //    if (vdp->vdpVersion != VDP_TMS9929A && vdp->vdpVersion != VDP_TMS99x8A) {
         if (vdp->vdpRegs[1] & 0x20) {
-            framecounter++;
             boardSetInt(INT_IE0);
         }
 //    }
