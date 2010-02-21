@@ -35,11 +35,15 @@ struct ColecoSteeringWheel {
     ColecoJoystickDevice joyDevice;
     int controller;
     UInt32 pos;
+    UInt32 curpos;
 };
+
+#define SENSITIVITY 4
 
 static UInt16 read(ColecoSteeringWheel* joystick) {
     UInt16 state = 0;
-    UInt16 modPos;
+    UInt16 pos;
+    Int32 diff;
     int dx;
     int dy;
 
@@ -47,17 +51,25 @@ static UInt16 read(ColecoSteeringWheel* joystick) {
 
     joystick->pos += dx;
 
-    modPos = (joystick->pos >> 6) & 3;
-    modPos ^= (modPos >> 1) & 1;
+    diff = (Int32)(joystick->curpos - joystick->pos);
+    if (diff >= (1 << SENSITIVITY)) {
+        joystick->curpos -= 1 << SENSITIVITY;
+    }
+    if (-diff >= (1 << SENSITIVITY)) {
+        joystick->curpos += 1 << SENSITIVITY;
+    }
 
-    state = (archMouseGetButtonState(0) << 4) |
-            (modPos << 8);
+    pos = (joystick->curpos >> SENSITIVITY) & 3;
+    pos ^= (pos >> 1) & 1;
+
+    state = (archMouseGetButtonState(0) << 4) | (pos << 8);
 
     return ~state;
 }
 
 static void reset(ColecoSteeringWheel* joystick) {
     joystick->pos = 0;
+    joystick->curpos = 0;
 }
 
 static void destroy(ColecoSteeringWheel* joystick) {
