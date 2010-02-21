@@ -80,6 +80,9 @@ typedef struct {
         int vramSize;
     } video;
     struct {
+        int psgstereo;
+    } audio;
+    struct {
         int enable;
         int batteryBacked;
     } cmos;

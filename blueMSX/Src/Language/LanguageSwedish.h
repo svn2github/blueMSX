@@ -506,6 +506,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->confChipVideoChip        = "Video Chip:";
     ls->confChipVideoRam         = "Video RAM:";
     ls->confChipSoundGB          = "Audio ";
+    ls->confChipPsgStereoText    = " PSG Stereo";
 
     ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " Använd CMOS";

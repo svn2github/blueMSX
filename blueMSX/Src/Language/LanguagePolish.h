@@ -505,6 +505,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->confChipVideoChip        = "Koœæ obrazu:";
     ls->confChipVideoRam         = "Pamiêæ RAM obrazu:";
     ls->confChipSoundGB          = "DŸwiêk ";
+    ls->confChipPsgStereoText    = " PSG Stereo";
 
     ls->confCmosGB                = "CMOS ";
     ls->confCmosEnable            = " Enable CMOS";

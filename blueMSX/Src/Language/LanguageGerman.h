@@ -505,6 +505,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->confChipVideoChip        = "Videochip:";
     ls->confChipVideoRam         = "Video-RAM:";
     ls->confChipSoundGB          = "Sound ";
+    ls->confChipPsgStereoText    = " PSG Stereo";
 
     ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " CMOS einschalten";

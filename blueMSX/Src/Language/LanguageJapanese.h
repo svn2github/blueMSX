@@ -506,6 +506,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->confChipVideoChip        = "ビデオチップ:";
     ls->confChipVideoRam         = "ビデオ RAM:";
     ls->confChipSoundGB          = " サウンド ";
+    ls->confChipPsgStereoText    = " PSG ステレオの切り替え";
 
     ls->confCmosGB                = " CMOS "; 
     ls->confCmosEnable            = " CMOS有効"; 

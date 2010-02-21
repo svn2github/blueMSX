@@ -524,6 +524,7 @@ char* langConfChipVideoGB();
 char* langConfChipVideoChip();
 char* langConfChipVideoRam();
 char* langConfChipSoundGB();
+char* langConfChipPsgStereoText();
 
 char* langConfCmosGB();
 char* langConfCmosEnableText();

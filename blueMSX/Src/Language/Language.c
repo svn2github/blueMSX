@@ -715,6 +715,7 @@ char* langConfChipVideoGB() { return ls->confChipVideoGB; }
 char* langConfChipVideoChip() { return ls->confChipVideoChip; }
 char* langConfChipVideoRam() { return ls->confChipVideoRam; }
 char* langConfChipSoundGB() { return ls->confChipSoundGB; }
+char* langConfChipPsgStereoText() { return ls->confChipPsgStereoText; }
 
 char* langConfCmosGB() { return ls->confCmosGB; }
 char* langConfCmosEnableText() { return ls->confCmosEnable; }

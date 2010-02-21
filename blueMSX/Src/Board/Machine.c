@@ -241,6 +241,13 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     else if (0 == strcmp(buffer, "1")) machine->cmos.batteryBacked = 1;
     else { iniFileClose(); return 0; }
 
+    // Read audio info
+    iniFileGetString("AUDIO", "PSG Stereo", "none", buffer, 10000);
+    if (0 == strcmp(buffer, "none")) machine->audio.psgstereo = 0;
+    else if (0 == strcmp(buffer, "0")) machine->audio.psgstereo = 0;
+    else if (0 == strcmp(buffer, "1")) machine->audio.psgstereo = 1;
+    else { iniFileClose(); return 0; }
+
     // Read subslot info
     iniFileGetString("Subslotted Slots", "slot 0", "none", buffer, 10000);
     if (0 == strcmp(buffer, "0")) machine->slot[0].subslotted = 0;
@@ -338,6 +345,9 @@ void machineSave(Machine* machine)
     iniFileWriteString("CMOS", "Enable CMOS", machine->cmos.enable ? "1" : "0");
     iniFileWriteString("CMOS", "Battery Backed", machine->cmos.batteryBacked ? "1" : "0");
 
+    // Write Audio info
+    iniFileWriteString("AUDIO", "PSG Stereo", machine->audio.psgstereo ? "1" : "0");
+    
     // Write FDC info
     sprintf(buffer, "%d", machine->fdc.count);
     iniFileWriteString("FDC", "Count", buffer);
@@ -662,6 +672,8 @@ void machineLoadState(Machine* machine)
     
     machine->cmos.enable           = saveStateGet(state, "cmosEnable",        0);
     machine->cmos.batteryBacked    = saveStateGet(state, "cmosBatteryBacked", 0);
+
+    machine->audio.psgstereo       = saveStateGet(state, "audioPsgStereo", 0);
     
     machine->fdc.count             = saveStateGet(state, "fdcCount",          2);
     machine->cpu.freqZ80           = saveStateGet(state, "cpuFreqZ80",        3579545);
@@ -731,6 +743,8 @@ void machineSaveState(Machine* machine)
 
     saveStateSet(state, "cmosEnable",        machine->cmos.enable);
     saveStateSet(state, "cmosBatteryBacked", machine->cmos.batteryBacked);
+
+    saveStateSet(state, "audioPsgStereo",    machine->audio.psgstereo);
     
     saveStateSet(state, "fdcCount",          machine->fdc.count);
     saveStateSet(state, "cpuFreqZ80",        machine->cpu.freqZ80);

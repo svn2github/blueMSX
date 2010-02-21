@@ -505,6 +505,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->confChipVideoChip        = "Видеочип:";
     ls->confChipVideoRam         = "Видеопамять:";
     ls->confChipSoundGB          = "Звук ";
+    ls->confChipPsgStereoText    = " PSG стерео";
 
     ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " Включить CMOS";

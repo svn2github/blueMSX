@@ -505,6 +505,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->confChipVideoChip       = "Puce Video:";
     ls->confChipVideoRam        = "Video RAM:";
     ls->confChipSoundGB         = "Son ";
+    ls->confChipPsgStereoText    = " PSG Stéréo";
 
     ls->confCmosGB                = "CMOS "; 
     ls->confCmosEnable            = " Activer la CMOS"; 

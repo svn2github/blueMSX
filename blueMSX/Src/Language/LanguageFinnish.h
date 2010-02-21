@@ -506,6 +506,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->confChipVideoChip        = "Videopiiri:";
     ls->confChipVideoRam         = "Videomuisti:";
     ls->confChipSoundGB          = "Ääni ";
+    ls->confChipPsgStereoText    = " PSG Stereo";
 
     ls->confCmosGB               = "Kellopiiri ";
     ls->confCmosEnable           = " Ota kellopiiri käyttöön";

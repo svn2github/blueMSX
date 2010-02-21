@@ -2205,6 +2205,9 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_ADDSTRING, 0, (LPARAM)"V9938");
         SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_ADDSTRING, 0, (LPARAM)"V9958");
 
+        SetWindowText(GetDlgItem(hDlg, IDC_AUDIOGROUPBOX), langConfChipSoundGB());
+        SetWindowText(GetDlgItem(hDlg, IDC_AUDIOPSGSTEREO), langConfChipPsgStereoText());
+        
         SendMessage(hDlg, WM_UPDATEMAHCINE, 0, 0);
 
         return FALSE;
@@ -2253,6 +2256,9 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
             case IDC_CONF_VRAM:
                 change = getVramList(hDlg);
                 break;
+            case IDC_AUDIOPSGSTEREO:
+                machine->audio.psgstereo = getBtCheck(hDlg, IDC_AUDIOPSGSTEREO);
+                break;
             default:
                 change = 0;
             }
@@ -2271,6 +2277,7 @@ static BOOL CALLBACK chipsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
         case VDP_V9958: SendDlgItemMessage(hDlg, IDC_CONF_VIDEOCHIP, CB_SETCURSEL, 3, 0); break;
         }
         updateVramList(hDlg);
+        setBtCheck(hDlg, IDC_AUDIOPSGSTEREO, machine->audio.psgstereo, 1);
         return TRUE;
     }
 

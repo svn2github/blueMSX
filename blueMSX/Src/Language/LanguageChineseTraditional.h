@@ -505,6 +505,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->confChipVideoChip        = "視訊晶片:";
     ls->confChipVideoRam         = "視訊 RAM:";
     ls->confChipSoundGB          = "音效 ";
+    ls->confChipPsgStereoText    = " PSG 立體聲";
 
     ls->confCmosGB                = "CMOS ";
     ls->confCmosEnable            = " 啟用 CMOS";

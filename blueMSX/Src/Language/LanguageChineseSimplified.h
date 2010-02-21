@@ -505,6 +505,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->confChipVideoChip        = "显示芯片:";
     ls->confChipVideoRam         = "显示内存:";
     ls->confChipSoundGB          = "声音 ";
+    ls->confChipPsgStereoText    = " PSG 立体声";
 
     ls->confCmosGB                = "CMOS ";
     ls->confCmosEnable            = " 启用 CMOS";

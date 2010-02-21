@@ -505,6 +505,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->confChipVideoChip        = "비디오 칩:";
     ls->confChipVideoRam         = "비디오 램:";
     ls->confChipSoundGB          = "사운드 ";
+    ls->confChipPsgStereoText    = " PSG 스테레오 변환";
 
     ls->confCmosGB                = "CMOS ";
     ls->confCmosEnable            = " CMOS 사용";

@@ -497,6 +497,7 @@ typedef struct {
     char* confChipVideoChip;
     char* confChipVideoRam;
     char* confChipSoundGB;
+    char* confChipPsgStereoText;
 
     char* confCmosGB;
     char* confCmosEnable;

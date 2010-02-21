@@ -505,6 +505,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->confChipVideoChip       = "Videochip:";
     ls->confChipVideoRam        = "VideoRAM:";
     ls->confChipSoundGB         = "Geluid ";
+    ls->confChipPsgStereoText    = " PSG Stereo";
 
     ls->confCmosGB              = "CMOS ";
     ls->confCmosEnable          = " Aanzetten CMOS";

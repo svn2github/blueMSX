@@ -249,7 +249,7 @@ int msxCreate(Machine* machine,
     msxPsg = msxPsgCreate(machine->board.type == BOARD_MSX || 
                           machine->board.type == BOARD_MSX_FORTE_II 
                           ? PSGTYPE_AY8910 : PSGTYPE_YM2149,
-                          0,
+                          machine->audio.psgstereo,
                           machine->board.type == BOARD_MSX_FORTE_II ? 1 : 2);
 
     if (machine->board.type == BOARD_MSX_FORTE_II) {

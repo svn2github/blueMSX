@@ -505,6 +505,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->confChipVideoChip        = "Xip de vídeo:";
     ls->confChipVideoRam         = "RAM de vídeo:";
     ls->confChipSoundGB          = "So ";
+    ls->confChipPsgStereoText    = " PSG estèreo";
 
     ls->confCmosGB               = "CMOS ";
     ls->confCmosEnable           = " Activa la CMOS";

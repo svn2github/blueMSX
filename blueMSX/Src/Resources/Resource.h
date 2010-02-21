@@ -226,6 +226,8 @@
 #define IDC_VIDEOCHIP                   2123
 #define IDC_VIDEORAM                    2124
 #define IDC_VIDEOGROUPBOX               2125
+#define IDC_AUDIOGROUPBOX               2126
+#define IDC_AUDIOPSGSTEREO              2127
 
 #define IDC_CPUFREQGROUPBOX             2130
 #define IDC_CPUR800FREQTEXT             2131
