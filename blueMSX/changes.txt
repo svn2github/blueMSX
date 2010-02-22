@@ -14,6 +14,13 @@ Next release
 v 2.8.3     May 30, 2010
 =============================
 
+- Fixed critical bug that caused Trainer and Cheats to fail when any of the follwing languages were selected:
+    Catalan
+    Chinese Simplified
+    Chinese Traditional
+    Dutch
+    Finnish
+    Russian
 - Added support for ColecoVision Super Action Controller
 - Added support for ColecoVision Super Expansion Module hardware
 - Added support for ColecoVision Expansion Module #2 using mouse

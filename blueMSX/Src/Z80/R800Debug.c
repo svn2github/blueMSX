@@ -117,7 +117,7 @@ static int dbgWriteMemory(R800Debug* dbg, char* name, void* data, int start, int
     int i;
     int rv = 1;
 
-    if (strcmp(name, "Visible Memory") || start + size > 0x10000) {
+    if (strcmp(name, langDbgMemVisible()) || start + size > 0x10000) {
         return 0;
     }
 
