@@ -90,7 +90,11 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
+             int statePeriod,
              int (*syncCallback)(int, int));
+
+void boardRewind();
+void boardEnableSnapshots(int enable);
 
 BoardType boardGetType();
 
@@ -110,7 +114,7 @@ int boardCaptureCompleteAmount();
 
 UInt8 boardCaptureUInt8(UInt8 logId, UInt8 value);
 
-void boardSaveState(const char* stateFile);
+void boardSaveState(const char* stateFile, int screenshot);
 
 void boardSetFrequency(int frequency);
 int  boardGetRefreshRate();

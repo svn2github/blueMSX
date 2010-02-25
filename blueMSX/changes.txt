@@ -14,18 +14,20 @@ Next release
 v 2.8.3     May 30, 2010
 =============================
 
-- Fixed critical bug that caused Trainer and Cheats to fail when any of the follwing languages were selected:
+- Added support for smooth rewind of emulation
+- Added support for ColecoVision Super Action Controller
+- Added support for ColecoVision Super Expansion Module hardware
+- Added support for ColecoVision Expansion Module #2 using mouse
+- Added support for Parallax ARC cartridge
+- Added support for stereo PSG in MSX machine configuration
+- Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
+  when any of the follwing languages were selected:
     Catalan
     Chinese Simplified
     Chinese Traditional
     Dutch
     Finnish
     Russian
-- Added support for ColecoVision Super Action Controller
-- Added support for ColecoVision Super Expansion Module hardware
-- Added support for ColecoVision Expansion Module #2 using mouse
-- Added support for Parallax ARC cartridge
-- Added support for stereo PSG in MSX machine configuration
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
 - Fixed 'no frequency' bug in SN76489 emulation

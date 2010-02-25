@@ -596,6 +596,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutSwitchPause             = "Tasto pausa Panasonic";
     ls->shortcutToggleMouseLock         = "Mostra/Nascondi il puntatore del mouse";
     ls->shortcutEmuSpeedMax             = "Esegui temporaneamente alla massima velocità";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle          = "Esegui alla massima velocità di emulazione";
     ls->shortcutEmuSpeedNormal          = "Normalizza la velocità di emulazione";
     ls->shortcutEmuSpeedInc             = "Aumenta la velocità di emulazione";

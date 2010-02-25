@@ -820,12 +820,16 @@ void setTapePosition(HWND parent, Properties* pProperties) {
 #define hotkeyEq(hotkey1, hotkey2) (*(DWORD*)&hotkey1 == *(DWORD*)&hotkey2)
 
 static int maxSpeedIsSet = 0;
+static int reverseIsSet  = 0;
 
 static void checkKeyDown(Shortcuts* s, ShotcutHotkey key) {
     if (hotkeyEq(key, s->emuSpeedFull)) {
         actionMaxSpeedSet();
         maxSpeedIsSet = 1;
-
+    }
+    if (hotkeyEq(key, s->emuPlayReverse)) {
+        actionStartPlayReverse();
+        reverseIsSet = 1;
     }
 }
 
@@ -834,6 +838,11 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (maxSpeedIsSet) {
         actionMaxSpeedRelease();
         maxSpeedIsSet = 0;
+    }
+
+    if (reverseIsSet) {
+        actionStopPlayReverse();
+        reverseIsSet = 0;
     }
 
     if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();

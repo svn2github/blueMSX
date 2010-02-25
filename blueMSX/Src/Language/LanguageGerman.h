@@ -595,6 +595,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->shortcutSwitchPause        = "Unterbrechungstaste umschalten";
     ls->shortcutToggleMouseLock    = "Maussperre umschalten";
     ls->shortcutEmuSpeedMax        = "Max. Emulationsgeschwindigkeit";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle     = "Max. Emulationsgeschwindigkeit umschalten";
     ls->shortcutEmuSpeedNormal     = "Normale Emulationsgeschwindigkeit";
     ls->shortcutEmuSpeedInc        = "Emulationsgeschwindigkeit erhöhen";

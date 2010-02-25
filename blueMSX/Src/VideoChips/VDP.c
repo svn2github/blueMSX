@@ -1439,8 +1439,8 @@ static void saveState(VDP* vdp)
     saveStateSet(state, "vramPages",       vdp->vramPages);
     saveStateSet(state, "vdpConnector",    vdp->vdpConnector);
     saveStateSet(state, "vdpVersion",      vdp->vdpVersion);
-    saveStateGet(state, "leftBorder",      vdp->leftBorder);
-    saveStateGet(state, "hRefresh",        vdp->displayArea);
+    saveStateSet(state, "leftBorder",      vdp->leftBorder);
+    saveStateSet(state, "hRefresh",        vdp->displayArea);
 
     saveStateSetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateSetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));

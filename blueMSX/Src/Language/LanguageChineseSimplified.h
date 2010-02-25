@@ -595,6 +595,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "切换暂停开关";
     ls->shortcutToggleMouseLock = "切换鼠标锁定";
     ls->shortcutEmuSpeedMax     = "最高速模拟";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "锁定最高速模拟";
     ls->shortcutEmuSpeedNormal  = "正常模拟速度";
     ls->shortcutEmuSpeedInc     = "加快模拟速度";

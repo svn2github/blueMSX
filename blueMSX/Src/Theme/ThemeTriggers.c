@@ -80,6 +80,7 @@ static void createAboutInfo(char* buffer, int length, unsigned int clk)
                 "Tobias Keizer,  "
                 "Sandy Pleyte,  "
                 "Marco Casali,  "
+                "Takayoshi Sasano,  "
                 "UC_ARS,  "
                 "nhlay,  "
                 "Rob Hiep,  "

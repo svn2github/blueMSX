@@ -595,6 +595,7 @@ void langInitChineseTraditional(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "ち传既氨秨闽";
     ls->shortcutToggleMouseLock = "ち传菲公玛﹚";
     ls->shortcutEmuSpeedMax     = "程蔼家览硉";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "ち传程蔼家览硉";
     ls->shortcutEmuSpeedNormal  = "夹非家览硉";
     ls->shortcutEmuSpeedInc     = "糤家览硉";

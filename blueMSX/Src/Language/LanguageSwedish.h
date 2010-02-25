@@ -596,6 +596,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Slå om Pausbrytare";
     ls->shortcutToggleMouseLock = "Slå om Muslås";
     ls->shortcutEmuSpeedMax     = "Maximal Emuleringshastighet";
+    ls->shortcutEmuPlayReverse  = "Spola tillbaka";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Växla Mellan Normal och Max Emuleringshastighet";
     ls->shortcutEmuSpeedNormal  = "Minska Emuleringhastigheten";
     ls->shortcutEmuSpeedInc     = "Öka Emuleringhastigheten";

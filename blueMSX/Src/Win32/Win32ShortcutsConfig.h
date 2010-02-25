@@ -89,6 +89,7 @@ typedef struct {
     ShotcutHotkey emulationRunPause;
     ShotcutHotkey emulationStop;
     ShotcutHotkey emuSpeedFull;
+    ShotcutHotkey emuPlayReverse;
     ShotcutHotkey emuSpeedNormal;
     ShotcutHotkey emuSpeedInc;
     ShotcutHotkey emuSpeedDec;

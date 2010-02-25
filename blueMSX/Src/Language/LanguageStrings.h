@@ -587,6 +587,7 @@ typedef struct {
     char* shortcutSwitchPause;
     char* shortcutToggleMouseLock;
     char* shortcutEmuSpeedMax;
+    char* shortcutEmuPlayReverse;
     char* shortcutEmuSpeedToggle;
     char* shortcutEmuSpeedNormal;
     char* shortcutEmuSpeedInc;

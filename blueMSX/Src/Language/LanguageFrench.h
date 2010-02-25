@@ -595,6 +595,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Actionner le commutateur Pause";
     ls->shortcutToggleMouseLock = "Activer/désactiver le blocage de la souris";
     ls->shortcutEmuSpeedMax     = "Vitesse maximale d'émulation";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Balance vitesse maximale d'émulation";
     ls->shortcutEmuSpeedNormal  = "Vitesse normale d'émulation";
     ls->shortcutEmuSpeedInc     = "Augmenter la vitesse d'émulation";

@@ -595,6 +595,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Pauze schakelaar aan/uit";
     ls->shortcutToggleMouseLock = "Muis vastzetten aan/uit";
     ls->shortcutEmuSpeedMax     = "Maximale emulatie snelheid";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Maximum snelheid van de emulatie aan/uit";
     ls->shortcutEmuSpeedNormal  = "Normale emulatie snelheid";
     ls->shortcutEmuSpeedInc     = "Verhoog emulatie snelheid";

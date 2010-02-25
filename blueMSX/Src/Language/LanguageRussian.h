@@ -595,6 +595,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "¬ключить переключатель паузы";
     ls->shortcutToggleMouseLock = "¬ключить блокировку мышки";
     ls->shortcutEmuSpeedMax     = "ћаксимальна€ скорость эмул€ции";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "¬ключить максимальную скорость эмул€ции";
     ls->shortcutEmuSpeedNormal  = "ќбына€ скорость эмул€ции";
     ls->shortcutEmuSpeedInc     = "”величить скорость эмул€ции";

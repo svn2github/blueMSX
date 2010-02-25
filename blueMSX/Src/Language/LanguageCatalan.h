@@ -595,6 +595,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Commuta el commutador de pausa";
     ls->shortcutToggleMouseLock = "Commuta el blocatge del ratolí";
     ls->shortcutEmuSpeedMax     = "Velocitat d'emulació màxima";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Commuta la velocitat d'emulació màxima";
     ls->shortcutEmuSpeedNormal  = "Velocitat d'emulació normal";
     ls->shortcutEmuSpeedInc     = "Augmenta la velocitat d'emulació";

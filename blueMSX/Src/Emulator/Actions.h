@@ -67,6 +67,8 @@ void actionDiskDirInsertA();
 void actionDiskDirInsertB();
 void actionMaxSpeedSet();
 void actionMaxSpeedRelease();
+void actionStartPlayReverse();
+void actionStopPlayReverse();
 void actionDiskQuickChange();
 void actionWindowSizeSmall();
 void actionWindowSizeNormal();

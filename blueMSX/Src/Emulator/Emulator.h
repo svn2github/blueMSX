@@ -49,6 +49,8 @@ void emulatorStart(const char* stateName);
 void emulatorStop();
 void emulatorSetMaxSpeed(int enable);
 int  emulatorGetMaxSpeed();
+void emulatorPlayReverse(int enable);
+int  emulatorGetPlayReverse();
 int emulatorGetCpuOverflow();
 int emulatorGetSyncPeriod();
 EmuState emulatorGetState();

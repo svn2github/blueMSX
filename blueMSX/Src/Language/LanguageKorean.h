@@ -595,6 +595,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "일시 정지 스위치";
     ls->shortcutToggleMouseLock = "마우스 고정 변환";
     ls->shortcutEmuSpeedMax     = "최대 에뮬레이션 속도";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "에뮬레이션 속도 최대화 변환";
     ls->shortcutEmuSpeedNormal  = "보통 에뮬레이션 속도";
     ls->shortcutEmuSpeedInc     = "에뮬레이션 속도 증가";

@@ -595,6 +595,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Toggle pause switch";
     ls->shortcutToggleMouseLock = "Toggle mouse lock";
     ls->shortcutEmuSpeedMax     = "Max emulation speed";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Toggle max emulation speed";
     ls->shortcutEmuSpeedNormal  = "Normal emulation speed";
     ls->shortcutEmuSpeedInc     = "Increase emulation speed";

@@ -82,6 +82,7 @@ static BOOL CALLBACK aboutDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                                 "%s\r\n\r\n"
 
                                 "Tim Brugman\r\n"
+                                "Takayoshi Sasano\r\n"
                                 "Albert Beevendorp\r\n"
                                 "Alex Wulms\r\n"
                                 "Alexandre Souza\r\n"

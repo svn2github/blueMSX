@@ -82,8 +82,8 @@ static void saveState(RomMapperPanasonic* rm)
         saveStateSet(state, tag, rm->romMapper[i]);
     }
     
-    saveStateGet(state, "readSection", rm->readSection);
-    saveStateGet(state, "readOffset", rm->readOffset);
+    saveStateSet(state, "readSection", rm->readSection);
+    saveStateSet(state, "readOffset", rm->readOffset);
     saveStateSet(state, "control", rm->control);
 
     saveStateClose(state);

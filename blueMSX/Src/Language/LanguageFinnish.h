@@ -596,6 +596,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Muuta Pause-näppäimen tilaa";
     ls->shortcutToggleMouseLock = "Muuta hiirenkaappauksen tilaa";
     ls->shortcutEmuSpeedMax     = "Maksimi emulointinopeus";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Vaihda maksimi emulointinopeus";
     ls->shortcutEmuSpeedNormal  = "Normaali emulointinopeus";
     ls->shortcutEmuSpeedInc     = "Nopeuta emulointia";

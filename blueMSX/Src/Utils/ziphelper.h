@@ -36,6 +36,9 @@ extern "C" {
 
 typedef void(*ZIP_EXTRACT_CB)(int, int);
 
+void memZipFileSystemCreate(int maxFiles);
+void memZipFileSystemDestroy();
+
 void zipCacheReadOnlyZip(const char* zipName);
 void* zipLoadFile(const char* zipName, const char* fileName, int* size);
 int zipSaveFile(const char* zipName, const char* fileName, int append, void* buffer, int size);

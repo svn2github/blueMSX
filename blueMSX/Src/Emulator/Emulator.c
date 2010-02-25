@@ -62,6 +62,7 @@ static int    emuExitFlag;
 static UInt32 emuSysTime = 0;
 static UInt32 emuFrequency = 3579545;
 int           emuMaxSpeed = 0;
+int           emuPlayReverse = 0;
 int           emuMaxEmuSpeed = 0; // Max speed issued by emulation
 static char   emuStateName[512];
 static volatile int      emuSuspendFlag;
@@ -358,6 +359,12 @@ static void setDeviceInfo(BoardDeviceInfo* deviceInfo)
 
 static int emulationStartFailure = 0;
 
+static void emulatorPauseCb(void)
+{
+    emulatorSetState(EMU_PAUSED);
+    debuggerNotifyEmulatorPause();
+}
+
 static void emulatorThread() {
     int frequency;
     int success = 0;
@@ -372,7 +379,13 @@ static void emulatorThread() {
                        &deviceInfo,
                        mixer,
                        *emuStateName ? emuStateName : NULL,
-                       frequency, WaitForSync);
+                       frequency, 
+#if 1
+                       100,
+#else
+                       0,
+#endif
+                       WaitForSync);
 
     ledSetAll(0);
     emuState = EMU_STOPPED;
@@ -589,6 +602,22 @@ int  emulatorGetMaxSpeed() {
     return emuMaxSpeed;
 }
 
+void emulatorPlayReverse(int enable)
+{
+    if (enable) {   
+        archSoundSuspend();
+    }
+    else {
+        archSoundResume();
+    }
+    emuPlayReverse = enable;
+}
+
+int  emulatorGetPlayReverse()
+{
+    return emuPlayReverse;
+}
+
 void emulatorResetMixer() {
     // Reset active indicators in mixer
     mixerIsChannelTypeActive(mixer, MIXER_CHANNEL_MOONSOUND, 1);
@@ -661,6 +690,20 @@ static int WaitForSync(int maxSpeed, int breakpointHit)
 
 #else
 
+int WaitReverse()
+{
+    int i;
+
+    boardEnableSnapshots(0);
+
+    for (i = 0; i < 20; i++) {
+        archEventWait(emuSyncEvent, -1);
+    }
+    boardRewind();
+
+    return 100;
+}
+
 static int WaitForSync(int maxSpeed, int breakpointHit) {
     UInt32 li1;
     UInt32 li2;
@@ -671,6 +714,12 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     UInt32 syncPeriod;
     static int overflowCount = 0;
     static UInt32 kbdPollCnt = 0;
+
+    if (emuPlayReverse) {
+        return WaitReverse();
+    }
+
+    boardEnableSnapshots(1);
 
     emuMaxEmuSpeed = maxSpeed;
 

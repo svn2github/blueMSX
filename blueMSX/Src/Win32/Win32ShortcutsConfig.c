@@ -768,6 +768,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(emulationRunPause);
     LOAD_SHORTCUT(emulationStop);
     LOAD_SHORTCUT(emuSpeedFull);
+    LOAD_SHORTCUT(emuPlayReverse);
     LOAD_SHORTCUT(emuSpeedToggle);
     LOAD_SHORTCUT(emuSpeedNormal);
     LOAD_SHORTCUT(emuSpeedInc);
@@ -868,6 +869,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(emulationRunPause);
     SAVE_SHORTCUT(emulationStop);
     SAVE_SHORTCUT(emuSpeedFull);
+    SAVE_SHORTCUT(emuPlayReverse);
     SAVE_SHORTCUT(emuSpeedToggle);
     SAVE_SHORTCUT(emuSpeedNormal);
     SAVE_SHORTCUT(emuSpeedInc);
@@ -1042,6 +1044,10 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(emuSpeedNormal, langShortcutEmuSpeedNormal());
     ADD_SHORTCUT(emuSpeedInc, langShortcutEmuSpeedInc());
     ADD_SHORTCUT(emuSpeedDec, langShortcutEmuSpeedDec());
+    
+    ADD_SHORTCUTSEPARATOR();
+    
+    ADD_SHORTCUT(emuPlayReverse, langShortcutEmuPlayReverse());
     
     ADD_SHORTCUTSEPARATOR();
 

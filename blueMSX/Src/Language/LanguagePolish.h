@@ -595,6 +595,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Pauza";
     ls->shortcutToggleMouseLock = "Przechwytywanie myszy";
     ls->shortcutEmuSpeedMax     = "Maksymalna prêdkoœæ emulacji";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Prze³¹cz maksymaln¹ prêdkoœæ emulacji";
     ls->shortcutEmuSpeedNormal  = "Normalna prêdkoœæ emulacji";
     ls->shortcutEmuSpeedInc     = "Zwiêksz prêdkoœæ emulacji";

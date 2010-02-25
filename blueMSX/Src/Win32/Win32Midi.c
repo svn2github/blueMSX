@@ -334,9 +334,9 @@ void archMidiSaveState(void)
         }
         if (di != NULL) {
             sprintf(buf, "buffer_%d_count", i);
-            saveStateGet(state, buf, di->buffer.count);
+            saveStateSet(state, buf, di->buffer.count);
             sprintf(buf, "buffer_%d_remain", i);
-            saveStateGet(state, buf, di->buffer.remain);
+            saveStateSet(state, buf, di->buffer.remain);
             // no need to save di->buffer.runningStatus
             // (set 0 at archMidiLoadState())
             sprintf(buf, "buffer_%d_data", i);

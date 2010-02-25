@@ -805,6 +805,7 @@ char* langShortcutSwitchFront() { return ls->shortcutSwitchFront; }
 char* langShortcutSwitchPause() { return ls->shortcutSwitchPause; }
 char* langShortcutToggleMouseLock() { return ls->shortcutToggleMouseLock; }
 char* langShortcutEmuSpeedMax() { return ls->shortcutEmuSpeedMax; }
+char* langShortcutEmuPlayReverse() { return ls->shortcutEmuPlayReverse; }
 char* langShortcutEmuSpeedMaxToggle() { return ls->shortcutEmuSpeedToggle; }
 char* langShortcutEmuSpeedNormal() { return ls->shortcutEmuSpeedNormal; }
 char* langShortcutEmuSpeedInc() { return ls->shortcutEmuSpeedInc; }

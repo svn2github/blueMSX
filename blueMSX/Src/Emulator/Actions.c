@@ -67,8 +67,8 @@ static char audioDir[PROP_MAXPATH]  = "";
 static char audioPrefix[64]         = "";
 static char videoDir[PROP_MAXPATH]  = "";
 static char videoPrefix[64]         = "";
-static char stateDir[PROP_MAXPATH]  = "";
-static char statePrefix[64]         = "";
+char stateDir[PROP_MAXPATH]  = "";
+char statePrefix[64]         = "";
 
 
 void actionCartInsert(int cartNo)
@@ -417,7 +417,7 @@ void actionSaveState() {
             }
 
             strcpy(ptr, ".sta");
-            boardSaveState(filename);
+            boardSaveState(filename, 1);
         }
         emulatorResume();
     }
@@ -435,7 +435,7 @@ void actionQuickSaveState() {
     if (emulatorGetState() != EMU_STOPPED) {
         emulatorSuspend();
         strcpy(state.properties->filehistory.quicksave, generateSaveFilename(state.properties, stateDir, statePrefix, ".sta", 2));
-        boardSaveState(state.properties->filehistory.quicksave);
+        boardSaveState(state.properties->filehistory.quicksave, 1);
         emulatorResume();
     }
 }
@@ -503,6 +503,16 @@ void actionMaxSpeedSet() {
 
 void actionMaxSpeedRelease() {
     emulatorSetMaxSpeed(0);
+}
+
+void actionStartPlayReverse()
+{
+    emulatorPlayReverse(1);
+}
+
+void actionStopPlayReverse()
+{
+    emulatorPlayReverse(0);
 }
 
 void actionDiskQuickChange() {

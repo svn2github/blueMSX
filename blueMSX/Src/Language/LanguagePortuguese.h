@@ -595,6 +595,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Impulsionar Botao Pause"; 
     ls->shortcutToggleMouseLock = "Ativar/Desativar Bloqueio do Mouse";
     ls->shortcutEmuSpeedMax     = "Velocidade Máxima da Emulação";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Troca de Velocidade Máxima da Emulação"; 
     ls->shortcutEmuSpeedNormal  = "Velocidade Normal da Emulação";
     ls->shortcutEmuSpeedInc     = "Aumentar Velocidade da Emulação";

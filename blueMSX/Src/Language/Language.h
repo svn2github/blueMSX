@@ -614,6 +614,7 @@ char* langShortcutSwitchFront();
 char* langShortcutSwitchPause();
 char* langShortcutToggleMouseLock();
 char* langShortcutEmuSpeedMax();
+char* langShortcutEmuPlayReverse();
 char* langShortcutEmuSpeedMaxToggle();
 char* langShortcutEmuSpeedNormal();
 char* langShortcutEmuSpeedInc();

@@ -596,6 +596,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "パナソ\ニック系 ポーズスイッチ";
     ls->shortcutToggleMouseLock = "マウスロック";
     ls->shortcutEmuSpeedMax     = "エミュレーション実行速度を最速化";
+    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "最速動作の有無";
     ls->shortcutEmuSpeedNormal  = "エミュレーション実行速度を標準化";
     ls->shortcutEmuSpeedInc     = "エミュレーション速度を加速";
