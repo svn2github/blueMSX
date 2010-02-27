@@ -302,6 +302,7 @@ typedef struct {
     char* propEmuFrontSwitchGB;
     char* propEmuFrontSwitch;
     char* propEmuFdcTiming;
+    char* propEmuReversePlay;
     char* propEmuPauseSwitch;
     char* propEmuAudioSwitch;
     char* propVideoFreqText;

@@ -310,6 +310,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "파나소닉 스위치 ";
     ls->propEmuFrontSwitch       = " 프론트 스위치";
     ls->propEmuFdcTiming        = " 플로피 드라이브 타이밍 사용 안함";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " 일시 정지 스위치";
     ls->propEmuAudioSwitch       = " MSX-AUDIO 카트리지 스위치";
     ls->propVideoFreqText       = "비디오 주파수:";

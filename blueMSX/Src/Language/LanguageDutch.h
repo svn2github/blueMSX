@@ -310,6 +310,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Panasonic schakelaars ";
     ls->propEmuFrontSwitch      = " Voorpanel Schakelaar";
     ls->propEmuFdcTiming        = " Diskettestation niet synchroniseren";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Pauze Schakelaar";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge Schakelaar";
     ls->propVideoFreqText       = "Videofrequentie:";

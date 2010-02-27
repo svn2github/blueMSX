@@ -159,6 +159,7 @@
 #define IDC_EMUAUDIOSWITCH              1808
 #define IDC_EMUFRONTSWITCHGROUPBOX      1809
 #define IDC_EMUFDCTIMING                1810
+#define IDC_EMUREVERSEPLAY              1811
 
 #define IDC_MONGROUPBOX                 1900
 #define IDC_MONTYPETEXT                 1901

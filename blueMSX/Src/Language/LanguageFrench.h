@@ -310,6 +310,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Commutateurs Panasonic "; 
     ls->propEmuFrontSwitch      = " Commutateur frontal"; 
     ls->propEmuFdcTiming        = " Ne pas synchroniser le lecteur de disquettes"; 
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Commutateur Pause";
     ls->propEmuAudioSwitch      = " Commutateur MSX-AUDIO"; 
     ls->propVideoFreqText       = "Fréquence Vidéo:";

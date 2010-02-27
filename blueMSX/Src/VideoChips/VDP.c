@@ -50,6 +50,7 @@
 static int spritesEnable = 1;
 static int displayEnable = 1;
 static int refreshRate   = 0;
+static int canFlipFrameBuffer = 0;
 
 void vdpSetSpritesEnable(int enable) {
     spritesEnable = enable ? 1 : 0;
@@ -581,7 +582,13 @@ static void onDisplay(VDP* vdp, UInt32 time)
 
     if (vdp->videoEnabled) {
         FrameBuffer* frameBuffer;
-        frameBuffer = frameBufferFlipDrawFrame();
+        if (canFlipFrameBuffer >= 2) {
+            frameBuffer = frameBufferFlipDrawFrame();
+        }
+        else {
+            frameBuffer = frameBufferGetDrawFrame();
+            canFlipFrameBuffer++;
+        }
         frameBufferSetLineCount(frameBuffer, 240);
         if (vdpIsInterlaceOn(vdp->vdpRegs)) {
             frameBufferSetInterlace(frameBuffer, (vdp->vdpStatus[2] & 0x02) && (vdp->vdpRegs[9]  & 0x04) && vdp->vram128 ? INTERLACE_EVEN : INTERLACE_ODD );
@@ -1445,6 +1452,8 @@ static void saveState(VDP* vdp)
     saveStateSetBuffer(state, "regs", vdp->vdpRegs, sizeof(vdp->vdpRegs));
     saveStateSetBuffer(state, "status", vdp->vdpStatus, sizeof(vdp->vdpStatus));
 
+    saveStateSet(state, "paletteTmp0",        vdp->palette0);
+    
     for (index = 0; index < sizeof(vdp->palette) / sizeof(vdp->palette[0]); index++) {
         sprintf(tag, "vdp->palette%d", index);
         saveStateSet(state, tag, vdp->palette[index]);
@@ -1498,6 +1507,8 @@ static void loadState(VDP* vdp)
     vdp->vdpVersion     =         saveStateGet(state, "vdpVersion",      0);
     vdp->leftBorder     =         saveStateGet(state, "leftBorder",      200);
     vdp->displayArea       =         saveStateGet(state, "hRefresh",        1024);
+
+    vdp->palette0 = saveStateGet(state, "paletteTmp0",        0);
 
     vdp->screenOffTime = boardSystemTime();
 
@@ -1569,6 +1580,8 @@ static void loadState(VDP* vdp)
 //    }
 
     onScrModeChange(vdp, boardSystemTime());
+
+    canFlipFrameBuffer = 0;
 }
 
 static void getDebugInfo(VDP* vdp, DbgDevice* dbgDevice)

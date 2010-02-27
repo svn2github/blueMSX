@@ -330,6 +330,7 @@ char* langPropEmuSpeedText();
 char* langPropEmuFrontSwitchGB();
 char* langPropEmuFrontSwitch();
 char* langPropEmuFdcTiming();
+char* langPropEmuReversePlay();
 char* langPropEmuPauseSwitch();
 char* langPropEmuAudioSwitch();
 char* langPropVideoFreqText();

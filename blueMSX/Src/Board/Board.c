@@ -76,8 +76,7 @@ static int boardRunning = 0;
 
 static HdType hdType[MAX_HD_COUNT];
   
-#define MAX_RAM_STATES 100
-
+static int     ramMaxStates;
 static int     ramStateCur;
 static int     ramStateCount;
 static int     stateFrequency;
@@ -510,7 +509,7 @@ static void onFdcDone(void* ref, UInt32 time)
 static void doSync(UInt32 time, int breakpointHit)
 {
     int execTime = syncToRealClock(fdcActive, breakpointHit);
-    if (execTime < 0) {
+    if (execTime == -99) {
         boardInfo.stop(boardInfo.cpuRef);
         return;
     }
@@ -520,9 +519,12 @@ static void doSync(UInt32 time, int breakpointHit)
     if (execTime == 0) {
         boardTimerAdd(syncTimer, boardSystemTime() + 1);
     }
-    else {
+    else if (execTime < 0) {
+        execTime = -execTime;
         boardTimerAdd(syncTimer, boardSystemTime() + (UInt32)((UInt64)execTime * boardFreq / 1000));
-//        boardTimerAdd(syncTimer, time + (UInt32)((UInt64)execTime * boardFreq / 1000));
+    }
+    else {
+        boardTimerAdd(syncTimer, time + (UInt32)((UInt64)execTime * boardFreq / 1000));
     }
 }
 
@@ -537,8 +539,8 @@ static void onStateSync(void* ref, UInt32 time)
 {    
     if (enableSnapshots) {
         char memFilename[8];
-        ramStateCur = (ramStateCur + 1) % MAX_RAM_STATES;
-        if (ramStateCount < MAX_RAM_STATES) {
+        ramStateCur = (ramStateCur + 1) % ramMaxStates;
+        if (ramStateCount < ramMaxStates) {
             ramStateCount++;
         }
 
@@ -603,11 +605,16 @@ void boardRewind()
         return;
     }
 
-    ramStateCount--;
-    sprintf(stateFile, "mem%d", ramStateCur);
-    ramStateCur = (ramStateCur + MAX_RAM_STATES - 1) % MAX_RAM_STATES;
+    if (ramStateCount > 1) {
+        ramStateCount--;
+        sprintf(stateFile, "mem%d", ramStateCur);
+        ramStateCur = (ramStateCur + ramMaxStates - 1) % ramMaxStates;
+    }
+    else {
+        sprintf(stateFile, "mem%d", ramStateCur);
+    }
 
-    printf("Reverting state %s\n", stateFile);
+    //printf("Reverting state %s\n", stateFile);
 
     boardTimerCleanup();
 
@@ -642,7 +649,8 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
-             int statePeriod,
+             int reversePeriod,
+             int reverseBufferCnt,
              int (*syncCallback)(int, int))
 {
     int loadState = 0;
@@ -740,12 +748,12 @@ int boardRun(Machine* machine,
         fdcTimer = boardTimerCreate(onFdcDone, NULL);
         mixerTimer = boardTimerCreate(onMixerSync, NULL);
         
-        stateFrequency = boardFrequency() / 1000 * statePeriod;
+        stateFrequency = boardFrequency() / 1000 * reversePeriod;
 
         if (stateFrequency > 0) {
-            ramStateCur   = 0;
-            ramStateCount = 0;
-            memZipFileSystemCreate(MAX_RAM_STATES);
+            ramStateCur  = 0;
+            ramMaxStates = reverseBufferCnt;
+            memZipFileSystemCreate(ramMaxStates);
             stateTimer = boardTimerCreate(onStateSync, NULL);
             boardTimerAdd(stateTimer, boardSystemTime() + stateFrequency);
         }

@@ -310,6 +310,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Panasonic 开关 ";
     ls->propEmuFrontSwitch       = " 前端开关";
     ls->propEmuFdcTiming        = " 禁用软盘驱动器计时";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " 暂停开关";
     ls->propEmuAudioSwitch       = " MSX-AUDIO 卡开关";
     ls->propVideoFreqText       = "视频频率:";

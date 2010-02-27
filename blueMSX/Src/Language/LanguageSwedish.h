@@ -311,6 +311,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Panasonicbrytare ";
     ls->propEmuFrontSwitch      = " Frontbrytare";
     ls->propEmuFdcTiming        = " Slå av diskettstationstiming";
+    ls->propEmuReversePlay      = " Tillåt baklänges uppspelning";
     ls->propEmuPauseSwitch      = " Pausbrytare";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
     ls->propVideoFreqText       = "Videofrekvens:";

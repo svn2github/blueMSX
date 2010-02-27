@@ -310,6 +310,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Переключатели Panasonic ";
     ls->propEmuFrontSwitch      = " Передний выключатель";
     ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Кнопка паузы";
     ls->propEmuAudioSwitch      = " Переключатель картриджа MSX-AUDIO";
     ls->propVideoFreqText       = "Частота экрана:";

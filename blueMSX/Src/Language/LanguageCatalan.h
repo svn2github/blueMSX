@@ -310,6 +310,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Commutadors Panasonic ";
     ls->propEmuFrontSwitch      = " Commutador frontal";
     ls->propEmuFdcTiming        = " Desactiva la sincronització de la unitat de disc";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Commutador de pausa";
     ls->propEmuAudioSwitch      = " Commutador del cartutx MSX-AUDIO";
     ls->propVideoFreqText       = "Freqüència de vídeo:";

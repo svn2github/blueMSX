@@ -90,7 +90,8 @@ int boardRun(Machine* machine,
              Mixer* mixer,
              char* stateFile,
              int frequency,
-             int statePeriod,
+             int reversePeriod,
+             int reverseBufferCnt,
              int (*syncCallback)(int, int));
 
 void boardRewind();

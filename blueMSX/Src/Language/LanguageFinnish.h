@@ -311,6 +311,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Panasonicin kytkimet ";
     ls->propEmuFrontSwitch       = " Aplikaatiokytkin";
     ls->propEmuFdcTiming        = " Poista käytöstä levyaseman ajoitus";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " PAUSE-näppäin";
     ls->propEmuAudioSwitch       = " MSX-AUDIO modulin kytkin";
     ls->propVideoFreqText       = "Videotaajuus:";

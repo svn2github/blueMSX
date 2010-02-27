@@ -60,6 +60,7 @@ typedef struct {
     char  filename[32];
     void* data;
     int   size;
+    unsigned long compSize;
 } MemFile;
 
 typedef struct {
@@ -101,12 +102,14 @@ void* memZipFileRead(MemZipFile* zipFile, const char* filename, int* size)
     *size = 0;
     for (i = 0; i < zipFile->count; i++) {
         if (strcmp(filename, zipFile->memFile[i].filename) == 0) {
-            void* buf = malloc(zipFile->memFile[i].size);
-            if (buf != NULL) {
-                *size = zipFile->memFile[i].size;
-                memcpy(buf, zipFile->memFile[i].data, *size);
+            if (zipFile->memFile[i].size) {
+                unsigned long sz = zipFile->memFile[i].size;
+                void* buf = zipUncompress(zipFile->memFile[i].data, zipFile->memFile[i].compSize, &sz);
+                if (buf) {
+                    *size = (int)sz;
+                    return buf;
+                }
             }
-            return buf;
         }
     }
     return NULL;
@@ -115,6 +118,8 @@ void* memZipFileRead(MemZipFile* zipFile, const char* filename, int* size)
 int memZipFileWrite(MemZipFile* zipFile, const char* filename, void* buffer, int size)
 {
     static const int MemFileCount = sizeof(zipFile->memFile) / sizeof(zipFile->memFile[0]);
+    unsigned long compSize;
+    void* compBuf;
     MemFile* memFile = NULL;
     int i;
     for (i = 0; i < zipFile->count; i++) {
@@ -130,12 +135,11 @@ int memZipFileWrite(MemZipFile* zipFile, const char* filename, void* buffer, int
         return 0;
     }
 
-    memFile->data = malloc(size);
-    if (memFile->data == NULL) {
-        return 0;
-    }
-    memFile->size = size;
-    memcpy(memFile->data, buffer, size);
+    compBuf = zipCompress(buffer, size, &compSize);
+    memFile->data = malloc(compSize);
+    memcpy(memFile->data, compBuf, compSize);
+    memFile->size = memFile->data ? size : 0;
+    memFile->compSize = compSize;
     strcpy(memFile->filename, filename);
     
     return 1;
@@ -740,3 +744,16 @@ void* zipCompress(void* buffer, int size, unsigned long* retSize)
 
     return retBuf;
 }
+
+void* zipUncompress(void* buffer, int size, unsigned long* retSize)
+{
+    void* retBuf = malloc(*retSize);
+
+    if (uncompress(retBuf, retSize, buffer, size) != Z_OK) {
+        free(retBuf);
+        retBuf = NULL;
+    }
+
+    return retBuf;
+}
+

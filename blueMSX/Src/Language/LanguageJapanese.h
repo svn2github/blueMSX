@@ -312,6 +312,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = " パナソ\ニックスイッチ "; 
     ls->propEmuFrontSwitch       = " 前面[内蔵ソ\フト]スイッチ"; 
     ls->propEmuFdcTiming        = " FDDドライブのタイミングを無効化";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " ポーズスイッチ";
     ls->propEmuAudioSwitch       = " MSX-AUDIO カートリッジスイッチ"; 
     ls->propVideoFreqText       = "ビデオ周波数:";

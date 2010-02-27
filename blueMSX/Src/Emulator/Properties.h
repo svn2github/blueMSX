@@ -218,6 +218,8 @@ typedef struct {
     int  priorityBoost;
     int  syncMethod;
     int  vdpSyncMode;
+    int  reverseEnable;
+    int  reverseMaxTime;
 } EmulationProperties;
 
 typedef struct {

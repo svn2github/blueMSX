@@ -311,6 +311,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB            = "Interruttori Panasonic ";
     ls->propEmuFrontSwitch              = " Interruttore frontale";
     ls->propEmuFdcTiming                = " Non sincronizzare le unità floppy ";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch              = " Tasto pausa";
     ls->propEmuAudioSwitch              = " Cartuccia MSX-AUDIO";
     ls->propVideoFreqText               = "Frequenza video:";

@@ -310,6 +310,7 @@ void langInitSpanish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Botones Panasonic "; 
     ls->propEmuFrontSwitch       = " Botón Frontal"; 
     ls->propEmuFdcTiming        = " No sincronizar unidad de disco"; 
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Botón Pause"; 
     ls->propEmuAudioSwitch       = " Botón cartucho MSX-AUDIO"; 
     ls->propVideoFreqText       = "Frecuencia video:"; 

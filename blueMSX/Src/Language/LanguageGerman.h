@@ -310,6 +310,7 @@ void langInitGerman(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Panasonic-Schalter";              // "Panasonic Switches ";
     ls->propEmuFrontSwitch       = " Frontschalter";                  // " Front Switch";
     ls->propEmuFdcTiming         = " Floppy-Drive-Timing sperren";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch       = " Unterbrechungstaste";
     ls->propEmuAudioSwitch       = " MSX-AUDIO-Cartridge-Schalter";
     ls->propVideoFreqText        = "Videofrequenz:";

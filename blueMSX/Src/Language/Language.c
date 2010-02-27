@@ -516,6 +516,7 @@ char* langPropEmuSpeedText() { return ls->propEmuSpeedText; }
 char* langPropEmuFrontSwitchGB() { return ls->propEmuFrontSwitchGB; }
 char* langPropEmuFrontSwitch() { return ls->propEmuFrontSwitch; }
 char* langPropEmuFdcTiming() { return ls->propEmuFdcTiming; }
+char* langPropEmuReversePlay() { return ls->propEmuReversePlay; }
 char* langPropEmuPauseSwitch() { return ls->propEmuPauseSwitch; }
 char* langPropEmuAudioSwitch() { return ls->propEmuAudioSwitch; }
 char* langPropVideoFreqText() { return ls->propVideoFreqText; }

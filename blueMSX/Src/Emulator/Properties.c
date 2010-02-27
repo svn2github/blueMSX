@@ -247,6 +247,8 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->emulation.registerFileTypes = 0;
     properties->emulation.disableWinKeys    = 0;
     properties->emulation.priorityBoost     = 0;
+    properties->emulation.reverseEnable     = 1;
+    properties->emulation.reverseMaxTime    = 15;
 
     properties->video.monitorColor          = P_VIDEO_COLOR;
     properties->video.monitorType           = P_VIDEO_PALMON;
@@ -533,6 +535,8 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(emulation, pauseSwitch, BoolPair);
     GET_ENUM_VALUE_2(emulation, audioSwitch, BoolPair);
     GET_ENUM_VALUE_2(emulation, priorityBoost, BoolPair);
+    GET_ENUM_VALUE_2(emulation, reverseEnable, BoolPair);
+    GET_INT_VALUE_2(emulation, reverseMaxTime);
     
     GET_ENUM_VALUE_2(video, monitorColor, MonitorColorPair);
     GET_ENUM_VALUE_2(video, monitorType, MonitorTypePair);
@@ -765,6 +769,8 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(emulation, pauseSwitch, OnOffPair);
     SET_ENUM_VALUE_2(emulation, audioSwitch, OnOffPair);
     SET_ENUM_VALUE_2(emulation, priorityBoost, YesNoPair);
+    SET_ENUM_VALUE_2(emulation, reverseEnable, BoolPair);
+    SET_INT_VALUE_2(emulation, reverseMaxTime);
     
     SET_ENUM_VALUE_2(video, monitorColor, MonitorColorPair);
     SET_ENUM_VALUE_2(video, monitorType, MonitorTypePair);

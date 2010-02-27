@@ -310,6 +310,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Prze³¹czniki Panasonic ";
     ls->propEmuFrontSwitch       = " Prze³¹cznik g³ówny";
     ls->propEmuFdcTiming        = " Wy³¹cz timing stacji dyskietek";
+    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Prze³¹cznik pauzy";
     ls->propEmuAudioSwitch       = " Prze³¹cznik kartrid¿a MSX-AUDIO";
     ls->propVideoFreqText       = "Czêstotliwoœæ obrazu:";

@@ -368,6 +368,8 @@ static void emulatorPauseCb(void)
 static void emulatorThread() {
     int frequency;
     int success = 0;
+    int reversePeriod = 0;
+    int reverseBufferCnt = 0;
 
     emulatorSetFrequency(properties->emulation.speed, &frequency);
 
@@ -375,16 +377,17 @@ static void emulatorThread() {
     switchSetPause(properties->emulation.pauseSwitch);
     switchSetAudio(properties->emulation.audioSwitch);
 
+    if (properties->emulation.reverseEnable && properties->emulation.reverseMaxTime > 0) {
+        reversePeriod = 150;
+        reverseBufferCnt = properties->emulation.reverseMaxTime * 1000 / reversePeriod;
+    }
     success = boardRun(machine,
                        &deviceInfo,
                        mixer,
                        *emuStateName ? emuStateName : NULL,
                        frequency, 
-#if 1
-                       100,
-#else
-                       0,
-#endif
+                       reversePeriod,
+                       reverseBufferCnt,
                        WaitForSync);
 
     ledSetAll(0);
@@ -692,16 +695,21 @@ static int WaitForSync(int maxSpeed, int breakpointHit)
 
 int WaitReverse()
 {
-    int i;
-
     boardEnableSnapshots(0);
 
-    for (i = 0; i < 20; i++) {
+    for (;;) {
+        UInt32 sysTime = archGetSystemUpTime(1000);
+        UInt32 diffTime = sysTime - emuSysTime;
+        if (diffTime >= 50) {
+            emuSysTime = sysTime;
+            break;
+        }
         archEventWait(emuSyncEvent, -1);
     }
+
     boardRewind();
 
-    return 100;
+    return -60;
 }
 
 static int WaitForSync(int maxSpeed, int breakpointHit) {
@@ -715,7 +723,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
     static int overflowCount = 0;
     static UInt32 kbdPollCnt = 0;
 
-    if (emuPlayReverse) {
+    if (emuPlayReverse && properties->emulation.reverseEnable) {
         return WaitReverse();
     }
 
@@ -822,7 +830,7 @@ static int WaitForSync(int maxSpeed, int breakpointHit) {
 
     emuUsageCurrent += diffTime;
 
-    return emuExitFlag ? -1 : diffTime;
+    return emuExitFlag ? -99 : diffTime;
 }
 #endif
 
