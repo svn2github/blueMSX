@@ -2500,7 +2500,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     HINSTANCE kbdLockInst;
     int readOnlyDir;
     const char* tempName;
-    
+    int scrDepth;
+
 #ifdef _CONSOLE
     for (i = 1; i < argc; i++) {
         strcat(szLine, argv[i]);
@@ -2508,7 +2509,8 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
     }
 #endif
 
-    if (getScreenBitDepth() == 24) {
+    scrDepth = getScreenBitDepth();
+    if (scrDepth != 16 && scrDepth != 32) {
         MessageBox(NULL, "blueMSX works best in 16 or 32 bits color depth", "blueMSX Info", MB_OK);
     }
 
