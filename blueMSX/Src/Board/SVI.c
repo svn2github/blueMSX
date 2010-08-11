@@ -320,7 +320,7 @@ int sviCreate(Machine* machine,
 
     r800DebugCreate(r800);
 
-    ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI, PSGTYPE_AY8910, 0, NULL);
+    ay8910 = ay8910Create(boardGetMixer(), AY8910_SVI, PSGTYPE_AY8910, 0, machine->audio.psgpan);
     ay8910SetIoPort(ay8910, sviPsgReadHandler, sviPsgPollHandler, sviPsgWriteHandler, NULL);
 
     keyClick  = audioKeyClickCreate(boardGetMixer());
