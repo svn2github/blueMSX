@@ -112,6 +112,7 @@ bool GameReader::readMemory(UInt16 address, void* buffer, int length)
     }
     
     if (inserted) {
+        //printf("### Reading address %.4x - %.4x\n", address, address + length - 1);
         if (MsxGr->ReadMemory(slot, globalBuffer, address, length) != 0) {
             inserted = MsxGr->IsCartridgeInserted(slot);
             return false;
@@ -133,6 +134,7 @@ bool GameReader::writeMemory(UInt16 address, void* buffer, int length)
     
     if (inserted) {
         memcpy(globalBuffer, buffer, length);
+        //printf("### Writing address %.4x - %.4x\n", address, address + length - 1);
         if (MsxGr->WriteMemory(slot, globalBuffer, address, length) != 0) {
             inserted = MsxGr->IsCartridgeInserted(slot);
             return false;

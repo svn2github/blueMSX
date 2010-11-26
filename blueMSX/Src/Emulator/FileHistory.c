@@ -500,7 +500,7 @@ static UInt32 fileWriteTime(const char* filename)
 
   rv = stat(filename, &s);
 
-  return rv < 0 ? 0 : s.st_mtime;
+  return rv < 0 ? 0 : (UInt32)s.st_mtime;
 }
 
 char* generateSaveFilename(Properties* properties, char* directory, char* prefix, char* extension, int digits)

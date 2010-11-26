@@ -146,7 +146,7 @@ static UInt8 readA(RomMapperBeerIde* rm)
 
 static UInt8 readB(RomMapperBeerIde* rm)
 {
-    return (UInt8)rm->ideData >>8;
+    return (UInt8)(rm->ideData >> 8);
 }
 
 static void writeA(RomMapperBeerIde* rm, UInt8 value)

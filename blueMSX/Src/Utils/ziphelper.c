@@ -40,8 +40,10 @@
 #include <direct.h>
 #endif
 
-#ifdef MINGW
+#if defined(MINGW)
  #define MKDIR(x) mkdir(x)
+#elif defined(WIN32)
+ #define MKDIR(x) _mkdir(x)
 #else
  #define MKDIR(x) mkdir(x,0777)
 #endif

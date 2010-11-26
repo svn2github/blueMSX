@@ -31,6 +31,7 @@ v 2.8.3     May 30, 2010
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
 - Fixed 'no frequency' bug in SN76489 emulation
+- Fixed minor bug in Beer IDE emulation
 
 v 2.8.2     August 14, 2009
 ===========================

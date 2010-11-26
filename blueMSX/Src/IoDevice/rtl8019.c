@@ -58,7 +58,7 @@ typedef struct RTL8019
     UInt16 regClda;
     UInt8  regRppr;
     UInt8  regLppr;
-    UInt8  regAcnt;
+    UInt16  regAcnt;
     UInt8  regTsr;
     UInt8  regNcr;
     UInt8  regFifo;
