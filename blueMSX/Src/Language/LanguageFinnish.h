@@ -161,7 +161,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPropsPerformance    = "Suorituskyky";
     ls->menuPropsSettings       = "Asetukset";
     ls->menuPropsFile           = "Tiedostot";
-    ls->menuPropsDisk           = "Disks";               // New in 2.7
+    ls->menuPropsDisk           = "Levyt";               // New in 2.7
     ls->menuPropsLanguage       = "Kieli";
     ls->menuPropsPorts          = "Liitännät";
     
@@ -171,7 +171,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuVideoInSource       = "Videosisääntulo";
     ls->menuVideoInBitmap       = "Bittikarttatiedosto";
     
-    ls->menuEthInterface        = "Ethernet Interface"; 
+    ls->menuEthInterface        = "Verkkokortti"; 
 
     ls->menuHelpHelp            = "Ohjeen aiheet";
     ls->menuHelpAbout           = "Tietoja blueMSX:stä";
@@ -311,7 +311,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB     = "Panasonicin kytkimet ";
     ls->propEmuFrontSwitch       = " Aplikaatiokytkin";
     ls->propEmuFdcTiming        = " Poista käytöstä levyaseman ajoitus";
-    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
+    ls->propEmuReversePlay      = " Salli taaksepäin suoritus"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " PAUSE-näppäin";
     ls->propEmuAudioSwitch       = " MSX-AUDIO modulin kytkin";
     ls->propVideoFreqText       = "Videotaajuus:";
@@ -376,7 +376,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propDisableWinKeys      = " Ota Windows-näppäimet MSX käyttöön";
     ls->propPriorityBoost       = " Nosta blueMSX:n prioriteettia";
     ls->propScreenshotPng       = " Tallenna kuvaruutukaappaukset PNG-muodossa";
-    ls->propEjectMediaOnExit    = " Eject media when blueMSX exits";        // New in 2.8
+    ls->propEjectMediaOnExit    = " Poista mediat kun ohjelma suljetaan";        // New in 2.8
     ls->propClearHistory        = "Oletko varma, että haluat poistaa kaikki tiedostohistorian tiedot?";
     ls->propOpenRomGB           = "ROM-tiedostojen avaus ";
     ls->propDefaultRomType      = "Oletus ROM tyyppi:";
@@ -392,11 +392,11 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propTheme               = "Teema:";
 
     ls->propCdromGB             = "CD-ROM ";         // New in 2.7
-    ls->propCdromMethod         = "Access Method:";  // New in 2.7
+    ls->propCdromMethod         = "Käyttötapa:";  // New in 2.7
     ls->propCdromMethodNone     = "None";            // New in 2.7
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
-    ls->propCdromDrive          = "Drive:";          // New in 2.7
+    ls->propCdromDrive          = "Asema:";          // New in 2.7
 
 
     //----------------------
@@ -597,7 +597,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutSwitchPause     = "Muuta Pause-näppäimen tilaa";
     ls->shortcutToggleMouseLock = "Muuta hiirenkaappauksen tilaa";
     ls->shortcutEmuSpeedMax     = "Maksimi emulointinopeus";
-    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
+    ls->shortcutEmuPlayReverse  = "Taaksepäin suoritus";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle  = "Vaihda maksimi emulointinopeus";
     ls->shortcutEmuSpeedNormal  = "Normaali emulointinopeus";
     ls->shortcutEmuSpeedInc     = "Nopeuta emulointia";
@@ -634,7 +634,7 @@ void langInitFinnish(LanguageStrings* ls)
     // Keyboard config lines
     //----------------------
 
-    ls->keyconfigSelectedKey    = "kohdenäppäin:";
+    ls->keyconfigSelectedKey    = "Emuloitava näppäin:";
     ls->keyconfigMappedTo       = "PC-näppäin:";
     ls->keyconfigMappingScheme  = "Näppäinkarttaprofiili:";
 
@@ -698,7 +698,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeSg1000Cart       = "SG-1000 Moduli";
     ls->romTypeSc3000Cart       = "SC-3000 Moduli";
 
-    ls->romTypeMsxPrinter       = "MSX Tulostin";
+    ls->romTypeMsxPrinter       = "MSX tulostin";
     ls->romTypeTurborPcm        = "Turbo-R PCM piiri";
     
     ls->romTypeNms8280Digitiz   = "Philips NMS-8280 Digitoija";
