@@ -706,6 +706,7 @@ char* langRomTypeNormalRam();
 char* langRomTypeKanji();
 char* langRomTypeHolyQuran();
 char* langRomTypeMatsushitaSram();
+char* langRomTypeMasushitaSramInv();
 char* langRomTypePanasonic8();
 char* langRomTypePanasonicWx16();
 char* langRomTypePanasonic16();

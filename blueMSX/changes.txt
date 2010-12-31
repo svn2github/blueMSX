@@ -20,6 +20,7 @@ v 2.8.3     May 30, 2010
 - Added support for ColecoVision Expansion Module #2 using mouse
 - Added support for Parallax ARC cartridge
 - Added support for stereo PSG in MSX machine configuration
+- Added support for inverted turbo mode bits on Panasonic MSX2+ machines
 - Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
   when any of the follwing languages were selected:
     Catalan

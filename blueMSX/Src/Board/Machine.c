@@ -1000,7 +1000,12 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         }
 
         if (machine->slotInfo[i].romType == SRAM_MATSUCHITA) {
-            success &= sramMapperMatsushitaCreate();
+            success &= sramMapperMatsushitaCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == SRAM_MATSUCHITA_INV) {
+            success &= sramMapperMatsushitaCreate(1);
             continue;
         }
 

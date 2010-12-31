@@ -606,6 +606,7 @@ static void getSlotControl(HWND hDlg)
     int j;
 
     if (editSlotInfo.romType == SRAM_MATSUCHITA || editSlotInfo.romType == ROM_GIDE ||
+        editSlotInfo.romType == SRAM_MATSUCHITA_INV ||
         editSlotInfo.romType == ROM_TURBORTIMER || editSlotInfo.romType == ROM_TURBORIO ||
         editSlotInfo.romType == SRAM_S1985 || editSlotInfo.romType == ROM_S1990 ||
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
@@ -756,6 +757,7 @@ static void endEditControls(HWND hDlg)
     case SRAM_S1985:
     case ROM_S1990:
     case SRAM_MATSUCHITA:
+    case SRAM_MATSUCHITA_INV:
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
     case ROM_NMS8280DIGI:
@@ -936,6 +938,7 @@ static void setEditControls(HWND hDlg)
         romType != RAM_NORMAL && romType != RAM_MAPPER && 
         romType != ROM_MEGARAM && romType != ROM_EXTRAM &&
         romType != SRAM_MATSUCHITA && romType != SRAM_S1985 && romType != ROM_S1990 && 
+        romType != SRAM_MATSUCHITA_INV &&
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE && romType != ROM_NMS1210 && 
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
@@ -959,6 +962,7 @@ static void setEditControls(HWND hDlg)
 
     // Set ram slot
     if (romType == SRAM_MATSUCHITA || romType == SRAM_S1985 || 
+        romType == SRAM_MATSUCHITA_INV ||
         romType == ROM_S1990 || romType == ROM_KANJI ||  romType == ROM_GIDE ||
         romType == ROM_TURBORTIMER || romType == ROM_TURBORIO || romType == ROM_NMS1210 ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
@@ -1365,6 +1369,7 @@ static void setEditControls(HWND hDlg)
     case SRAM_S1985:
     case ROM_S1990:
     case SRAM_MATSUCHITA:
+    case SRAM_MATSUCHITA_INV:
     case ROM_F4INVERTED:
     case ROM_F4DEVICE:
     case ROM_NMS8280DIGI:
@@ -1449,6 +1454,7 @@ static RomType romTypeList[] = {
     ROM_YAMAHANET,
     
     SRAM_MATSUCHITA,
+    SRAM_MATSUCHITA_INV,
     ROM_DRAM,
     ROM_PANASONIC8,
     ROM_PANASONICWX16,

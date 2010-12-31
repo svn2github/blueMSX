@@ -601,6 +601,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_KANJI:       return langRomTypeKanji();
     case ROM_HOLYQURAN:   return langRomTypeHolyQuran();
     case SRAM_MATSUCHITA: return langRomTypeMatsushitaSram();
+    case SRAM_MATSUCHITA_INV: return langRomTypeMasushitaSramInv();
     case ROM_PANASONIC8:  return langRomTypePanasonic8();
     case ROM_PANASONICWX16:return langRomTypePanasonicWx16();
     case ROM_PANASONIC16: return langRomTypePanasonic16();
@@ -763,8 +764,9 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case RAM_NORMAL:      return "NORMAL RAM";
     case ROM_KANJI:       return "KANJI";
     case ROM_HOLYQURAN:   return "HOLYQURAN";
-    case SRAM_MATSUCHITA: return "MATSUSHITA";
-    case ROM_PANASONICWX16: return "PANASON 16";
+    case SRAM_MATSUCHITA:     return "MATSUSHITA";
+    case SRAM_MATSUCHITA_INV: return "MATSUS INV";
+    case ROM_PANASONICWX16:   return "PANASON 16";
     case ROM_PANASONIC16: return "PANASON 16";
     case ROM_PANASONIC32: return "PANASON 32";
     case ROM_BUNSETU:     return "BUNSETSU";
@@ -895,6 +897,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_SVI738FDC:   return 1;
     case ROM_HOLYQURAN:   return 1;
     case SRAM_MATSUCHITA: return 1;
+    case SRAM_MATSUCHITA_INV: return 1;
     case ROM_BASIC:       return 1;
     case ROM_0x4000:      return 1;
     case ROM_0xC000:      return 1;
