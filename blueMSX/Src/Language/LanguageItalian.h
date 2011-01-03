@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
+** $Source: /cvsroot/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.72 $
+** $Revision: 1.73 $
 **
-** $Date: 2009-04-04 20:57:19 $
+** $Date: 2008/06/26 01:35:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -136,7 +136,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuCasRewindAfterInsert        = "Riavvolgi quando inserisci";
     ls->menuCasUseReadOnly              = "Simula una cassetta di sola lettura";
     ls->lmenuCasSaveAs                  = "Salva la cassetta come...";
-    ls->menuCasSetPosition              = "Cambia la posizione del nastro...";
+    ls->menuCasSetPosition              = "Imposta la posizione del nastro...";
     ls->menuCasRewind                   = "Riavvolgi";
 
     ls->menuVideoLoad                   = "Carica...";                                              
@@ -250,7 +250,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->dlgRomType                      = "Tipo ROM:";
     ls->dlgDiskSize                     = "Dimensione:";                                            
 
-    ls->dlgTapeTitle                    = "blueMSX - Posizione del nastro";
+    ls->dlgTapeTitle                    = "blueMSX - Imposta la posizione del nastro";
     ls->dlgTapeFrameText                = "Posizione del nastro";
     ls->dlgTapeCurrentPos               = "Posizione corrente";
     ls->dlgTapeTotalTime                = "Durata complessiva";
@@ -308,10 +308,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmuVramSizeText             = "Dimensione della VRAM:";
     ls->propEmuSpeedGB                  = "Velocità di emulazione ";
     ls->propEmuSpeedText                = "Velocità di emulazione:";
-    ls->propEmuFrontSwitchGB            = "Interruttori Panasonic ";
+    ls->propEmuFrontSwitchGB            = "Opzioni Panasonic ";
     ls->propEmuFrontSwitch              = " Interruttore frontale";
     ls->propEmuFdcTiming                = " Non sincronizzare le unità floppy ";
-    ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
+    ls->propEmuReversePlay              = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch              = " Tasto pausa";
     ls->propEmuAudioSwitch              = " Cartuccia MSX-AUDIO";
     ls->propVideoFreqText               = "Frequenza video:";
@@ -507,7 +507,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->confChipVideoChip               = "Chip:";
     ls->confChipVideoRam                = "VRAM:";
     ls->confChipSoundGB                 = "Audio ";
-    ls->confChipPsgStereoText           = " PSG Stereo";
+    ls->confChipPsgStereoText           = " PSG Stereo"; // New in 2.8.3
 
     ls->confCmosGB                      = "CMOS ";
     ls->confCmosEnable                  = " Abilita il CMOS";
@@ -519,8 +519,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->confFdcGB                       = "Controller del disco floppy ";
     ls->confCFdcNumDrivesText           = "Numero di unità connesse:";
 
-    ls->confEditMemTitle                = "blueMSX - Compila l'elenco assegnazioni";
-    ls->confEditMemGB                   = "Elenco assegnazioni ";
+    ls->confEditMemTitle                = "blueMSX - Effettua la mappatura";
+    ls->confEditMemGB                   = "Dettagli mappatura ";
     ls->confEditMemType                 = "Tipo:";
     ls->confEditMemFile                 = "File:";
     ls->confEditMemAddress              = "Indirizzo:";
@@ -597,9 +597,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutSwitchPause             = "Tasto pausa Panasonic";
     ls->shortcutToggleMouseLock         = "Mostra/Nascondi il puntatore del mouse";
     ls->shortcutEmuSpeedMax             = "Esegui temporaneamente alla massima velocità";
-    ls->shortcutEmuPlayReverse  = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedToggle          = "Esegui alla massima velocità di emulazione";
     ls->shortcutEmuSpeedNormal          = "Normalizza la velocità di emulazione";
+    ls->shortcutEmuPlayReverse          = "Rewind emulation";                     // New in 2.8.3
     ls->shortcutEmuSpeedInc             = "Aumenta la velocità di emulazione";
     ls->shortcutEmuSpeedDec             = "Diminuisci la velocità di emulazione";
     ls->shortcutThemeSwitch             = "Cambia il tema corrente";
@@ -664,6 +664,10 @@ void langInitItalian(LanguageStrings* ls)
     ls->romTypeMirroredRam1k            = "1kB Mirrored RAM";
     ls->romTypeMirroredRam2k            = "2kB Mirrored RAM";
     ls->romTypeNormalRam                = "Normal RAM";
+    ls->romTypeExtRam16                 = "16kB External RAM";
+    ls->romTypeExtRam32                 = "32kB External RAM";
+    ls->romTypeExtRam48                 = "48kB External RAM";
+    ls->romTypeExtRam64                 = "64kB External RAM";
     ls->romTypeTurborPause              = "Turbo-R Pause";
     ls->romTypeF4deviceNormal           = "F4 Device Normal";
     ls->romTypeF4deviceInvert           = "F4 Device Inverted";
@@ -671,10 +675,6 @@ void langInitItalian(LanguageStrings* ls)
     ls->romTypeNormal4000               = "Normal 4000h";
     ls->romTypeNormalC000               = "Normal C000h";
     ls->romTypeExtRam                   = "External RAM";
-    ls->romTypeExtRam16         = "16kB External RAM";
-    ls->romTypeExtRam32         = "32kB External RAM";
-    ls->romTypeExtRam48         = "48kB External RAM";
-    ls->romTypeExtRam64         = "64kB External RAM";
     ls->romTypeExtRam512                = "512kB External RAM";
     ls->romTypeExtRam1mb                = "1MB External RAM";
     ls->romTypeExtRam2mb                = "2MB External RAM";
