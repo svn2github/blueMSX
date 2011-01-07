@@ -126,7 +126,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -144,7 +144,7 @@
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)blueMSX.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -161,7 +161,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -179,7 +179,7 @@
       <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -193,7 +193,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\Input;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;LSB_FIRST;NDEBUG;NARROW;SOUND;DISK;FMSX;PROPERTIES_LOCAL_INI_FILE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -205,7 +205,7 @@
       <AdditionalDependencies>dxguid.lib;winmm.lib;ComCtl32.Lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\Unzip\zlibstat.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -227,7 +227,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_CONSOLE;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;USE_NOWIND_DLL;USE_PACKET_FS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -244,7 +244,7 @@
       <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Console</SubSystem>
@@ -262,7 +262,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OLD_Y8950;_MBCS;__WINCRYPT_H__;WIN32;_WINDOWS;WINDOWS;NDEBUG;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME="Canned";SINGLE_MACHINE="Canned";NO_DEFAULT_THEME;NO_FILE_HISTORY; NO_TOOL_SUPPORT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -281,7 +281,7 @@
       <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -296,7 +296,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Canned|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Bios;..\..\Src\Board;..\..\Src\Theme;..\..\Src\Utils;..\..\Src\Emulator;..\..\Src\BuildInfo;..\..\Src\Common;..\..\Src\IoDevice;..\..\Src\Resources;..\..\Src\SoundChips;..\..\Src\Unzip;..\..\Src\VideoChips;..\..\Src\VideoRender;..\..\Src\Z80;..\..\Src\Language;..\..\Src\Memory;..\..\Src\TinyXML;..\..\Src\Arch;..\..\Src\Media;..\..\Src\Debugger;..\..\Src\Input;..\..\Src\ThirdParty\DirectShowSamples;..\..\Src\ThirdParty\WinPCap;C:\Program Files\Microsoft DirectX SDK (August 2007)\Include;c:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\atl;c:\Program Files\Microsoft SDKs\Windows\v6.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>OLD_Y8950;WIN32;_DEBUG;_CONSOLE;WINDOWS;NARROW;SOUND;DISK;NOCRYPT;NOUNCRYPT;PROPERTIES_LOCAL_INI_FILE;SINGLE_THEME="Canned";SINGLE_MACHINE="Canned";NO_DEFAULT_THEME;NO_FILE_HISTORY;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -315,7 +315,7 @@
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)blueMSX.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -327,6 +327,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Src\Input\ColecoSteeringWheel.c" />
+    <ClCompile Include="..\..\Src\Input\ColecoSuperAction.c" />
+    <ClCompile Include="..\..\Src\IoDevice\Z8530.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperArc.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperNms1210Rs232.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperOpcodeBios.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperOpcodeMegaRam.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperOpcodeSaveRam.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperOpcodeSlotManager.c" />
+    <ClCompile Include="..\..\Src\Utils\ZipFromMem.c" />
     <ClCompile Include="..\..\Src\Win32\Win32.c" />
     <ClCompile Include="..\..\Src\Win32\Win32Avi.c" />
     <ClCompile Include="..\..\Src\Win32\Win32Bitmap.c" />
@@ -608,6 +618,16 @@
     <ClCompile Include="..\..\Src\Input\SviJoystick.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Src\Input\ColecoSteeringWheel.h" />
+    <ClInclude Include="..\..\Src\Input\ColecoSuperAction.h" />
+    <ClInclude Include="..\..\Src\IoDevice\Z8530.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperArc.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperNms1210Rs232.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperOpcodeBios.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperOpcodeMegaRam.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperOpcodeSaveRam.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperOpcodeSlotManager.h" />
+    <ClInclude Include="..\..\Src\Utils\ZipFromMem.h" />
     <ClInclude Include="..\..\Src\Win32\Win32Printer.h" />
     <ClInclude Include="..\..\Src\Win32\BlueMSXToolInterface.h" />
     <ClInclude Include="..\..\Src\Win32\Win32Avi.h" />
