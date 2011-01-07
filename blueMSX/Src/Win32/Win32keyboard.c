@@ -278,9 +278,9 @@ int str2dik(char* dikString)
 // initKbdTable initializes the keyboard table with default keys
 static void initKbdTable()
 {
-    memset (kbdTable[0], 0, sizeof(kbdTable));
-    memset (kbdTable[1], 0, sizeof(kbdTable));
-    memset (kbdTable[2], 0, sizeof(kbdTable));
+    memset (kbdTable[0], 0, sizeof(kbdTable[0]));
+    memset (kbdTable[1], 0, sizeof(kbdTable[1]));
+    memset (kbdTable[2], 0, sizeof(kbdTable[2]));
 
     kbdTable[0][DIK_0          ] = EC_0;
     kbdTable[0][DIK_1          ] = EC_1;
