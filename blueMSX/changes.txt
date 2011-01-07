@@ -21,6 +21,7 @@ v 2.8.3     May 30, 2010
 - Added support for Parallax ARC cartridge
 - Added support for stereo PSG in MSX machine configuration
 - Added support for inverted turbo mode bits on Panasonic MSX2+ machines
+- Added build system for Visual Studio 2010 (Needs some old SDK's downloadable from Microsoft)
 - Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
   when any of the follwing languages were selected:
     Catalan
@@ -33,6 +34,7 @@ v 2.8.3     May 30, 2010
 - Fix ARTRAGs VDP command engine bug
 - Fixed 'no frequency' bug in SN76489 emulation
 - Fixed minor bug in Beer IDE emulation
+- Fixed minor bug in video capture
 
 v 2.8.2     August 14, 2009
 ===========================

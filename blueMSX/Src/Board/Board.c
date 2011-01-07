@@ -412,7 +412,7 @@ static void boardCaptureSaveState()
             saveStateSetBuffer(state, "inputs", cap.inputs, cap.inputCnt * sizeof(RleData));
         }
         saveStateSet(state, "initStateSize", cap.initStateSize);
-        if (cap.inputCnt > 0) {
+        if (cap.initStateSize > 0) {
             saveStateSetBuffer(state, "initState", cap.initState, cap.initStateSize);
         }
         
