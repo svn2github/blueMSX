@@ -122,8 +122,8 @@ void CVideoGrabber::ShutdownGrabber()
     
     if (m_initialized) {
         HRESULT hr;
-        CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
-
+//        CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
+        IMediaControlPtr pControl = m_pGraph;
         hr = pControl->Stop();
 
 #ifdef _DEBUG
@@ -144,7 +144,7 @@ HRESULT CVideoGrabber::ShowFilterPropertyPage(HWND hwndParent, IBaseFilter *pFil
         return E_POINTER;
     }
 
-    CComPtr <ISpecifyPropertyPages> pPropertyPage;
+    ISpecifyPropertyPagesPtr pPropertyPage;
     hr = pFilter->QueryInterface(IID_ISpecifyPropertyPages, (void **) &pPropertyPage);
     if(SUCCEEDED(hr)) {
         FILTER_INFO FilterInfo;
@@ -169,7 +169,7 @@ HRESULT CVideoGrabber::ShowFilterPropertyPage(HWND hwndParent, IBaseFilter *pFil
 
 void CVideoGrabber::ShowProperties(HWND hwndParent, const std::string& devName)
 {
-    CComPtr <IBaseFilter> pSource;
+    IBaseFilterPtr pSource;
 
     pSource = GetCapDevice(devName);
     if (pSource) {
@@ -179,10 +179,10 @@ void CVideoGrabber::ShowProperties(HWND hwndParent, const std::string& devName)
 
 bool CVideoGrabber::SetupGrabber(const std::string& devName)
 {
-    CComPtr <ISampleGrabber> pGrabber;
-    CComPtr <IBaseFilter>    pSource;
-    CComPtr <IVideoWindow>   pVideoWindow;
-    CComPtr <ICaptureGraphBuilder2> pBuilder;
+    ISampleGrabberPtr pGrabber;
+    IBaseFilterPtr    pSource;
+    IVideoWindowPtr   pVideoWindow;
+    ICaptureGraphBuilder2Ptr pBuilder;
     IAMStreamConfig *pConfig;
     HRESULT hr;
 
@@ -190,12 +190,12 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         ShutdownGrabber();
     }
 
-    hr = pBuilder.CoCreateInstance(CLSID_CaptureGraphBuilder2);
+    hr = pBuilder.CreateInstance(CLSID_CaptureGraphBuilder2);
     if (FAILED(hr)) {
         return false;
     }
 
-    hr = pGrabber.CoCreateInstance(CLSID_SampleGrabber);
+    hr = pGrabber.CreateInstance(CLSID_SampleGrabber);
     if (FAILED(hr)) {
         return false;
     }
@@ -205,7 +205,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-    hr = m_pGraph.CoCreateInstance(CLSID_FilterGraph);
+    hr = m_pGraph.CreateInstance(CLSID_FilterGraph);
     if (FAILED(hr)) {
         return false;
     }
@@ -216,15 +216,16 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-    CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
+//    CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
+    IBaseFilterPtr pGrabberBase(pGrabber);
     hr = m_pGraph->AddFilter(pGrabberBase, L"Grabber");
     if (FAILED(hr)) {
         m_pGraph = 0;
         return false;
     }
 
-    CComPtr <IBaseFilter> pRenderer;
-    hr = pRenderer.CoCreateInstance(CLSID_NullRenderer);
+    IBaseFilterPtr pRenderer;
+    hr = pRenderer.CreateInstance(CLSID_NullRenderer);
     if (FAILED(hr)) {
         m_pGraph = 0;
         return false;
@@ -255,8 +256,8 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-    CComPtr <IPin> pSourcePin;
-    CComPtr <IPin> pGrabPin;
+    IPinPtr pSourcePin;
+    IPinPtr pGrabPin;
     pSourcePin = GetOutPin(pSource, 0);
     pGrabPin = GetInPin(pGrabberBase, 0);
     hr = m_pGraph->Connect(pSourcePin, pGrabPin);
@@ -283,7 +284,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     cbInfo.bih.biPlanes = 1;
     cbInfo.bih.biBitCount = 16;
 
-    CComPtr <IPin> pGrabOutPin = GetOutPin(pGrabberBase, 0);
+    IPinPtr pGrabOutPin = GetOutPin(pGrabberBase, 0);
     hr = m_pGraph->Render(pGrabOutPin);
     if (FAILED(hr)) {
         m_pGraph = 0;
@@ -306,7 +307,8 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-    CComQIPtr <IVideoWindow, &IID_IVideoWindow> pWindow = m_pGraph;
+//    CComQIPtr <IVideoWindow, &IID_IVideoWindow> pWindow = m_pGraph;
+    IVideoWindowPtr pWindow = m_pGraph;
     if (pWindow) {
         hr = pWindow->put_AutoShow(OAFALSE);
     }
@@ -316,7 +318,8 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     hr = AddGraphToRot(m_pGraph, &m_dwGraphRegister);
 #endif
 
-    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
+//    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
+    IMediaControlPtr pControl(m_pGraph);
     hr = pControl->Run();
     if (FAILED(hr)) {
         m_pGraph = 0;
@@ -325,7 +328,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
 
     m_initialized = true;
 
-	return true;
+    return true;
 }
 
 int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
@@ -337,7 +340,8 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
         return 0;    
     }
 
-    CComQIPtr <IMediaEvent, &IID_IMediaEvent> pEvent(m_pGraph);
+//    CComQIPtr <IMediaEvent, &IID_IMediaEvent> pEvent(m_pGraph);
+    IMediaEventPtr pEvent(m_pGraph);
 
     hr = pEvent->WaitForCompletion(INFINITE, &EvCode);
     
@@ -396,7 +400,7 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
 
 HRESULT CVideoGrabber::GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin)
 {
-    CComPtr <IEnumPins> pEnum;
+    IEnumPinsPtr pEnum;
     *ppPin = NULL;
 
     HRESULT hr = pFilter->EnumPins(&pEnum);
@@ -429,14 +433,14 @@ HRESULT CVideoGrabber::GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, i
 
 IPin *CVideoGrabber::GetInPin(IBaseFilter *pFilter, int nPin)
 {
-    CComPtr <IPin> pComPin=0;
+    IPinPtr pComPin=0;
     GetPin(pFilter, PINDIR_INPUT, nPin, &pComPin);
     return pComPin;
 }
 
 IPin *CVideoGrabber::GetOutPin(IBaseFilter *pFilter, int nPin)
 {
-    CComPtr <IPin> pComPin=0;
+    IPinPtr pComPin=0;
     GetPin(pFilter, PINDIR_OUTPUT, nPin, &pComPin);
     return pComPin;
 }
@@ -446,8 +450,8 @@ CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
     DeviceNameList nameList;
     HRESULT hr;
 
-    CComPtr <ICreateDevEnum> pCreateDevEnum;
-    hr = pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
+    ICreateDevEnumPtr pCreateDevEnum;
+    hr = pCreateDevEnum.CreateInstance(CLSID_SystemDeviceEnum);
     if (FAILED(hr)) {
         return nameList;
     }
@@ -456,7 +460,7 @@ CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
         return nameList;
     }
 
-    CComPtr <IEnumMoniker> pEm;
+    IEnumMonikerPtr pEm;
     hr = pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
     if (FAILED(hr)) {
         return nameList;
@@ -473,19 +477,19 @@ CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
 
     while (true) {
         ULONG ulFetched = 0;
-        CComPtr <IMoniker> pM;
+        IMonikerPtr pM;
         hr = pEm->Next(1, &pM, &ulFetched);
         if (hr != S_OK) {
             break;
         }
 
-        CComPtr <IPropertyBag> pBag;
+        IPropertyBagPtr pBag;
         hr = pM->BindToStorage( 0, 0, IID_IPropertyBag, (void**) &pBag );
         if (hr != S_OK) {
             continue;
         }
 
-        CComVariant varName;
+        _variant_t varName;
         varName.vt = VT_BSTR;
         hr = pBag->Read( L"FriendlyName", &varName, NULL);
         if (hr != S_OK) {
@@ -506,8 +510,8 @@ IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
 
     m_szDeviceName.clear();
 
-    CComPtr <ICreateDevEnum> pCreateDevEnum;
-    hr = pCreateDevEnum.CoCreateInstance(CLSID_SystemDeviceEnum);
+    ICreateDevEnumPtr pCreateDevEnum;
+    hr = pCreateDevEnum.CreateInstance(CLSID_SystemDeviceEnum);
     if (FAILED(hr)) {
         return NULL;
     }
@@ -516,7 +520,7 @@ IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
         return NULL;
     }
 
-    CComPtr <IEnumMoniker> pEm;
+    IEnumMonikerPtr pEm;
     hr = pCreateDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEm, 0);
     if (FAILED(hr)) {
         return NULL;
@@ -535,19 +539,19 @@ IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
 
     while (true) {
         ULONG ulFetched = 0;
-        CComPtr <IMoniker> pM;
+        IMonikerPtr pM;
         hr = pEm->Next(1, &pM, &ulFetched);
         if (hr != S_OK) {
             break;
         }
 
-        CComPtr <IPropertyBag> pBag;
+        IPropertyBagPtr pBag;
         hr = pM->BindToStorage( 0, 0, IID_IPropertyBag, (void**) &pBag );
         if (hr != S_OK) {
             continue;
         }
 
-        CComVariant varName;
+        _variant_t varName;
         varName.vt = VT_BSTR;
         hr = pBag->Read( L"FriendlyName", &varName, NULL);
         if (hr != S_OK) {
@@ -614,7 +618,7 @@ HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
         return E_POINTER;
     }
 
-    CComPtr <IRunningObjectTable> pROT;
+    IRunningObjectTablePtr pROT;
     hr = GetRunningObjectTable(0, &pROT);
     if (FAILED(hr)) {
         return hr;
@@ -623,7 +627,7 @@ HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
     WCHAR wsz[128];
     hr = StringCchPrintfW(wsz, NUMELMS( wsz ), L"FilterGraph %08x pid %08x\0", (DWORD_PTR) pUnkGraph, GetCurrentProcessId());
 
-    CComPtr <IMoniker> pMoniker;
+    IMonikerPtr pMoniker;
     hr = CreateItemMoniker(L"!", wsz, &pMoniker);
     if (SUCCEEDED(hr)) {
         hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker, pdwRegister);
@@ -635,7 +639,7 @@ HRESULT CVideoGrabber::AddGraphToRot(IUnknown *pUnkGraph, DWORD *pdwRegister)
 void CVideoGrabber::RemoveGraphFromRot(DWORD pdwRegister)
 {
     HRESULT hr;
-    CComPtr <IRunningObjectTable> pROT;
+    IRunningObjectTablePtr pROT;
 
     hr = GetRunningObjectTable(0, &pROT);
     if (SUCCEEDED(hr)) {

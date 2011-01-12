@@ -31,7 +31,7 @@
 #include <windows.h>
 #include <streams.h>
 #include <stdio.h>
-#include <atlbase.h>
+#include <comdef.h>
 #include <qedit.h>
 #include <vector>
 #include <string>
@@ -56,7 +56,22 @@ public:
 private:
     bool m_initialized;
     std::string m_szDeviceName;
-    CComPtr <IGraphBuilder>  m_pGraph;
+    _COM_SMARTPTR_TYPEDEF(IBaseFilter,           __uuidof(IBaseFilter));
+    _COM_SMARTPTR_TYPEDEF(ICaptureGraphBuilder2, __uuidof(ICaptureGraphBuilder2));
+    _COM_SMARTPTR_TYPEDEF(ICreateDevEnum,        __uuidof(ICreateDevEnum));
+    _COM_SMARTPTR_TYPEDEF(IEnumMoniker,          __uuidof(IEnumMoniker));
+    _COM_SMARTPTR_TYPEDEF(IEnumPins,             __uuidof(IEnumPins));
+    _COM_SMARTPTR_TYPEDEF(IGraphBuilder,         __uuidof(IGraphBuilder));
+    _COM_SMARTPTR_TYPEDEF(IMediaControl,         __uuidof(IMediaControl));
+    _COM_SMARTPTR_TYPEDEF(IMediaEvent,           __uuidof(IMediaEvent));
+    _COM_SMARTPTR_TYPEDEF(IMoniker,              __uuidof(IMoniker));
+    _COM_SMARTPTR_TYPEDEF(IPin,                  __uuidof(IPin));
+    _COM_SMARTPTR_TYPEDEF(IPropertyBag,          __uuidof(IPropertyBag));
+    _COM_SMARTPTR_TYPEDEF(IRunningObjectTable,   __uuidof(IRunningObjectTable));
+    _COM_SMARTPTR_TYPEDEF(ISampleGrabber,        __uuidof(ISampleGrabber));
+    _COM_SMARTPTR_TYPEDEF(ISpecifyPropertyPages, __uuidof(ISpecifyPropertyPages));
+    _COM_SMARTPTR_TYPEDEF(IVideoWindow,          __uuidof(IVideoWindow));
+    IGraphBuilderPtr  m_pGraph;
     HRESULT GetPin(IBaseFilter *pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin);
     IPin *GetInPin (IBaseFilter *pFilter, int Num);
     IPin *GetOutPin(IBaseFilter *pFilter, int Num);
