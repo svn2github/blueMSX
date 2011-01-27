@@ -201,7 +201,7 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     }
 
     pSource = GetCapDevice(devName);
-    if (!pSource) {
+    if (pSource == NULL) {
         return false;
     }
 
@@ -456,7 +456,7 @@ CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
         return nameList;
     }
 
-    if (!pCreateDevEnum) {
+    if (pCreateDevEnum == NULL) {
         return nameList;
     }
 
@@ -466,7 +466,7 @@ CVideoGrabber::DeviceNameList CVideoGrabber::GetDeviceNames() const
         return nameList;
     }
 
-    if (!pEm) {
+    if (pEm == NULL) {
         return nameList;
     }
 
@@ -516,7 +516,7 @@ IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
         return NULL;
     }
 
-    if (!pCreateDevEnum) {
+    if (pCreateDevEnum == NULL) {
         return NULL;
     }
 
@@ -526,7 +526,7 @@ IBaseFilter* CVideoGrabber::GetCapDevice(const std::string& devName)
         return NULL;
     }
 
-    if (!pEm) {
+    if (pEm == NULL) {
         return NULL;
     }
 
