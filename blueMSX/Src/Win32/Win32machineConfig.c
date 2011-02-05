@@ -769,6 +769,7 @@ static void endEditControls(HWND hDlg)
     case ROM_OPCODESLOT:
     case ROM_TURBORTIMER:
     case ROM_TURBORIO:
+    case ROM_SVI328RSIDE:
     case ROM_SVI328FDC:
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
