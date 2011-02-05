@@ -749,6 +749,11 @@ static HMENU menuCreateHarddisk(Properties* pProperties, Shortcuts* shortcuts)
             AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
             AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateNowindSettings(pProperties), langPropSettings());
             break;
+        case HD_RSIDE:
+            hasHd = 1;
+            sprintf(langBuffer, "IDE%d RS IDE", i);
+            AppendMenu(hMenu, MF_POPUP, (UINT)menuCreateIdeHd(diskGetHdDriveId(i, 0), pProperties, shortcuts, 0), langBuffer);
+            break;
         case HD_GIDE:
             hasHd = 1;
             sprintf(langBuffer, "IDE%d GIDE", i);

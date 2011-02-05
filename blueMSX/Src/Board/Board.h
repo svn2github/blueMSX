@@ -138,7 +138,7 @@ int boardUseFmPac();
 
 RomType boardGetRomType(int cartNo);
 
-typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE,
+typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE, HD_RSIDE,
                HD_MEGASCSI, HD_WAVESCSI, HD_GOUDASCSI, HD_NOWIND } HdType;
 HdType boardGetHdType(int hdIndex);
 
