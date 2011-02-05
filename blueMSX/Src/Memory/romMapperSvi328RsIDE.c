@@ -210,7 +210,7 @@ static void getDebugInfo(RomMapperRsIde* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperRsIdeCreate(int hdId)
+int romMapperSvi328RsIdeCreate(int hdId)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
