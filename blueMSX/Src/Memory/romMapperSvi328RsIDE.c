@@ -204,7 +204,7 @@ static void getDebugInfo(RomMapperRsIde* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeRsSvi(), 12);
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeSviRs(), 12);
     for (i = 0; i < 12; i++) {
         dbgIoPortsAddPort(ioPorts, i, 0x44 + i, DBG_IO_READWRITE, peekIo(rm, 0x44 + i));
     }
@@ -215,12 +215,11 @@ int romMapperRsIdeCreate(int hdId)
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperRsIde* rm;
-    int i;
 
     rm = malloc(sizeof(RomMapperRsIde));
     
     rm->deviceHandle = deviceManagerRegister(ROM_SVI328RSIDE, &callbacks, rm);
-    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevIdeRsSvi(), &dbgCallbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_PORT, langDbgDevIdeSviRs(), &dbgCallbacks, rm);
 
     rm->i8255 = i8255Create( NULL, readA, writeA,
                              NULL, readB, writeB,

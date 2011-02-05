@@ -683,6 +683,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->romTypeSvi328Prn        = "SVI-328 Printer";
     ls->romTypeSvi328Uart       = "SVI-328 Serial Port";
     ls->romTypeSvi328col80      = "SVI-328 80 Column Card";
+    ls->romTypeSvi328RsIde      = "SVI-328 RS IDE";
     ls->romTypeSvi727col80      = "SVI-727 80 Column Card";
     ls->romTypeColecoCart       = "Coleco Cartridge";
     ls->romTypeSg1000Cart       = "SG-1000 Cartridge";

@@ -160,6 +160,7 @@ char* langRomTypeSvi328Fdc()        { return "SVI-328 Disk Controller"; }
 char* langRomTypeSvi328Prn()        { return "SVI-328 Printer"; }
 char* langRomTypeSvi328Uart()       { return "SVI-328 Serial Port"; }
 char* langRomTypeSvi328col80()      { return "SVI-328 80 Column Card"; }
+char* langRomTypeSvi328RsIde()      { return "SVI-328 RS IDE"; }
 char* langRomTypeSvi727col80()      { return "SVI-727 80 Column Card"; }
 char* langRomTypeColecoCart()       { return "Coleco Cartridge"; }
 char* langRomTypeSg1000Cart()       { return "SG-1000 Cartridge"; }
@@ -229,6 +230,7 @@ char* langDbgDevRamMapper()         { return "RAM Mapper"; }
 char* langDbgDevRam()               { return "RAM"; }
 char* langDbgDevIdeBeer()           { return "Beer IDE"; }
 char* langDbgDevIdeGide()           { return "GIDE"; }
+char* langDbgDevIdeSviRs)           { return "SVI-328 RS IDE"; }
 char* langDbgDevScsiGouda()         { return "Gouda SCSI"; }
 char* langDbgDevF4Device()          { return "F4 Device"; }
 char* langDbgDevFmpac()             { return "FMPAC"; }

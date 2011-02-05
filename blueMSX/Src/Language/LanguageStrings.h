@@ -684,6 +684,7 @@ typedef struct {
     char* romTypeSvi328Prn;
     char* romTypeSvi328Uart;
     char* romTypeSvi328col80;
+    char* romTypeSvi328RsIde;
     char* romTypeSvi727col80;
     char* romTypeColecoCart;
     char* romTypeSg1000Cart;

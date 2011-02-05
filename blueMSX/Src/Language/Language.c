@@ -949,6 +949,7 @@ char* langRomTypeSvi328Fdc() { return ls->romTypeSvi328Fdc; }
 char* langRomTypeSvi328Prn() { return ls->romTypeSvi328Prn; }
 char* langRomTypeSvi328Uart() { return ls->romTypeSvi328Uart; }
 char* langRomTypeSvi328col80() { return ls->romTypeSvi328col80; }
+char* langRomTypeSvi328RsIde() { return ls->romTypeSvi328RsIde; }
 char* langRomTypeSvi727col80() { return ls->romTypeSvi727col80; }
 char* langRomTypeColecoCart() { return ls->romTypeColecoCart; }
 char* langRomTypeSg1000Cart() { return ls->romTypeSg1000Cart; }
@@ -1015,6 +1016,7 @@ char* langDbgDevRamMapper() { return ls->dbgDevRamMapper; }
 char* langDbgDevRam() { return ls->dbgDevRam; }
 char* langDbgDevIdeBeer() { return "Beer IDE"; }
 char* langDbgDevIdeGide() { return "GIDE"; }
+char* langDbgDevIdeSviRs() { return "SVI-328 RS IDE"; }
 char* langDbgDevScsiGouda() { return "Gouda SCSI"; }
 char* langDbgDevF4Device() { return ls->dbgDevF4Device; }
 char* langDbgDevFmpac() { return "FMPAC"; }

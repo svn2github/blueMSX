@@ -110,6 +110,7 @@
 #include "romMapperSunriseIDE.h"
 #include "romMapperBeerIDE.h"
 #include "romMapperGIDE.h"
+#include "romMapperSvi328RsIDE.h"
 #include "romMapperMicrosolVmx80.h"
 #include "romMapperNms8280VideoDa.h"
 #include "romMapperSonyHBIV1.h"
@@ -1115,6 +1116,12 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperSvi328Rs232Create(SVI328_RS232);
             continue;
         }
+
+        if (machine->slotInfo[i].romType == ROM_SVI328RSIDE) {
+            success &= romMapperSvi328RsIdeCreate(hdId++);
+            continue;
+        }
+        
         // -------------------------------
         
         // MEGA-SCSI etc

@@ -117,6 +117,7 @@ const char* romTypeToString(RomType romType) {
     case ROM_SVI328PRN:   return "SVI-328 Printer";
     case ROM_SVI328RS232: return "SVI-328 Serial Port";
     case ROM_SVI80COL:    return "SVI 80 Column Card";
+    case ROM_SVI328RSIDE: return "SVI-328 RS IDE";
     case ROM_COLECO:      return "Coleco Cartridge";
     case ROM_SONYHBI55:   return "Sony HBI-55";
     case ROM_MSXAUDIODEV: return "MSX Audio Chip";
@@ -213,6 +214,7 @@ const char* romTypeToShortString(RomType romType) {
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
     case ROM_SVI80COL:    return "SVI80COL";
+    case ROM_SVI328RSIDE: return "SVI328RSIDE";
     case ROM_COLECO:      return "COLECO";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";

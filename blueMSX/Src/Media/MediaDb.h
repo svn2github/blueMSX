@@ -187,7 +187,8 @@ enum  {
     ROM_OPCODESAVE  = 157,
     ROM_OPCODEMEGA  = 158,
     SRAM_MATSUCHITA_INV = 159,
-    ROM_MAXROMID    = 159
+    ROM_SVI328RSIDE = 160,
+    ROM_MAXROMID    = 160
 };
 
 typedef struct MediaType MediaType;

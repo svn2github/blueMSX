@@ -652,6 +652,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI328PRN:   return langRomTypeSvi328Prn();
     case ROM_SVI328RS232: return langRomTypeSvi328Uart();
     case ROM_SVI80COL:    return langRomTypeSvi328col80();
+    case ROM_SVI328RSIDE: return langRomTypeSvi328RsIde();
     case ROM_SVI727:      return langRomTypeSvi727col80();
     case ROM_COLECO:      return langRomTypeColecoCart();
     case ROM_SG1000:      return langRomTypeSg1000Cart();
@@ -814,6 +815,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
     case ROM_SVI80COL:    return "SVI80COL";
+    case ROM_SVI328RSIDE: return "SVI328RSIDE";
     case ROM_SVI727:      return "SVI727";
     case ROM_COLECO:      return "COLECO";
     case ROM_SG1000:      return "SG-1000";

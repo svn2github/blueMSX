@@ -618,7 +618,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_JOYREXPSG || 
         editSlotInfo.romType == ROM_OPCODEPSG || editSlotInfo.romType == ROM_OPCODESLOT ||
         editSlotInfo.romType == ROM_SVI80COL || editSlotInfo.romType == ROM_SVI328PRN ||
-        editSlotInfo.romType == ROM_SVI727 ||
+        editSlotInfo.romType == ROM_SVI727 || editSlotInfo.romType == ROM_SVI328RSIDE ||
         editSlotInfo.romType == ROM_MSXPRN || editSlotInfo.romType == ROM_SVI328RS232) {
         return;
     }
@@ -945,6 +945,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_MSXMIDI && romType != ROM_MSXPRN && romType != ROM_JOYREXPSG && 
         romType != ROM_OPCODEPSG && romType != ROM_OPCODESLOT && romType != ROM_OPCODEMEGA &&
         romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
+        romType != ROM_SVI328RSIDE &&
         romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
         if (romSize == 0) {
@@ -972,7 +973,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_KANJI12 || romType == ROM_JISYO || 
         romType == ROM_OPCODEPSG || romType == ROM_OPCODESLOT ||
         romType == ROM_SVI328FDC || romType == ROM_SVI80COL || romType == ROM_SVI727 ||
-        romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232)
+        romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232 || romType == ROM_SVI328RSIDE)
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMSLOT), "Unmapped");
@@ -1384,6 +1385,7 @@ static void setEditControls(HWND hDlg)
     case ROM_SVI328FDC:
     case ROM_SVI328PRN:
     case ROM_SVI328RS232:
+    case ROM_SVI328RSIDE:
     case ROM_MSXPRN:
     case ROM_GIDE:
     case ROM_NMS1210:
@@ -1519,6 +1521,7 @@ static RomType romTypeList[] = {
     ROM_ARC,
     
     /* no msx */
+    ROM_SVI328RSIDE,
     ROM_SVI328FDC,
     ROM_SVI328PRN,
     ROM_SVI328RS232,
