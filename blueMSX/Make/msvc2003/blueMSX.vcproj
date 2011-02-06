@@ -1021,6 +1021,9 @@
 					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.c">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328RsIDE.c">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi727.c">
 				</File>
 				<File
@@ -1305,6 +1308,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi328rs232.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperSvi328RsIDE.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperSvi727.h">

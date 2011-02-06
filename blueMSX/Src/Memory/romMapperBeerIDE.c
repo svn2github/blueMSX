@@ -215,9 +215,9 @@ static void getDebugInfo(RomMapperBeerIde* rm, DbgDevice* dbgDevice)
     DbgIoPorts* ioPorts;
     int i;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeBeer(), 12);
-    for (i = 0; i < 12; i++) {
-        dbgIoPortsAddPort(ioPorts, i, 0x44 + i, DBG_IO_READWRITE, peekIo(rm, 0x44 + i));
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevIdeBeer(), 4);
+    for (i = 0; i < 4; i++) {
+        dbgIoPortsAddPort(ioPorts, i, 0x30 + i, DBG_IO_READWRITE, i8255Peek(rm->i8255, 0x30 + i));
     }
 }
 

@@ -150,7 +150,7 @@ int iniFileGetInt(char* section,
     char buff[MAX_LINE_LENGTH]; 
     char *ep; 
     char t_section[MAX_LINE_LENGTH]; 
-    char value[6]; 
+    char value[16]; 
     int len = strlen(entry); 
     int i; 
     
