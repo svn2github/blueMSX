@@ -577,7 +577,11 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+#ifdef VC2003
+IDI_BLUEMSX             ICON                    "bluemsx2003.ico"
+#else
 IDI_BLUEMSX             ICON                    "bluemsx.ico"
+#endif
 IDI_DISKIMAGE           ICON                    "diskimage.ico"
 IDI_ROMIMAGE            ICON                    "romimage.ico"
 IDI_CASIMAGE            ICON                    "casimage.ico"

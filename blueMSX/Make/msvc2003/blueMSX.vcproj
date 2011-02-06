@@ -1752,6 +1752,12 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Resources\blueMSX.rc">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCResourceCompilerTool"
+						AdditionalOptions="/dVC2003=1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\Src\BuildInfo\build_info.txt">
