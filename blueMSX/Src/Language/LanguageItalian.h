@@ -1,9 +1,9 @@
 /*****************************************************************************
 ** $Source: /cvsroot/bluemsx/blueMSX/Src/Language/LanguageItalian.h,v $
 **
-** $Revision: 1.73 $
+** $Revision: 1.74 $
 **
-** $Date: 2008/06/26 01:35:00 $
+** $Date: 2011/01/28 02:30:00 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -76,9 +76,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->errorTitle                      = "blueMSX - Errore";
     ls->errorEnterFullscreen            = "Non riesco ad attivare la visualizzazione a schermo intero.           \n";
     ls->errorDirectXFailed              = "Non riesco a creare gli oggetti DirectX.          \nHo selezionato automaticamente le GDI.\nVerifica le proprietà video.";
-    ls->errorNoRomInZip                 = "Nessun file .rom trovato nell'archivio compresso.";
-    ls->errorNoDskInZip                 = "Nessun file .dsk trovato nell'archivio compresso.";
-    ls->errorNoCasInZip                 = "Nessun file .cas trovato nell'archivio compresso.";
+    ls->errorNoRomInZip                 = "Nessun file .ROM trovato nell'archivio compresso.";
+    ls->errorNoDskInZip                 = "Nessun file .DSK trovato nell'archivio compresso.";
+    ls->errorNoCasInZip                 = "Nessun file .CAS trovato nell'archivio compresso.";
     ls->errorNoHelp                     = "Non trovo il file della guida in linea di blueMSX.";
     ls->errorStartEmu                   = "Avvio dell'emulatore fallito!";
     ls->errorPortableReadonly           = "Il dispositivo rimovibile è di sola lettura";
@@ -103,7 +103,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuNoRecentFiles               = "- nessun file recente -";
     ls->menuInsert                      = "Inserisci...";
-    ls->menuEject                       = "Rimuovi";
+    ls->menuEject                       = "Espelli";
 
     ls->menuCartGameReader              = "Game Reader";
     ls->menuCartIde                     = "IDE";
@@ -190,14 +190,14 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->menuFileHarddisk                = "Interfaccia disco rigido";
     ls->menuFileHarddiskNoPesent        = "Controller non presente";
-    ls->menuFileHarddiskRemoveAll       = "Rimuovi tutti i dispositivi";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll       = "Espelli tutti i dispositivi";    // New in 2.7
 
     ls->menuRunRun                      = "Esegui";
     ls->menuRunPause                    = "Sospendi";
     ls->menuRunStop                     = "Interrompi";
-    ls->menuRunSoftReset                = "Riavvio software";
-    ls->menuRunHardReset                = "Riavvio hardware";
-    ls->menuRunCleanReset               = "Riavvio completo";
+    ls->menuRunSoftReset                = "Riavvia software";
+    ls->menuRunHardReset                = "Riavvia hardware";
+    ls->menuRunCleanReset               = "Espelli e riavvia";
 
     ls->menuToolsMachine                = "Gestione hardware...";
     ls->menuToolsShortcuts              = "Gestione tasti rapidi...";
@@ -310,8 +310,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->propEmuSpeedText                = "Velocità di emulazione:";
     ls->propEmuFrontSwitchGB            = "Opzioni Panasonic ";
     ls->propEmuFrontSwitch              = " Interruttore frontale";
-    ls->propEmuFdcTiming                = " Non sincronizzare le unità floppy ";
-    ls->propEmuReversePlay              = " Enable reverse playback"; // New in 2.8.3
+    ls->propEmuFdcTiming                = " Non rallentare le unità floppy ";
+    ls->propEmuReversePlay              = " Abilita la riproduzione a ritroso"; // New in 2.8.3
     ls->propEmuPauseSwitch              = " Tasto pausa";
     ls->propEmuAudioSwitch              = " Cartuccia MSX-AUDIO";
     ls->propVideoFreqText               = "Frequenza video:";
@@ -370,13 +370,13 @@ void langInitItalian(LanguageStrings* ls)
     ls->propSetFileHistoryGB            = "File recenti ";
     ls->propSetFileHistorySize          = "Numero di file recenti:";
     ls->propSetFileHistoryClear         = "Svuota la cronologia";
-    ls->propFileTypes                   = " Associa alcuni tipi di file a blueMSX (.rom, .dsk, .cas, .sta)";
+    ls->propFileTypes                   = " Associa alcuni tipi di file a blueMSX (.ROM, .DSK, .CAS, .STA)";
     ls->propWindowsEnvGB                = "Ambiente Windows ";
-    ls->propSetScreenSaver              = " Disabilita il salva schermo quando blueMSX è in esecuzione";
+    ls->propSetScreenSaver              = " Disattiva il salva schermo quando blueMSX è in esecuzione";
     ls->propDisableWinKeys              = " Associa automaticamente le funzionalità MSX ai tasti Windows";
     ls->propPriorityBoost               = " Utilizza blueMSX a priorità elevata";
     ls->propScreenshotPng               = " Utilizza il formato PNG per il salvataggio delle schermate";
-    ls->propEjectMediaOnExit            = " Rimuovi tutti i supporti quando esci da blueMSX";                      // New in 2.8
+    ls->propEjectMediaOnExit            = " Espelli tutti i supporti quando esci da blueMSX";                      // New in 2.8
     ls->propClearHistory                = "Vuoi veramente svuotare la cronologia dei file recenti?";
     ls->propOpenRomGB                   = "Esecuzione delle immagini ROM ";
     ls->propDefaultRomType              = "Tipo predefinito:";
@@ -497,7 +497,7 @@ void langInitItalian(LanguageStrings* ls)
 
     ls->confMemAdd                      = "Aggiungi...";
     ls->confMemEdit                     = "Modifica...";
-    ls->confMemRemove                   = "Rimuovi";
+    ls->confMemRemove                   = "Elimina";
     ls->confMemSlot                     = "Slot";
     ls->confMemAddresss                 = "Indirizzo";
     ls->confMemType                     = "Tipo";
@@ -555,12 +555,12 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutCartAutoReset           = "Riavvia quando inserisci una cartuccia";
     ls->shortcutDiskInsertA             = "Inserisci un disco nell'unità A";
     ls->shortcutDiskDirInsertA          = "Inserisci una cartella come disco dell'unità A";
-    ls->shortcutDiskRemoveA             = "Rimuovi il disco dall'unità A";
+    ls->shortcutDiskRemoveA             = "Espelli il disco dall'unità A";
     ls->shortcutDiskChangeA             = "Cambia rapidamente il disco nell'unità A";
     ls->shortcutDiskAutoResetA          = "Riavvia quando inserisci un disco nell'unità A";
     ls->shortcutDiskInsertB             = "Inserisci un disco nell'unità B";
     ls->shortcutDiskDirInsertB          = "Inserisci una cartella come disco dell'unità B";
-    ls->shortcutDiskRemoveB             = "Rimuovi il disco dall'unità B";
+    ls->shortcutDiskRemoveB             = "Espelli il disco dall'unità B";
     ls->shortcutCasInsert               = "Inserisci una cassetta nel registratore";
     ls->shortcutCasEject                = "Rimuovi la cassetta dal registratore";
     ls->shortcutCasAutorewind           = "Riavvolgi il nastro quando inserisci una cassetta";
@@ -568,7 +568,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutCasSetPosition          = "Imposta la posizione del nastro";
     ls->shortcutCasRewind               = "Riavvolgi il nastro";
     ls->shortcutCasSave                 = "Salva la cassetta come file immagine";
-    ls->shortcutPrnFormFeed             = "Salta alla pagina successiva sulla stampante";
+    ls->shortcutPrnFormFeed             = "Salta alla pagina di stampa successiva";
     ls->shortcutCpuStateLoad            = "Carica lo stato della CPU";
     ls->shortcutCpuStateSave            = "Salva lo stato della CPU";
     ls->shortcutCpuStateQload           = "Carica rapidamente lo stato della CPU";
@@ -580,9 +580,9 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutQuit                    = "Esci da blueMSX";
     ls->shortcutRunPause                = "Esegui/Sospendi l'emulazione";
     ls->shortcutStop                    = "Interrompi l'emulazione";
-    ls->shortcutResetHard               = "Riavvio hardware";
-    ls->shortcutResetSoft               = "Riavvio software";
-    ls->shortcutResetClean              = "Riavvio completo";
+    ls->shortcutResetHard               = "Riavvia hardware";
+    ls->shortcutResetSoft               = "Riavvia software";
+    ls->shortcutResetClean              = "Espelli e riavvia";
     ls->shortcutSizeSmall               = "Passa alla finestra ridotta";
     ls->shortcutSizeNormal              = "Passa alla finestra normale";
     ls->shortcutSizeFullscreen          = "Passa a schermo intero";
@@ -598,8 +598,8 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutToggleMouseLock         = "Mostra/Nascondi il puntatore del mouse";
     ls->shortcutEmuSpeedMax             = "Esegui temporaneamente alla massima velocità";
     ls->shortcutEmuSpeedToggle          = "Esegui alla massima velocità di emulazione";
-    ls->shortcutEmuSpeedNormal          = "Normalizza la velocità di emulazione";
-    ls->shortcutEmuPlayReverse          = "Rewind emulation";                     // New in 2.8.3
+    ls->shortcutEmuSpeedNormal          = "Ripristina la normale velocità di emulazione";
+    ls->shortcutEmuPlayReverse          = "Emulazione a ritroso";                     // New in 2.8.3
     ls->shortcutEmuSpeedInc             = "Aumenta la velocità di emulazione";
     ls->shortcutEmuSpeedDec             = "Diminuisci la velocità di emulazione";
     ls->shortcutThemeSwitch             = "Cambia il tema corrente";
@@ -621,7 +621,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutShowAbout               = "Visualizza le informazioni su blueMSX";
     ls->shortcutShowFiles               = "Mostra le proprietà dei file";
     ls->shortcutToggleSpriteEnable      = "Mostra/Nascondi gli sprite";
-    ls->shortcutToggleFdcTiming         = "Sincronizza/Desincronizza le unità floppy";
+    ls->shortcutToggleFdcTiming         = "Rallenta/Velocizza le unità floppy";
     ls->shortcutToggleCpuTrace          = "Avvia/Interrompi l'azione del trace logger";
     ls->shortcutVideoLoad               = "Carica un video acquisito";                              
     ls->shortcutVideoPlay               = "Riproduci l'ultimo video acquisito";                     
