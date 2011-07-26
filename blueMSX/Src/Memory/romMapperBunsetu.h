@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperBunsetuCreate(char* filename, UInt8* romData, 
+int romMapperBunsetuCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage,
                            void* jisyoRom, int jisyoSize);
 

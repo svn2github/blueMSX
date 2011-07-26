@@ -111,6 +111,7 @@
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="VC2003"
 				AdditionalIncludeDirectories="..\..\Src\BuildInfo"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
@@ -667,13 +668,7 @@
 					RelativePath="..\..\Src\Memory\AmdFlash.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\AmdFlash.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\AtmelPerom.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\AtmelPerom.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\DeviceManager.c">
@@ -712,13 +707,7 @@
 					RelativePath="..\..\Src\Memory\romMapperA1FMModem.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperA1FMModem.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperArc.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperArc.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperASCII16.c">
@@ -763,9 +752,6 @@
 					RelativePath="..\..\Src\Memory\romMapperDumas.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperDumas.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperF4device.c">
 				</File>
 				<File
@@ -779,9 +765,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperForteII.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperForteII.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.c">
@@ -806,9 +789,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperKanji.c">
@@ -856,13 +836,7 @@
 					RelativePath="..\..\Src\Memory\romMapperMatraINK.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperMatraINK.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperMegaFlashRomScc.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperMegaFlashRomScc.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperMegaRAM.c">
@@ -901,19 +875,10 @@
 					RelativePath="..\..\Src\Memory\romMapperNet.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperNet.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperNms1210Rs232.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperNms1210Rs232.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.c">
@@ -925,40 +890,22 @@
 					RelativePath="..\..\Src\Memory\romMapperNoWind.cpp">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperNoWind.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperObsonet.c">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodeBios.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperOpcodeBios.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodeMegaRam.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperOpcodeMegaRam.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodeSaveRam.c">
 				</File>
 				<File
-					RelativePath="..\..\Src\Memory\romMapperOpcodeSaveRam.h">
-				</File>
-				<File
 					RelativePath="..\..\Src\Memory\romMapperOpcodeSlotManager.c">
-				</File>
-				<File
-					RelativePath="..\..\Src\Memory\romMapperOpcodeSlotManager.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.c">
@@ -1064,6 +1011,12 @@
 				Name="Include"
 				Filter="">
 				<File
+					RelativePath="..\..\Src\Memory\AmdFlash.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\AtmelPerom.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\DeviceManager.h">
 				</File>
 				<File
@@ -1091,7 +1044,16 @@
 					RelativePath="..\..\Src\Memory\ramNormal.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romExclusion.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\RomLoader.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperA1FMModem.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperArc.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperASCII16.h">
@@ -1133,6 +1095,9 @@
 					RelativePath="..\..\Src\Memory\romMapperDRAM.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperDumas.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperF4device.h">
 				</File>
 				<File
@@ -1143,6 +1108,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperFMPAK.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperForteII.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperGameMaster2.h">
@@ -1164,6 +1132,9 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperHolyQuran.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperJoyrexPsg.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperKanji.h">
@@ -1208,6 +1179,12 @@
 					RelativePath="..\..\Src\Memory\romMapperMajutsushi.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperMatraINK.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperMegaFlashRomScc.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperMegaRAM.h">
 				</File>
 				<File
@@ -1241,13 +1218,40 @@
 					RelativePath="..\..\Src\Memory\romMapperNationalFdc.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNet.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNettouYakyuu.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperNms1210Rs232.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperNms8280VideoDa.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperNormal.h">
 				</File>
 				<File
+					RelativePath="..\..\Src\Memory\romMapperNoWind.h">
+				</File>
+				<File
 					RelativePath="..\..\Src\Memory\romMapperObsonet.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeBios.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeMegaRam.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodePsg.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSaveRam.h">
+				</File>
+				<File
+					RelativePath="..\..\Src\Memory\romMapperOpcodeSlotManager.h">
 				</File>
 				<File
 					RelativePath="..\..\Src\Memory\romMapperPAC.h">

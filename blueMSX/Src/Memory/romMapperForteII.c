@@ -82,7 +82,7 @@ static UInt8 eeprom2cpu8(UInt8 v)
            (((v >>  3) & 1) <<  7);
 }
 
-int romMapperForteIICreate(char* filename, UInt8* romData, 
+int romMapperForteIICreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

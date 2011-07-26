@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperMicrosolCreate(char* filename, UInt8* romData, 
+int romMapperMicrosolCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage);
 
 #endif

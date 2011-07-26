@@ -125,7 +125,7 @@ static void getDebugInfo(RomMapperKorean90* rm, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 0, 0x77, DBG_IO_WRITE, 0);
 }
 
-int romMapperKorean90Create(char* filename, UInt8* romData, 
+int romMapperKorean90Create(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperSg1000CastleCreate(char* filename, UInt8* romData, 
+int romMapperSg1000CastleCreate(const char* filename, UInt8* romData, 
                                 int size, int slot, int sslot, int startPage);
 
 #endif

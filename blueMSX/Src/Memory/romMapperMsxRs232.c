@@ -327,7 +327,7 @@ static void getDebugInfo(MSXRs232* msxRs232, DbgDevice* dbgDevice)
 ** MSX RS-232 Create Method
 ******************************************
 */
-int romMapperMsxRs232Create(char* filename, UInt8* romData, int size, int slot, int sslot, int startPage)
+int romMapperMsxRs232Create(const char* filename, UInt8* romData, int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = {destroy, reset, saveState, loadState};
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };

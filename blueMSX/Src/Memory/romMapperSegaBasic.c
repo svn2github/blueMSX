@@ -92,7 +92,7 @@ static int dbgWriteMemory(RomMapperSegaBasic* rm, char* name, void* data, int st
     return 1;
 }
 
-int romMapperSegaBasicCreate(char* filename, UInt8* romData, 
+int romMapperSegaBasicCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

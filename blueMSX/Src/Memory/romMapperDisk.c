@@ -54,7 +54,7 @@ static void destroy(RomMapperDisk* rm)
     free(rm);
 }
 
-int romMapperDiskCreate(char* filename, UInt8* romData, 
+int romMapperDiskCreate(const char* filename, UInt8* romData, 
                         int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

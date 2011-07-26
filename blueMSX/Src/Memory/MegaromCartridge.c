@@ -113,6 +113,9 @@
 #include <stdio.h>
 
 
+#include "romExclusion.h"
+
+
 typedef struct {
     struct {
         int slot;
@@ -130,9 +133,9 @@ void cartridgeSetSlotInfo(int cartNo, int slot, int sslot)
     cartridgeInfo.cart[cartNo].sslot = sslot;
 }
 
-int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip) 
+int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* cartZip)
 {
-    char* romName = cartZip != NULL ? cartZip : cart;
+    const char* romName = cartZip != NULL ? cartZip : cart;
     int success = 1;
     UInt8* buf;
     int size;
@@ -145,7 +148,7 @@ int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip)
     if (cart == NULL) {
         return 0;
     }
-
+    
     switch (romType) {
     case ROM_EXTRAM16KB:
         success &= ramNormalCreate(0x4000, slot, sslot, 4, NULL, NULL);

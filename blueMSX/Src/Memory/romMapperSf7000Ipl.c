@@ -62,7 +62,7 @@ static void write(RomMapperSf7000Ipl* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperSf7000IplCreate(char* filename, UInt8* romData, 
+int romMapperSf7000IplCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

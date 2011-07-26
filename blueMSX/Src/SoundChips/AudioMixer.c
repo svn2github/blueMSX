@@ -122,10 +122,9 @@ struct Mixer
     Int32   channelCount;
     Int32   handleCount;
     UInt32  oldTick;
-    Int32   dummyBuffer[AUDIO_STEREO_BUFFER_SIZE];
     Int32   logging;
     Int32   stereo;
-    double  masterVolume;
+    DoubleT  masterVolume;
     Int32   masterEnable;
     Int32   volIntLeft;
     Int32   volIntRight;
@@ -165,6 +164,13 @@ static void mixerRecalculateType(Mixer* mixer, int audioType)
             recalculateChannelVolume(mixer, channel);
         }
     }
+}
+
+Int16 *mixerGetBuffer(Mixer* mixer, UInt32 *samplesOut)
+{
+	*samplesOut = mixer->index;
+	mixer->index = 0;
+	return mixer->buffer;
 }
 
 void mixerSetStereo(Mixer* mixer, Int32 stereo)
@@ -273,9 +279,9 @@ Int32 mixerIsChannelTypeActive(Mixer* mixer, Int32 type, Int32 reset)
 
 static void recalculateChannelVolume(Mixer* mixer, MixerChannel* channel)
 {
-    double volume        = pow(10.0, (channel->volume - 100) / 60.0) - pow(10.0, -100 / 60.0);
-    double panLeft       = pow(10.0, (MIN(100 - channel->pan, 50) - 50) / 30.0) - pow(10.0, -50 / 30.0);
-    double panRight      = pow(10.0, (MIN(channel->pan, 50) - 50) / 30.0) - pow(10.0, -50 / 30.0);
+    DoubleT volume        = pow(10.0, (channel->volume - 100) / 60.0) - pow(10.0, -100 / 60.0);
+    DoubleT panLeft       = pow(10.0, (MIN(100 - channel->pan, 50) - 50) / 30.0) - pow(10.0, -50 / 30.0);
+    DoubleT panRight      = pow(10.0, (MIN(channel->pan, 50) - 50) / 30.0) - pow(10.0, -50 / 30.0);
 
     channel->volumeLeft  = channel->enable * mixer->masterEnable * (Int32)(1024 * mixer->masterVolume * volume * panLeft);
     channel->volumeRight = channel->enable * mixer->masterEnable * (Int32)(1024 * mixer->masterVolume * volume * panRight);

@@ -30,6 +30,6 @@
 
 #include "MsxTypes.h"
 
-int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramSize);
+int romMapperMoonsoundCreate(const char* filename, UInt8* romData, int size, int sramSize);
 
 #endif

@@ -34,6 +34,6 @@
 
 void cartridgeSetSlotInfo(int cartNo, int slot, int sslot);
 
-int cartridgeInsert(int cartNo, RomType romType, char* cart, char* cartZip);
+int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* cartZip);
 
 #endif

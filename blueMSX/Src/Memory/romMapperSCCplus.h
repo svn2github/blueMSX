@@ -38,7 +38,7 @@ typedef enum {
     SCCP_EXTENDED
 } SccType;
 
-int romMapperSCCplusCreate(char* filename, UInt8* romData, 
+int romMapperSCCplusCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage,
                            SccType sccType);
 

@@ -97,7 +97,7 @@ static void reset(RomMapperKonamiWordPro* rm)
     rm->control = 0xff;
 }
 
-int romMapperKonamiWordProCreate(char* filename, UInt8* romData, 
+int romMapperKonamiWordProCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

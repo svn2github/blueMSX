@@ -31,7 +31,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperMicrosolVmx80Create(char* filename, UInt8* romData, int size,
+int romMapperMicrosolVmx80Create(const char* filename, UInt8* romData, int size,
                                  int slot, int sslot, int startPage,
                                  void* charRom, int charSize);
 

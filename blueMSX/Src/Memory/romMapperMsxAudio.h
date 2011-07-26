@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperMsxAudioCreate(char* filename, UInt8* romData, 
+int romMapperMsxAudioCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage);
 
 #endif

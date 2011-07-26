@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData, 
+int romMapperKonamiKeyboardMasterCreate(const char* filename, UInt8* romData, 
                                        int size, int slot, int sslot, 
                                        int startPage,
                                        void* voiceRom, int voiceSize);

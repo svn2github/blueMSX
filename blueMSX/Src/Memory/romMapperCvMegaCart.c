@@ -109,7 +109,7 @@ static UInt8 peek(RomMapperCvMegaCart* rm, UInt16 address)
     return rm->romMapper;
 }
 
-int romMapperCvMegaCartCreate(char* filename, UInt8* romData, 
+int romMapperCvMegaCartCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

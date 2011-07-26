@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperOpcodeBiosCreate(char* filename, UInt8* romData, 
+int romMapperOpcodeBiosCreate(const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, 
                               int startPage);
 

@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperNoWindCreate(int driveId, char* filename, UInt8* romData, 
+int romMapperNoWindCreate(int driveId, const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

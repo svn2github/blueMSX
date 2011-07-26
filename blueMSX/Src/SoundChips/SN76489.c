@@ -487,7 +487,7 @@ SN76489* sn76489Create(Mixer* mixer)
     sn76489Reset(sn76489);
 
     {
-        double v = 0x26a9;
+        DoubleT v = 0x26a9;
         for (i = 0; i < 15; i++) {
             v /= 1.258925412;
         }

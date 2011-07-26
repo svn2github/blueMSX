@@ -29,7 +29,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperMatraINKCreate(char* filename, UInt8* romData, 
+int romMapperMatraINKCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);
 
 #endif

@@ -38,6 +38,8 @@ extern "C" {
 #ifdef __GNUC__
 #define __int64 long long
 #endif
+    
+typedef double DoubleT;
 
 typedef unsigned char    UInt8;
 typedef unsigned short   UInt16;

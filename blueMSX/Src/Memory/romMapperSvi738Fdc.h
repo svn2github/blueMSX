@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperSvi738FdcCreate(char* filename, UInt8* romData, 
+int romMapperSvi738FdcCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);
 
 #endif

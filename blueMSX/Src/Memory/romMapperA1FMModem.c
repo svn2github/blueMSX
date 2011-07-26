@@ -115,7 +115,7 @@ static void reset(RomMapperA1FMModem* rm)
     slotMapPage(rm->slot, rm->sslot, rm->startPage + 1, NULL, 0, 0);
 }
 
-int romMapperA1FMModemCreate(char* filename, UInt8* romData, 
+int romMapperA1FMModemCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

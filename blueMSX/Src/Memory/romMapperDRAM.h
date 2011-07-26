@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperDramCreate(char* filename, UInt8* romData, 
+int romMapperDramCreate(const char* filename, UInt8* romData, 
                         int size, int slot, int sslot, int startPage);
 
 typedef void (*PanasonicDramCallback)(void*, int);

@@ -56,7 +56,7 @@ static void destroy(RomMapperPlayBall* rm)
     free(rm);
 }
 
-int romMapperPlayBallCreate(char* filename, UInt8* romData, 
+int romMapperPlayBallCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
@@ -136,7 +136,7 @@ static void write(RomMapperPlayBall* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperPlayBallCreate(char* filename, UInt8* romData, 
+int romMapperPlayBallCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

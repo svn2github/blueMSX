@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperObsonetCreate(char* filename, UInt8* romData, 
+int romMapperObsonetCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage);
 
 #endif

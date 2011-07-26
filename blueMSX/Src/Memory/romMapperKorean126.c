@@ -107,7 +107,7 @@ static void write(RomMapperKorean126* rm, UInt16 address, UInt8 value)
     slotMapPage(rm->slot, rm->sslot, rm->startPage + bank + 1, bankData + 0x2000, 1, 0);
 }
 
-int romMapperKorean126Create(char* filename, UInt8* romData, 
+int romMapperKorean126Create(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

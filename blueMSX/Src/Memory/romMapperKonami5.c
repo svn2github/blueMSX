@@ -173,7 +173,7 @@ static void write(RomMapperKonami5* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperKonami5Create(char* filename, UInt8* romData, 
+int romMapperKonami5Create(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

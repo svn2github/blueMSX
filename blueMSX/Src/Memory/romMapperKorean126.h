@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperKorean126Create(char* filename, UInt8* romData, 
+int romMapperKorean126Create(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);
 
 #endif

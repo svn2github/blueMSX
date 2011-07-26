@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperKonamiWordProCreate(char* filename, UInt8* romData, 
+int romMapperKonamiWordProCreate(const char* filename, UInt8* romData, 
                                  int size, int slot, int sslot, int startPage);
 
 #endif

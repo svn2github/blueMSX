@@ -111,7 +111,7 @@ static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value)
 	rm->romMapper[bank] = value;
 }
 
-int romMapperNettouYakyuuCreate(char* filename, UInt8* romData, 
+int romMapperNettouYakyuuCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };
@@ -228,7 +228,7 @@ static void write(RomMapperNettouYakyuu* rm, UInt16 address, UInt8 value)
 	samplePlayerSetIndex(rm->samplePlayer,index);
 }
 
-int romMapperNettouYakyuuCreate(char* filename, UInt8* romData, 
+int romMapperNettouYakyuuCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

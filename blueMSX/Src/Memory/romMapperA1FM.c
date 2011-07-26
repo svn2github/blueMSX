@@ -253,7 +253,7 @@ static void reset(RomMapperA1FM* rm)
     changeBank(rm, 7, 0);
 }
 
-int romMapperA1FMCreate(char* filename, UInt8* romData, 
+int romMapperA1FMCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage,
                              int sramSize) 
 {

@@ -175,7 +175,7 @@ static void reset(RomMapperPhilipsFdc* rm)
     write(rm, 0xffd, 0);
 }
 
-int romMapperPhilipsFdcCreate(char* filename, UInt8* romData, 
+int romMapperPhilipsFdcCreate(const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperPhilipsFdcCreate(char* filename, UInt8* romData, 
+int romMapperPhilipsFdcCreate(const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, int startPage);
 
 #endif

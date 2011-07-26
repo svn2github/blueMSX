@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperPlayBallCreate(char* filename, UInt8* romData, 
+int romMapperPlayBallCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage);
 
 #endif

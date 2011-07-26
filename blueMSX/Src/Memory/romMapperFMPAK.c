@@ -155,7 +155,7 @@ static void getDebugInfo(RomMapperFMPAK* rm, DbgDevice* dbgDevice)
     ym2413GetDebugInfo(rm->ym2413, dbgDevice);
 }
 
-int romMapperFMPAKCreate(char* filename, UInt8* romData, 
+int romMapperFMPAKCreate(const char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

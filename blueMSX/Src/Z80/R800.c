@@ -5831,7 +5831,9 @@ R800* r800Create(UInt32 cpuFlags,
     r800->frequencyR800 = 7159090;
 
     r800->terminate       = 0;
+#ifdef ENABLE_BREAKPOINTS
     r800->breakpointCount = 0;
+#endif
     r800->systemTime      = 0;
     r800->cpuMode         = CPU_UNKNOWN;
     r800->oldCpuMode      = CPU_UNKNOWN;
@@ -5913,7 +5915,9 @@ void r800Reset(R800 *r800, UInt32 cpuTime) {
     r800->nmiState       = INT_HIGH;
     r800->nmiEdge        = 0;
 
+#ifdef ENABLE_CALLSTACK
     r800->callstackSize = 0;
+#endif
 }
 
 void r800SetDataBus(R800* r800, UInt8 value, UInt8 defaultValue, int setDefault) {

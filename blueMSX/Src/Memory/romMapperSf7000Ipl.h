@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperSf7000IplCreate(char* filename, UInt8* romData, 
+int romMapperSf7000IplCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);
 
 #endif

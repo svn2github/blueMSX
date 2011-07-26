@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperGoudaSCSICreate(int hdId, char* filename, UInt8* romData, 
+int romMapperGoudaSCSICreate(int hdId, const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

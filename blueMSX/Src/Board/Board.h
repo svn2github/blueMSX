@@ -143,7 +143,7 @@ typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE, HD_RSIDE,
 HdType boardGetHdType(int hdIndex);
 
 
-char* boardGetBaseDirectory();
+const char* boardGetBaseDirectory();
 
 Mixer* boardGetMixer();
 
@@ -170,7 +170,7 @@ BoardTimer* boardTimerCreate(BoardTimerCb callback, void* ref);
 void boardTimerDestroy(BoardTimer* timer);
 void boardTimerAdd(BoardTimer* timer, UInt32 timeout);
 void boardTimerRemove(BoardTimer* timer);
-UInt32 boardTimerCheckTimeout(void* dummy);
+void boardTimerCheckTimeout(void* dummy);
 UInt32 boardCalcRelativeTimeout(UInt32 timerFrequency, UInt32 nextTimeout);
 
 void   boardOnBreakpoint(UInt16 pc);

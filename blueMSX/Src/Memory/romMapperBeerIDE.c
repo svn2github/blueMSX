@@ -221,7 +221,7 @@ static void getDebugInfo(RomMapperBeerIde* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperBeerIdeCreate(int hdId, char* fileName, UInt8* romData, 
+int romMapperBeerIdeCreate(int hdId, const char* fileName, UInt8* romData, 
                            int size, int slot, int sslot, int startPage)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

@@ -222,7 +222,7 @@ void atmelPeromLoadState(AtmelPerom* rm)
     saveStateClose(state);
 }
 
-AtmelPerom* atmelPeromCreate(AmdType type, int flashSize, int sectorSize, UInt32 writeProtectMask, void* romData, int size, char* sramFilename, int loadSram)
+AtmelPerom* atmelPeromCreate(AmdType type, int flashSize, int sectorSize, UInt32 writeProtectMask, void* romData, int size, const char* sramFilename, int loadSram)
 {
     AtmelPerom* rm = (AtmelPerom*)calloc(1, sizeof(AtmelPerom));
 

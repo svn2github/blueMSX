@@ -360,7 +360,7 @@ static void reset(RomMapperSonyHbiV1* rm)
     rm->delay       = 0;
 }
 
-int romMapperSonyHbiV1Create(char* filename, UInt8* romData, int size,
+int romMapperSonyHbiV1Create(const char* filename, UInt8* romData, int size,
                              int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

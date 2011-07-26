@@ -61,10 +61,10 @@ struct Video {
     int scanLinesPct;
     int colorSaturationEnable;
     int colorSaturationWidth;
-    double gamma;
-    double saturation;
-    double brightness;
-    double contrast;
+    DoubleT gamma;
+    DoubleT saturation;
+    DoubleT brightness;
+    DoubleT contrast;
     int deInterlace;
     int invertRGB;
 };

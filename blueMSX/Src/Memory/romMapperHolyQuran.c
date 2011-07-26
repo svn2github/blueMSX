@@ -107,7 +107,7 @@ static void write(RomMapperHolyQuran* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperHolyQuranCreate(char* filename, UInt8* romData, 
+int romMapperHolyQuranCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

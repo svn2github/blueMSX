@@ -63,6 +63,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
 
     dbgDeviceAddMemoryBlock(dbgDevice, langDbgMemVisible(), 0, 0, 0x10000, mappedRAM);
 
+#ifdef ENABLE_CALLSTACK
     if (dbg->r800->callstackSize > 255) {
         static UInt16 callstack[0x100];
         int beginning = dbg->r800->callstackSize & 0xff;
@@ -74,6 +75,7 @@ static void getDebugInfo(R800Debug* dbg, DbgDevice* dbgDevice)
     else {
         dbgDeviceAddCallstack(dbgDevice, langDbgCallstack(), dbg->r800->callstack, dbg->r800->callstackSize);
     }
+#endif
 
     regBank = dbgDeviceAddRegisterBank(dbgDevice, langDbgRegsCpu(), 20);
 

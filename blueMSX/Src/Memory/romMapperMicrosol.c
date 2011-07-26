@@ -185,7 +185,7 @@ static void getDebugInfo(Microsol* rm, DbgDevice* dbgDevice)
     }
 }
 
-int romMapperMicrosolCreate(char* filename, UInt8* romData, 
+int romMapperMicrosolCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

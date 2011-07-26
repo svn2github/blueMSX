@@ -50,7 +50,7 @@ static void destroy(RomMapperFmDas* rm)
     free(rm);
 }
 
-int romMapperFmDasCreate(char* filename, UInt8* romData, 
+int romMapperFmDasCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

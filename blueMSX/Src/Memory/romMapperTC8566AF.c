@@ -225,7 +225,7 @@ static void write(RomMapperTC8566AF* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperTC8566AFCreate(char* filename, UInt8* romData, 
+int romMapperTC8566AFCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage,
                            RomType romType) 
 {

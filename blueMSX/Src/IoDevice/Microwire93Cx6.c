@@ -98,7 +98,7 @@ static void onTimer(Microwire93Cx6* rm, UInt32 time)
     }
 }
 
-Microwire93Cx6* microwire93Cx6Create(int size, int mode, void* imgData, int imgSize, char* sramFilename)
+Microwire93Cx6* microwire93Cx6Create(int size, int mode, void* imgData, int imgSize, const char* sramFilename)
 {
     Microwire93Cx6* rm = calloc(1, sizeof(Microwire93Cx6));
 

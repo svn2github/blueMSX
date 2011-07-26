@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperSunriseIdeCreate(int hdId, char* filename, UInt8* romData, 
+int romMapperSunriseIdeCreate(int hdId, const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, int startPage);
 
 #endif

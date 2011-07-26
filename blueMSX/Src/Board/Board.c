@@ -1353,7 +1353,7 @@ void boardTimerCleanup()
     timeoutCheckBreak = 1;
 }
 
-UInt32 boardTimerCheckTimeout(void* dummy)
+void boardTimerCheckTimeout(void* dummy)
 {
     UInt32 currentTime = boardSystemTime();
     timerList->timeout = currentTime + MAX_TIME;
@@ -1362,7 +1362,7 @@ UInt32 boardTimerCheckTimeout(void* dummy)
     while (!timeoutCheckBreak) {
         BoardTimer* timer = timerList->next;
         if (timer == timerList) {
-            return currentTime + 1000;
+            return;
         }
         if (timer->timeout - timeAnchor > currentTime - timeAnchor) {
             break;
@@ -1375,8 +1375,6 @@ UInt32 boardTimerCheckTimeout(void* dummy)
     timeAnchor = boardSystemTime();    
 
     boardInfo.setCpuTimeout(boardInfo.cpuRef, timerList->next->timeout);
-
-    return timerList->next->timeout - currentTime;
 }
 
 UInt64 boardSystemTime64() {
@@ -1418,7 +1416,7 @@ static int enableY8950           = 1;
 static int enableMoonsound       = 1;
 static int videoAutodetect       = 1;
 
-char* boardGetBaseDirectory() {
+const char* boardGetBaseDirectory() {
     return baseDirectory;
 }
 

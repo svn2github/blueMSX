@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperFMPAKCreate(char* filename, UInt8* romData, 
+int romMapperFMPAKCreate(const char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);
 
 #endif

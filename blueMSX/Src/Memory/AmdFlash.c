@@ -222,7 +222,7 @@ void amdFlashLoadState(AmdFlash* rm)
     saveStateClose(state);
 }
 
-AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, UInt32 writeProtectMask, void* romData, int size, char* sramFilename, int loadSram)
+AmdFlash* amdFlashCreate(AmdType type, int flashSize, int sectorSize, UInt32 writeProtectMask, void* romData, int size, const char* sramFilename, int loadSram)
 {
     AmdFlash* rm = (AmdFlash*)calloc(1, sizeof(AmdFlash));
 

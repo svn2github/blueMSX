@@ -118,7 +118,7 @@ static void write(RomMapperMajutsushi* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperMajutsushiCreate(char* filename, UInt8* romData, 
+int romMapperMajutsushiCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

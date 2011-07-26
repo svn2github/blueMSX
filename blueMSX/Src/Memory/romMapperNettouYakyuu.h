@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperNettouYakyuuCreate(char* filename, UInt8* romData, 
+int romMapperNettouYakyuuCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

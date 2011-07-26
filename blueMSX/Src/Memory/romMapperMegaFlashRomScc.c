@@ -199,7 +199,7 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperMegaFlashRomSccCreate(char* filename, UInt8* romData, 
+int romMapperMegaFlashRomSccCreate(const char* filename, UInt8* romData, 
                                    int size, int slot, int sslot, int startPage, UInt32 writeProtectMask) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

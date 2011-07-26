@@ -126,7 +126,7 @@ static void getDebugInfo(RomMapperMoonsound* rm, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 5, 0xc7, DBG_IO_READWRITE, peek(rm, 0xc7));
 }
 
-int romMapperMoonsoundCreate(char* filename, UInt8* romData, int size, int sramSize)
+int romMapperMoonsoundCreate(const char* filename, UInt8* romData, int size, int sramSize)
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
     DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };

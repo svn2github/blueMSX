@@ -437,7 +437,7 @@ static void getDebugInfo(RomMapperNet* rm, DbgDevice* dbgDevice)
     ym2151GetDebugInfo(rm->ym2151, dbgDevice);
 }
 
-int romMapperNetCreate(char* filename, UInt8* romData, 
+int romMapperNetCreate(const char* filename, UInt8* romData, 
                        int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

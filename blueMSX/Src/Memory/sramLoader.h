@@ -30,9 +30,9 @@
  
 #include "MsxTypes.h"
 
-char* sramCreateFilename(char* romFilename);
-char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix, char* ext);
-void sramLoad(char* filename, UInt8* sram, int length, void* header, int headerLength);
-void sramSave(char* filename, UInt8* sram, int length, void* header, int headerLength);
+const char* sramCreateFilename(const char* romFilename);
+const char* sramCreateFilenameWithSuffix(const char* romFilename, char* suffix, char* ext);
+void sramLoad(const char* filename, UInt8* sram, int length, void* header, int headerLength);
+void sramSave(const char* filename, UInt8* sram, int length, void* header, int headerLength);
 
 #endif

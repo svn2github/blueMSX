@@ -36,7 +36,15 @@ typedef struct Mixer Mixer;
 #define AUDIO_MONO_BUFFER_SIZE    10000
 #define AUDIO_STEREO_BUFFER_SIZE  (2 * AUDIO_MONO_BUFFER_SIZE)
 
-#define AUDIO_SAMPLERATE       44100
+#ifdef CONFIG_BASE_X11
+#include <config.h>
+	#define AUDIO_SAMPLERATE       48000
+#elif defined(CONFIG_BASE_IPHONE) || defined(CONFIG_BASE_ANDROID)
+#include <config.h>
+	#define AUDIO_SAMPLERATE       44075
+#else
+	#define AUDIO_SAMPLERATE       44100
+#endif
 
 typedef enum { 
     MIXER_CHANNEL_PSG = 0,

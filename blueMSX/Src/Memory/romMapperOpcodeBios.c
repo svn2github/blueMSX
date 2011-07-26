@@ -110,7 +110,7 @@ static void getDebugInfo(RomMapperOpcodeBios* rm, DbgDevice* dbgDevice)
     dbgDeviceAddMemoryBlock(dbgDevice, "BIOS", 0, 0, sizeof(rm->biosRom), rm->biosRom);
 }
 
-int romMapperOpcodeBiosCreate(char* filename, UInt8* romData, 
+int romMapperOpcodeBiosCreate(const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, 
                               int startPage) 
 {

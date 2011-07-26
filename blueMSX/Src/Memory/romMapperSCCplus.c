@@ -266,7 +266,7 @@ static void write(RomMapperSCCplus* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperSCCplusCreate(char* filename, UInt8* romData, 
+int romMapperSCCplusCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage, SccType sccType) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

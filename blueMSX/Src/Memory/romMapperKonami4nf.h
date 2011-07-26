@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperKonami4nfCreate(char* filename, UInt8* romData, 
+int romMapperKonami4nfCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage);
 
 #endif

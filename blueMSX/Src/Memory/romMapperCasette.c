@@ -55,7 +55,7 @@ static void destroy(RomMapperCasette* rm)
     free(rm);
 }
 
-int romMapperCasetteCreate(char* filename, UInt8* romData, 
+int romMapperCasetteCreate(const char* filename, UInt8* romData, 
                         int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

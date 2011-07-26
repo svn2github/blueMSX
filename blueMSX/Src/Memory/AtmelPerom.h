@@ -36,7 +36,7 @@ typedef enum { AMD_TYPE_1, AMD_TYPE_2 } AmdType;
 
 
 AtmelPerom* atmelPeromCreate(AmdType type, int flashSize, int sectorSize, UInt32 writeProtectMask, 
-                         void* romData, int size, char* sramFilename, int loadSram);
+                         void* romData, int size, const char* sramFilename, int loadSram);
 void atmelPeromDestroy(AtmelPerom* rm);
 
 int atmelPeromCmdInProgress(AtmelPerom* rm);

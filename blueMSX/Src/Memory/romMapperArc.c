@@ -107,7 +107,7 @@ static void getDebugInfo(Arc* rm, DbgDevice* dbgDevice)
     dbgIoPortsAddPort(ioPorts, 0, 0x7f, DBG_IO_READWRITE, readIo(rm, 0x7f));
 }
 
-int romMapperArcCreate(char* filename, UInt8* romData, 
+int romMapperArcCreate(const char* filename, UInt8* romData, 
                        int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

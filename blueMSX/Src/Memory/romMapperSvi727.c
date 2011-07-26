@@ -108,7 +108,7 @@ static void reset(RomMapperSvi727* rm)
 {
 }
 
-int romMapperSvi727Create(char* filename, UInt8* charRom, int charSize,
+int romMapperSvi727Create(const char* filename, UInt8* charRom, int charSize,
                                  int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

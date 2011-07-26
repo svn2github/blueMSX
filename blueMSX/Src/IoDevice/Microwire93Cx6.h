@@ -32,7 +32,7 @@
 
 typedef struct Microwire93Cx6 Microwire93Cx6;
 
-Microwire93Cx6* microwire93Cx6Create(int size, int width, void* romData, int romSize, char* sramFilename);
+Microwire93Cx6* microwire93Cx6Create(int size, int width, void* romData, int romSize, const char* sramFilename);
 void microwire93Cx6Destroy(Microwire93Cx6* rtl);
 
 void microwire93Cx6Reset(Microwire93Cx6* rtl);

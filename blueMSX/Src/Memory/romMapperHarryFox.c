@@ -112,7 +112,7 @@ static void write(RomMapperHarryFox* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperHarryFoxCreate(char* filename, UInt8* romData, 
+int romMapperHarryFoxCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

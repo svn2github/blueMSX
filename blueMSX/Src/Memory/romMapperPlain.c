@@ -98,7 +98,7 @@ static UInt16 getRomStart(UInt8* romData, int size)
 }
 
 
-int romMapperPlainCreate(char* filename, UInt8* romData, 
+int romMapperPlainCreate(const char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

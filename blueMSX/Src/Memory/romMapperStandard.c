@@ -112,7 +112,7 @@ static void write(RomMapperStandard* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperStandardCreate(char* filename, UInt8* romData, 
+int romMapperStandardCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

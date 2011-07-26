@@ -138,7 +138,7 @@ static void write(RomMapperASCII16sram* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperASCII16sramCreate(char* filename, UInt8* romData, 
+int romMapperASCII16sramCreate(const char* filename, UInt8* romData, 
                                int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

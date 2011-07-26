@@ -292,7 +292,7 @@ static void reset(RomMapperPanasonic* rm)
     }
 }
 
-int romMapperPanasonicCreate(char* filename, UInt8* romData, 
+int romMapperPanasonicCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage,
                              int sramSize, int mappedSlots) 
 {

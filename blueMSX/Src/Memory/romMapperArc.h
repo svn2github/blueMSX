@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperArcCreate(char* filename, UInt8* romData, 
+int romMapperArcCreate(const char* filename, UInt8* romData, 
                        int size, int slot, int sslot, int startPage);
 
 #endif

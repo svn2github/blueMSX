@@ -78,7 +78,7 @@ static void write(RomMapperMatraINK* rm, UInt16 address, UInt8 value)
     amdFlashWrite(rm->flash, address, value);
 }
 
-int romMapperMatraINKCreate(char* filename, UInt8* romData, 
+int romMapperMatraINKCreate(const char* filename, UInt8* romData, 
                              int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

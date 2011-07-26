@@ -216,7 +216,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int3
     AY8910* ay8910 = (AY8910*)calloc(1, sizeof(AY8910));
     int i;
 
-    double v = 0x26a9;
+    DoubleT v = 0x26a9;
     for (i = 15; i >= 0; i--) {
         voltTable[i] = (Int16)v;
         voltEnvTable[2 * i + 0] = (Int16)v;
@@ -225,7 +225,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int3
     }
 
     if ( type == PSGTYPE_YM2149) {
-        double v = 0x26a9;
+        DoubleT v = 0x26a9;
         for (i = 31; i >= 0; i--) {
             voltEnvTable[i] = (Int16)v;
             v *= 0.84139514164519509115274189380029;

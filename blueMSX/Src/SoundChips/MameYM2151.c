@@ -462,7 +462,7 @@ static MameYm2151 * PSG;
 static void init_tables(void)
 {
 	signed int i,x,n;
-	double o,m;
+	DoubleT o,m;
 
 	for (x=0; x<TL_RES_LEN; x++)
 	{
@@ -537,10 +537,10 @@ static void init_tables(void)
 static void init_chip_tables(MameYm2151 *chip)
 {
 	int i,j;
-	double mult,phaseinc,Hz;
-	double scaler;
+	DoubleT mult,phaseinc,Hz;
+	DoubleT scaler;
 
-	scaler = ( (double)chip->clock / 64.0 ) / ( (double)chip->sampfreq );
+	scaler = ( (DoubleT)chip->clock / 64.0 ) / ( (DoubleT)chip->sampfreq );
 	/*logerror("scaler    = %20.15f\n", scaler);*/
 
 
@@ -594,10 +594,10 @@ static void init_chip_tables(MameYm2151 *chip)
 	{
 		for (i=0; i<32; i++)
 		{
-			Hz = ( (double)dt1_tab[j*32+i] * ((double)chip->clock/64.0) ) / (double)(1<<20);
+			Hz = ( (DoubleT)dt1_tab[j*32+i] * ((DoubleT)chip->clock/64.0) ) / (DoubleT)(1<<20);
 
 			/*calculate phase increment*/
-			phaseinc = (Hz*SIN_LEN) / (double)chip->sampfreq;
+			phaseinc = (Hz*SIN_LEN) / (DoubleT)chip->sampfreq;
 
 			/*positive and negative values*/
 			chip->dt1_freq[ (j+0)*32 + i ] = (Int32)(phaseinc * mult);
@@ -608,12 +608,12 @@ static void init_chip_tables(MameYm2151 *chip)
     chip->timer_A_val = 0;
 
     /* calculate noise periods table */
-	scaler = ( (double)chip->clock / 64.0 ) / ( (double)chip->sampfreq );
+	scaler = ( (DoubleT)chip->clock / 64.0 ) / ( (DoubleT)chip->sampfreq );
 	for (i=0; i<32; i++)
 	{
 		j = (i!=31 ? i : 30);				/* rate 30 and 31 are the same */
 		j = 32-j;
-		j = (int)(65536.0 / (double)(j*32.0));	/* number of samples per one shift of the shift register */
+		j = (int)(65536.0 / (DoubleT)(j*32.0));	/* number of samples per one shift of the shift register */
 		/*chip->noise_tab[i] = j * 64;*/	/* number of chip clock cycles per one shift */
 		chip->noise_tab[i] = (UInt32)(j * 64 * scaler);
 		/*logerror("noise_tab[%02x]=%08x\n", i, chip->noise_tab[i]);*/

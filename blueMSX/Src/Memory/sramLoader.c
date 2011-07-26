@@ -33,12 +33,12 @@
 
 
 
-char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix, char* ext)
+const char* sramCreateFilenameWithSuffix(const char* romFilename, char* suffix, char* ext)
 {
     static char SRAMfileName[512];
     char fileName[512];
     char* dst = fileName + 512;
-    char* src;
+    const char* src;
 
     *--dst = '\0';
     if (ext == NULL) {
@@ -75,10 +75,10 @@ char* sramCreateFilenameWithSuffix(char* romFilename, char* suffix, char* ext)
 }
 
 
-char* sramCreateFilename(char* romFilename) {
+const char* sramCreateFilename(const char* romFilename) {
     return sramCreateFilenameWithSuffix(romFilename, "", NULL);
 }
-void sramLoad(char* filename, UInt8* sram, int length, void* header, int headerLength) {
+void sramLoad(const char* filename, UInt8* sram, int length, void* header, int headerLength) {
     FILE* file;
 
     file = fopen(filename, "rb");
@@ -97,7 +97,7 @@ void sramLoad(char* filename, UInt8* sram, int length, void* header, int headerL
     }
 }
 
-void sramSave(char* filename, UInt8* sram, int length, void* header, int headerLength) {
+void sramSave(const char* filename, UInt8* sram, int length, void* header, int headerLength) {
     FILE* file;
 
     file = fopen(filename, "wb");

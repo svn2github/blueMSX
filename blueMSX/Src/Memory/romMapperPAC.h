@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperPACCreate(char* filename, UInt8* romData, 
+int romMapperPACCreate(const char* filename, UInt8* romData, 
                        int size, int slot, int sslot, int startPage);
 
 #endif

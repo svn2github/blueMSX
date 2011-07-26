@@ -196,7 +196,7 @@ static void write(RomMapperHalnote* rm, UInt16 address, UInt8 value)
     }
 }
 
-int romMapperHalnoteCreate(char* filename, UInt8* romData, 
+int romMapperHalnoteCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, saveState, loadState };

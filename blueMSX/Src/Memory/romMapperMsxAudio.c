@@ -479,7 +479,7 @@ static void getDebugInfo(RomMapperMsxAudio* rm, DbgDevice* dbgDevice)
     y8950GetDebugInfo(rm->y8950, dbgDevice);
 }
 
-int romMapperMsxAudioCreate(char* filename, UInt8* romData, 
+int romMapperMsxAudioCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };

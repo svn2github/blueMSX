@@ -30,7 +30,7 @@
 
 #include "MsxTypes.h"
 
-int romMapperCvMegaCartCreate(char* filename, UInt8* romData, 
+int romMapperCvMegaCartCreate(const char* filename, UInt8* romData, 
                               int size, int slot, int sslot, int startPage);
 
 #endif

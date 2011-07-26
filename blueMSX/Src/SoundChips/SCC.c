@@ -612,7 +612,7 @@ static Int32 filter(SCC* scc, Int32 input) {
 static Int32 filter4(SCC* scc, Int32 in1, Int32 in2, Int32 in3, Int32 in4)
 {
     int i;
-    double res;
+    DoubleT res;
 
     for (i = 0; i < 91; ++i) {
         scc->in[i] = scc->in[i + 4];

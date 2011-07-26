@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperRTypeCreate(char* filename, UInt8* romData, 
+int romMapperRTypeCreate(const char* filename, UInt8* romData, 
                          int size, int slot, int sslot, int startPage);
 
 #endif

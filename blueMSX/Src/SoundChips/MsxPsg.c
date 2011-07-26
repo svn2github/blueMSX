@@ -75,27 +75,41 @@ static void joystickPortHandler(MsxPsg* msxPsg, int port, JoystickPortType type)
     case JOYSTICK_PORT_NONE:
         msxPsg->devFun[port] = NULL;
         break;
+#ifndef EXCLUDE_JOYSTICK_PORT_GUNSTICK
     case JOYSTICK_PORT_GUNSTICK:
         msxPsg->devFun[port] = msxGunstickCreate();
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_ASCIILASER
     case JOYSTICK_PORT_ASCIILASER:
         msxPsg->devFun[port] = msxAsciiLaserCreate();
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_JOYSTICK
     case JOYSTICK_PORT_JOYSTICK:
         msxPsg->devFun[port] = msxJoystickCreate(port);
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_MOUSE
     case JOYSTICK_PORT_MOUSE:
         msxPsg->devFun[port] = msxMouseCreate();
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_TETRIS2DONGLE
     case JOYSTICK_PORT_TETRIS2DONGLE:
         msxPsg->devFun[port] = msxTetrisDongleCreate();
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_MAGICKEYDONGLE
     case JOYSTICK_PORT_MAGICKEYDONGLE:
         msxPsg->devFun[port] = magicKeyDongleCreate();
         break;
+#endif
+#ifndef EXCLUDE_JOYSTICK_PORT_ARKANOID_PAD
     case JOYSTICK_PORT_ARKANOID_PAD:
         msxPsg->devFun[port] = msxArkanoidPadCreate();
         break;
+#endif
     }
 }
 

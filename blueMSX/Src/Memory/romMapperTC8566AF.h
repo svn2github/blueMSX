@@ -31,7 +31,7 @@
 #include "MsxTypes.h"
 #include "MediaDb.h"
 
-int romMapperTC8566AFCreate(char* filename, UInt8* romData, 
+int romMapperTC8566AFCreate(const char* filename, UInt8* romData, 
                             int size, int slot, int sslot, int startPage,
                             RomType type);
 

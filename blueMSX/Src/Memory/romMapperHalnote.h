@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperHalnoteCreate(char* filename, UInt8* romData, 
+int romMapperHalnoteCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage);
 
 #endif

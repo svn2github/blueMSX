@@ -448,7 +448,7 @@ static void write(SramMapperEseSCC* rm, UInt16 address, UInt8 value)
     DBGLOG1("can't write: %x\n", address);
 }
 
-int sramMapperEseSCCCreate(char* filename, UInt8* buf, int size, int pSlot, int sSlot, int startPage, int hdId, int mode)
+int sramMapperEseSCCCreate(const char* filename, UInt8* buf, int size, int pSlot, int sSlot, int startPage, int hdId, int mode)
 {
     DeviceCallbacks callbacks = { (void*)destroy, (void*)reset, (void*)saveState, (void*)loadState };
 

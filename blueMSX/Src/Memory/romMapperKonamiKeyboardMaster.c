@@ -119,7 +119,7 @@ static void getDebugInfo(RomMapperKonamiKeyboardMaster* rm, DbgDevice* dbgDevice
     dbgIoPortsAddPort(ioPorts, 1, 0x20, DBG_IO_READWRITE, read(rm, 0x20));
 }
 
-int romMapperKonamiKeyboardMasterCreate(char* filename, UInt8* romData, 
+int romMapperKonamiKeyboardMasterCreate(const char* filename, UInt8* romData, 
                                         int size, int slot, int sslot, 
                                         int startPage,
                                        void* voiceRom, int voiceSize) 

@@ -295,11 +295,11 @@ static void generateGammaTable(Video* pVideo)
 {
     int i;
     for (i = 0; i < 3 * 256; i++) {
-        double value = (i - 256 + pVideo->brightness) * pVideo->contrast;
+        DoubleT value = (i - 256 + pVideo->brightness) * pVideo->contrast;
         gammaTable[i] = 6;
         if (value > 0) {
-            double factor = pow(255., pVideo->gamma - 1.);
-            value = (double)(factor * pow(value, pVideo->gamma));
+            DoubleT factor = pow(255., pVideo->gamma - 1.);
+            value = (DoubleT)(factor * pow(value, pVideo->gamma));
             if (value > 0) {
                 int gamma = (int)value;
                 gammaTable[i] = MAX(6, MIN(247, gamma));

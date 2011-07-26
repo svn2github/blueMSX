@@ -57,7 +57,7 @@ static void destroy(RomMapperSg1000Castle* rm)
     free(rm);
 }
 
-int romMapperSg1000CastleCreate(char* filename, UInt8* romData, 
+int romMapperSg1000CastleCreate(const char* filename, UInt8* romData, 
                           int size, int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };

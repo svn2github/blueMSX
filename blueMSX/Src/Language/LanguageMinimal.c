@@ -204,6 +204,7 @@ char* langRomTypeEseSCC256()        { return "256kB Ese-SCC"; }
 char* langRomTypeEseSCC512()        { return "512kB Ese-SCC"; }
 char* langRomTypeNoWind()           { return "NoWind USB"; }
 char* langRomTypeGoudaSCSI()        { return "Gouda SCSI"; }
+char* langRomTypeMasushitaSramInv() { return "Matsushita SRAM - Turbo 5.37MHz"; }
 
 //----------------------
 // Debug type lines
@@ -230,7 +231,7 @@ char* langDbgDevRamMapper()         { return "RAM Mapper"; }
 char* langDbgDevRam()               { return "RAM"; }
 char* langDbgDevIdeBeer()           { return "Beer IDE"; }
 char* langDbgDevIdeGide()           { return "GIDE"; }
-char* langDbgDevIdeSviRs)           { return "SVI-328 RS IDE"; }
+char* langDbgDevIdeSviRs()          { return "SVI-328 RS IDE"; }
 char* langDbgDevScsiGouda()         { return "Gouda SCSI"; }
 char* langDbgDevF4Device()          { return "F4 Device"; }
 char* langDbgDevFmpac()             { return "FMPAC"; }

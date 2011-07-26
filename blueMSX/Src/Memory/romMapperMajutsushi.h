@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperMajutsushiCreate(char* filename, UInt8* romData, 
+int romMapperMajutsushiCreate(const char* filename, UInt8* romData, 
                            int size, int slot, int sslot, int startPage);
 
 #endif

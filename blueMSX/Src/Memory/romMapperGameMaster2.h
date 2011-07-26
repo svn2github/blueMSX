@@ -30,7 +30,7 @@
  
 #include "MsxTypes.h"
 
-int romMapperGameMaster2Create(char* filename, UInt8* romData, 
+int romMapperGameMaster2Create(const char* filename, UInt8* romData, 
                                int size, int slot, int sslot, int startPage);
 
 #endif
