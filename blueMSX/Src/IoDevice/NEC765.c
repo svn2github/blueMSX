@@ -371,6 +371,7 @@ static void nec765CommandPhaseWrite(NEC765* fdc, UInt8 value)
                 }
                 if (rv == DSKE_CRC_ERROR) {
                     fdc->status0 |= ST0_IC0;
+                    fdc->status1 |= ST1_DE; 
                     fdc->status2 |= ST2_DD;
                 }
                 fdc->mainStatus |= STM_DIO;

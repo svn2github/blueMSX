@@ -357,6 +357,7 @@ static void tc8566afCommandPhaseWrite(TC8566AF* tc, UInt8 value)
                 }
                 if (rv == DSKE_CRC_ERROR) {
                     tc->status0 |= ST0_IC0;
+                    tc->status1 |= ST1_DE; 
                     tc->status2 |= ST2_DD;
                 }
                 tc->mainStatus |= STM_DIO;
