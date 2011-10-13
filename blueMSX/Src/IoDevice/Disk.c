@@ -96,6 +96,8 @@ static const UInt8 hdIdentifyBlock[512] = {
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
+static const UInt8 sviCpm80ss[] = "CP/M-80 Revision 2.23SE (326K)";
+
 static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 {
     UInt32 totalSectors = fileSize[driveId] / 512;
@@ -350,12 +352,12 @@ static void diskUpdateInfo(int driveId)
         case 163840:
             if (isSectorSize256(buf)) {
                 sectorSize[driveId]      = 256;
-	            sectorsPerTrack[driveId] = 16;
+                sectorsPerTrack[driveId] = 16;
                 tracks[driveId]          = 40;
-	            sides[driveId]           = 1;
+                sides[driveId]           = 1;
             }
             break;
-        case 172032:  /* SVI-328 SSDD */
+        case 172032:  /* SVI-328 40 SS */
             sides[driveId] = 1;
             tracks[driveId] = 40;
             sectorsPerTrack[driveId] = 17;
@@ -375,11 +377,29 @@ static void diskUpdateInfo(int driveId)
             tracks[driveId] = 40;
             sides[driveId] = 1;
             return;
-        case 346112:  /* SVI-328 DSDD */
-            sides[driveId] = 2;
-            tracks[driveId] = 40;
+        case 346112:  /* SVI-328 40 DS/80 SS */
+            sides[driveId] = 1;
+            tracks[driveId] = 80;
             sectorsPerTrack[driveId] = 17;
             diskType[driveId] = SVI328_DISK;
+            rv = diskReadSector(driveId, buf, 15, 0, 40, 0, &secSize);
+            if (rv != DSKE_OK) {
+                return;
+            }
+            // Is it formatted for 80 track Disk BASIC?
+            if (buf[0] == 0xfe && buf[1] == 0xfe && buf[2] == 0xfe && buf[20] != 0xfe && buf[40] == 0xfe) {
+            	return;
+            }
+            rv = diskReadSector(driveId, buf, 1, 0, 1, 0, &secSize);
+            if (rv != DSKE_OK) {
+                return;
+            }
+            // Is it sysgend for 80 track CP/M?
+            if (memcmp(&buf[176], &sviCpm80ss[0], sizeof(sviCpm80ss)-1) == 0) {
+                return;
+            }
+            sides[driveId] = 2;
+            tracks[driveId] = 40;
             return;
         case 348160:  /* SVI-728 DSDD (CP/M) */
             if (isSectorSize256(buf)) {
