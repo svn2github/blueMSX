@@ -96,7 +96,7 @@ static const UInt8 hdIdentifyBlock[512] = {
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
-static const UInt8 sviCpm80ss[] = "CP/M-80 Revision 2.23SE (326K)";
+static const UInt8 svi328Cpm80track[] = "CP/M-80 Revision 2.23SE (326K)";
 
 static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 {
@@ -104,7 +104,7 @@ static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
     UInt16 heads = 16;
     UInt16 sectors = 32;
     UInt16 cylinders = (UInt16)(totalSectors / (heads * sectors));
-    
+
     memcpy(buffer, hdIdentifyBlock, 512);
 
     buffer[0x02] = cylinders & 0xff;
@@ -343,11 +343,6 @@ static void diskUpdateInfo(int driveId)
         return;
     }
 
-    rv = diskReadSector(driveId, buf, 1, 0, 0, 512, &secSize);
-    if (rv != DSKE_OK) {
-        return;
-    }
-
     switch (fileSize[driveId]) {
         case 163840:
             if (isSectorSize256(buf)) {
@@ -395,8 +390,14 @@ static void diskUpdateInfo(int driveId)
                 return;
             }
             // Is it sysgend for 80 track CP/M?
-            if (memcmp(&buf[176], &sviCpm80ss[0], sizeof(sviCpm80ss)-1) == 0) {
-                return;
+            if (memcmp(&buf[176], &svi328Cpm80track[0], strlen(svi328Cpm80track)) == 0) {
+                rv = diskReadSector(driveId, buf, 2, 0, 0, 1, &secSize);
+                if (rv != DSKE_OK) {
+                    return;
+                }
+                if (buf[115] == 0x50 || buf[116] == 0x50) {
+                    return;
+                }
             }
             sides[driveId] = 2;
             tracks[driveId] = 40;
@@ -410,6 +411,11 @@ static void diskUpdateInfo(int driveId)
             }
             return;
 	}
+
+    rv = diskReadSector(driveId, buf, 1, 0, 0, 512, &secSize);
+    if (rv != DSKE_OK) {
+        return;
+    }
 
     if (buf[0] ==0xeb) {
         switch (buf[0x15]) {
@@ -464,7 +470,7 @@ static void diskUpdateInfo(int driveId)
             return;
         }
     }
-    
+
     if ((buf[0] == 0xe9) || (buf[0] ==0xeb)) {
 	    sectorsPerTrack[driveId] = buf[0x18] + 256 * buf[0x19];
 	    sides[driveId]           = buf[0x1a] + 256 * buf[0x1b];
