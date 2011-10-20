@@ -122,7 +122,6 @@ void CVideoGrabber::ShutdownGrabber()
     
     if (m_initialized) {
         HRESULT hr;
-//        CComQIPtr <IMediaControl, &IID_IMediaControl> pControl = m_pGraph;
         IMediaControlPtr pControl = m_pGraph;
         hr = pControl->Stop();
 
@@ -216,7 +215,6 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-//    CComQIPtr <IBaseFilter, &IID_IBaseFilter> pGrabberBase(pGrabber);
     IBaseFilterPtr pGrabberBase(pGrabber);
     hr = m_pGraph->AddFilter(pGrabberBase, L"Grabber");
     if (FAILED(hr)) {
@@ -307,7 +305,6 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
         return false;
     }
 
-//    CComQIPtr <IVideoWindow, &IID_IVideoWindow> pWindow = m_pGraph;
     IVideoWindowPtr pWindow = m_pGraph;
     if (pWindow) {
         hr = pWindow->put_AutoShow(OAFALSE);
@@ -318,7 +315,6 @@ bool CVideoGrabber::SetupGrabber(const std::string& devName)
     hr = AddGraphToRot(m_pGraph, &m_dwGraphRegister);
 #endif
 
-//    CComQIPtr <IMediaControl, &IID_IMediaControl> pControl(m_pGraph);
     IMediaControlPtr pControl(m_pGraph);
     hr = pControl->Run();
     if (FAILED(hr)) {
@@ -340,7 +336,6 @@ int CVideoGrabber::GrabFrame(WORD* bitmap, LONG width, LONG height)
         return 0;    
     }
 
-//    CComQIPtr <IMediaEvent, &IID_IMediaEvent> pEvent(m_pGraph);
     IMediaEventPtr pEvent(m_pGraph);
 
     hr = pEvent->WaitForCompletion(INFINITE, &EvCode);
