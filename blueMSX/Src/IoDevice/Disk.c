@@ -96,7 +96,7 @@ static const UInt8 hdIdentifyBlock[512] = {
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
-static const UInt8 svi328Cpm80track[] = "CP/M-80 Revision 2.23SE (326K)";
+static const UInt8 svi328Cpm80track[] = "CP/M-80";
 
 static void diskReadHdIdentifySector(int driveId, UInt8* buffer)
 {
@@ -174,7 +174,6 @@ int diskGetSectorSize(int driveId, int side, int track, int density)
     if (driveId >= MAXDRIVES)
         return 0;
 
-//    if (boardGetType() == BOARD_SVI) {
     if (diskType[driveId] == SVI328_DISK) {
         secSize = (track==0 && side==0 && density==1) ? 128 : 256;
     }
@@ -343,6 +342,11 @@ static void diskUpdateInfo(int driveId)
         return;
     }
 
+    rv = diskReadSector(driveId, buf, 1, 0, 0, 512, &secSize);
+    if (rv != DSKE_OK) {
+        return;
+    }
+
     switch (fileSize[driveId]) {
         case 163840:
             if (isSectorSize256(buf)) {
@@ -411,11 +415,6 @@ static void diskUpdateInfo(int driveId)
             }
             return;
 	}
-
-    rv = diskReadSector(driveId, buf, 1, 0, 0, 512, &secSize);
-    if (rv != DSKE_OK) {
-        return;
-    }
 
     if (buf[0] ==0xeb) {
         switch (buf[0x15]) {
