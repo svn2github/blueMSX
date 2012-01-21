@@ -36,15 +36,7 @@ typedef struct Mixer Mixer;
 #define AUDIO_MONO_BUFFER_SIZE    10000
 #define AUDIO_STEREO_BUFFER_SIZE  (2 * AUDIO_MONO_BUFFER_SIZE)
 
-#ifdef CONFIG_BASE_X11
-#include <config.h>
-	#define AUDIO_SAMPLERATE       48000
-#elif defined(CONFIG_BASE_IPHONE) || defined(CONFIG_BASE_ANDROID)
-#include <config.h>
-	#define AUDIO_SAMPLERATE       44075
-#else
-	#define AUDIO_SAMPLERATE       44100
-#endif
+#define AUDIO_SAMPLERATE       44100
 
 typedef enum { 
     MIXER_CHANNEL_PSG = 0,
@@ -68,6 +60,7 @@ typedef enum {
 #define MAX_CHANNELS 16
 
 typedef Int32* (*MixerUpdateCallback)(void*, UInt32);
+typedef void (*MixerSetSampleRateCallback)(void*, UInt32);
 typedef Int32 (*MixerWriteCallback)(void*, Int16*, UInt32);
 
 /* Constructor and destructor */
@@ -80,6 +73,8 @@ Int32 mixerGetMasterVolume(Mixer* mixer, int leftRight);
 void mixerSetMasterVolume(Mixer* mixer, Int32 volume);
 void mixerEnableMaster(Mixer* mixer, Int32 enable);
 void mixerSetStereo(Mixer* mixer, Int32 stereo);
+UInt32 mixerGetSampleRate(Mixer* mixer);
+void mixerSetSampleRate(Mixer* mixer, UInt32 rate);
 
 Int32 mixerGetChannelTypeVolume(Mixer* mixer, Int32 channelType, int leftRight);
 void mixerSetChannelTypeVolume(Mixer* mixer, Int32 channelType, Int32 volume);
@@ -100,7 +95,8 @@ void mixerReset(Mixer* mixer);
 void mixerSync(Mixer* mixer);
 
 Int32 mixerRegisterChannel(Mixer* mixer, Int32 audioType, Int32 stereo, 
-                           MixerUpdateCallback callback, void*param);
+                           MixerUpdateCallback callback, MixerSetSampleRateCallback rateCallback,
+                           void*param);
 void mixerSetEnable(Mixer* mixer, int enable);
 void mixerUnregisterChannel(Mixer* mixer, Int32 handle);
 

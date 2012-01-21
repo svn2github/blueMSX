@@ -163,6 +163,12 @@ void ym2413GetDebugInfo(YM_2413* ym2413, DbgDevice* dbgDevice)
     }
 }
 
+void ym2413SetSampleRate(void* ref, UInt32 rate)
+{
+    YM_2413* ym2413 = (YM_2413*)ref;
+    ym2413->ym2413->setSampleRate(rate, boardGetYm2413Oversampling());
+}
+
 YM_2413* ym2413Create(Mixer* mixer)
 {
     YM_2413* ym2413;
@@ -171,9 +177,9 @@ YM_2413* ym2413Create(Mixer* mixer)
 
     ym2413->mixer = mixer;
 
-    ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, ym2413Sync, ym2413);
+    ym2413->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_MSXMUSIC, 0, ym2413Sync, ym2413SetSampleRate, ym2413);
 
-    ym2413->ym2413->setSampleRate(AUDIO_SAMPLERATE, boardGetYm2413Oversampling());
+    ym2413->ym2413->setSampleRate(mixerGetSampleRate(mixer), boardGetYm2413Oversampling());
 	ym2413->ym2413->setVolume(32767 * 9 / 10);
 
     return ym2413;

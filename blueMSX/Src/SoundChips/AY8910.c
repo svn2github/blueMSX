@@ -248,7 +248,7 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int3
     ay8910->pan[1] = pan?pan[1]:0;
     ay8910->pan[2] = pan?pan[2]:0;
 
-    ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, stereo, ay8910Sync, ay8910);
+    ay8910->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, stereo, ay8910Sync, NULL, ay8910);
 
     ay8910Reset(ay8910);
     for (i = 0; i < 16; i++) {

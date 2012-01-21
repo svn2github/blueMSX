@@ -53,7 +53,7 @@ AudioKeyClick* audioKeyClickCreate(Mixer* mixer)
 
     keyClick->mixer = mixer;
 
-    keyClick->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_KEYBOARD, 0, audioKeyClickSync, keyClick);
+    keyClick->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_KEYBOARD, 0, audioKeyClickSync, NULL, keyClick);
 
     return keyClick;
 }

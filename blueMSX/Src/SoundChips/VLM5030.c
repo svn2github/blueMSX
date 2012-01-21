@@ -170,7 +170,7 @@ VLM5030* vlm5030Create(Mixer* mixer, UInt8* voiceData, int length)
 
     vlm5030->mixer = mixer;
 
-    vlm5030->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, vlm5030Sync, vlm5030);
+    vlm5030->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, vlm5030Sync, NULL, vlm5030);
 
     vlm5030_start(FREQUENCY);
     VLM5030_set_rom(voiceData, length);

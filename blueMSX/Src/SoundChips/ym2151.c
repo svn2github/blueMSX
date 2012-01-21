@@ -43,6 +43,7 @@
 struct YM2151 {
     Mixer* mixer;
     Int32  handle;
+    UInt32 rate;
 
     MameYm2151* opl;
     BoardTimer* timer1;
@@ -179,14 +180,14 @@ static Int32* ym2151Sync(void* ref, UInt32 count)
 
     for (i = 0; i < count; i++) {
         Int16 sl, sr;
-        ym2151->off -= SAMPLERATE - AUDIO_SAMPLERATE;
+        ym2151->off -= SAMPLERATE - ym2151->rate;
         ym2151->s1l = ym2151->s2l;
         ym2151->s1r = ym2151->s2r;
         YM2151UpdateOne(ym2151->opl, &sl, &sr, 1);
         ym2151->s2l = sl;
         ym2151->s2r = sr;
         if (ym2151->off < 0) {
-            ym2151->off += AUDIO_SAMPLERATE;
+            ym2151->off += ym2151->rate;
             ym2151->s1l = ym2151->s2l;
             ym2151->s1r = ym2151->s2r;
             YM2151UpdateOne(ym2151->opl, &sl, &sr, 1);
@@ -270,6 +271,12 @@ void ym2151Reset(YM2151* ym2151)
     ym2151->latch = 0;
 }
 
+void ym2151SetSampleRate(void* ref, UInt32 rate)
+{
+    YM2151* ym2151 = (YM2151*)ref;
+    ym2151->rate = rate;
+}
+
 YM2151* ym2151Create(Mixer* mixer)
 {
     YM2151* ym2151;
@@ -283,9 +290,11 @@ YM2151* ym2151Create(Mixer* mixer)
     ym2151->timer1 = boardTimerCreate(onTimeout1, ym2151);
     ym2151->timer2 = boardTimerCreate(onTimeout2, ym2151);
 
-    ym2151->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_YAMAHA_SFG, 1, ym2151Sync, ym2151);
+    ym2151->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_YAMAHA_SFG, 1, ym2151Sync, ym2151SetSampleRate, ym2151);
 
     ym2151->opl = YM2151Create(ym2151, FREQUENCY, SAMPLERATE);
+    
+    ym2151->rate = mixerGetSampleRate(mixer);
 
     return ym2151;
 }

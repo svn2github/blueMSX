@@ -223,7 +223,7 @@ SN76489* sn76489Create(Mixer* mixer)
 
     sn76489->mixer = mixer;
 
-    sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, sn76489);
+    sn76489->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PSG, 0, sn76489Sync, NULL, sn76489);
     sn76489->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "SN76489 PSG", &dbgCallbacks, sn76489);
 
 

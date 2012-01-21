@@ -76,7 +76,7 @@ SamplePlayer* samplePlayerCreate(Mixer* mixer, int mixerChannel, int bitDepth, i
 
     samplePlayerReset(samplePlayer);
 
-    samplePlayer->handle = mixerRegisterChannel(mixer, mixerChannel, 0, samplePlayerSync, samplePlayer);
+    samplePlayer->handle = mixerRegisterChannel(mixer, mixerChannel, 0, samplePlayerSync, NULL, samplePlayer);
 
     return samplePlayer;
 }

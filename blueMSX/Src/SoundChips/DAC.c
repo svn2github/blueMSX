@@ -76,10 +76,10 @@ DAC* dacCreate(Mixer* mixer, DacMode mode)
     dacReset(dac);
 
     if (mode == DAC_MONO) {
-        dac->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, dacSyncMono, dac);
+        dac->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 0, dacSyncMono, NULL, dac);
     }
     else {
-        dac->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 1, dacSyncStereo, dac);
+        dac->handle = mixerRegisterChannel(mixer, MIXER_CHANNEL_PCM, 1, dacSyncStereo, NULL, dac);
     }
     return dac;
 }
