@@ -97,9 +97,6 @@ static void crtcRenderVideoBuffer(CRTC6845* crtc)
     color[1] = videoGetColor(255, 255, 255); // must be updated (also for the VDP)
 
     for (y = 0; y < DISPLAY_HEIGHT; y++) {
-#ifdef CRT_SKIP_OVERSCAN
-    	if(y < 8 || y >= (224+8)) continue; // skip overscan
-#endif
         Pixel* linePtr = frameBufferGetLine(crtcFrameBuffer, y);
         int charRaster = y % Nr;
         int vadjust = 2; // Fix vertical adjust from regs (the value 4)

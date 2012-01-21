@@ -143,7 +143,6 @@ typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE, HD_RSIDE,
 HdType boardGetHdType(int hdIndex);
 
 
-const char* boardGetBaseDirectory();
 
 Mixer* boardGetMixer();
 

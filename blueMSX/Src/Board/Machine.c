@@ -151,10 +151,6 @@
 #include "romExclusion.h"
 
 
-
-static char basePath[512] = "";
-
-
 int toint(char* buffer) 
 {
     int i;
@@ -326,18 +322,10 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
                                 machine->slotInfo[i].romType == ROM_SVI738FDC;
 
         arg = extractToken(slotBuf, 5);
-        machine->slotInfo[i].name[0] = '\0';
-        if(arg && strlen(arg))
-        {
-        	sprintf(machine->slotInfo[i].name, "%s%s", basePath, arg);
-        }
+        strcpy(machine->slotInfo[i].name, arg ? arg : "");
 
         arg = extractToken(slotBuf, 6);
-        machine->slotInfo[i].inZipName[0] = '\0';
-        if(arg && strlen(arg))
-		{
-			sprintf(machine->slotInfo[i].inZipName, "%s%s", basePath, arg);
-		}
+        strcpy(machine->slotInfo[i].inZipName, arg ? arg : "");
 
         if (machine->slotInfo[i].slot < 0 || machine->slotInfo[i].slot >= 4) { iniFileClose(); return 0; }
         if (machine->slotInfo[i].subslot < 0 || machine->slotInfo[i].subslot >= 4) { iniFileClose(); return 0; }
@@ -459,11 +447,6 @@ void machineSave(Machine* machine)
     iniFileClose();
 }
 
-void machineSetPath(const char* path)
-{
-    strcpy(basePath, path);
-}
-
 Machine* machineCreate(const char* machineName)
 {
     char fileName[512];
@@ -472,7 +455,7 @@ Machine* machineCreate(const char* machineName)
 
     machine = malloc(sizeof(Machine));
 
-    sprintf(fileName, "%sMachines/%s/config.ini", basePath, machineName);
+    sprintf(fileName, "Machines/%s/config.ini", machineName);
     success = readMachine(machine, machineName, fileName);
     if (!success) {
         free(machine);

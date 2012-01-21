@@ -41,6 +41,6 @@ typedef enum {
     DDT_MSX_CPM_DSDD       = 7,
 } DirDiskType;
 
-void* dirLoadFile(DirDiskType diskType, char* fileName, int* size);
+void* dirLoadFile(DirDiskType diskType, const char* fileName, int* size);
 
 #endif

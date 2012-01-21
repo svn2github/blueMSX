@@ -47,7 +47,7 @@ typedef enum {
     DSKE_CRC_ERROR
 } DSKE;
 
-UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile);
+UInt8 diskChange(int driveId, const char* fileName, const char* fileInZipFile);
 void diskSetInfo(int driveId, char* fileName, const char* fileInZipFile);
 void  diskEnable(int driveId, int enable);
 UInt8 diskEnabled(int driveId);

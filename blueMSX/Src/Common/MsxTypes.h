@@ -45,7 +45,11 @@ extern "C" {
 
 /* Define double type for different targets
  */
+#if defined(__x86_64__) || defined(__i386__)
 typedef double DoubleT;
+#else
+typedef float DoubleT;
+#endif
 
 
 /* So far, only support for MSVC types

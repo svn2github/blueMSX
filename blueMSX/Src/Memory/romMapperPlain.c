@@ -187,6 +187,7 @@ int romMapperPlainCreate(const char* filename, UInt8* romData,
         break;
         
     default:
+        free(rm->romData);
         free(rm);
         return 0;
     }

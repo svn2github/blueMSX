@@ -1416,7 +1416,7 @@ static int enableY8950           = 1;
 static int enableMoonsound       = 1;
 static int videoAutodetect       = 1;
 
-const char* boardGetBaseDirectory() {
+char* boardGetBaseDirectory() {
     return baseDirectory;
 }
 

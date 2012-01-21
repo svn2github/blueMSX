@@ -123,6 +123,7 @@ int romMapperMsxMusicCreate(const char* filename, UInt8* romData,
     int i;
 
     if (pages == 0 || (startPage + pages) > 8) {
+        free(rm);
         return 0;
     }
 

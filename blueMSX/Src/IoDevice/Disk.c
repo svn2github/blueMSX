@@ -605,7 +605,7 @@ static char *makeErrorsFileName(const char *fileName)
     }
 }
 
-UInt8 diskChange(int driveId, char* fileName, const char* fileInZipFile)
+UInt8 diskChange(int driveId, const char* fileName, const char* fileInZipFile)
 {
     struct stat s;
     int rv;

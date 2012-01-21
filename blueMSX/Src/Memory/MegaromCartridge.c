@@ -302,7 +302,7 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
     default:
         // Load roms for Special Carts
         if (strcmp(cart, "Sunrise IDE") == 0) {
-            buf = romLoad("Machines/Shared Roms/sunriseide.rom", cartZip, &size);
+            buf = romLoad("Machines/Shared Roms/SUNRISEIDE.rom", cartZip, &size);
             if (buf == 0) {
                 success &= romMapperSunriseIdeCreate(cartNo, romName, NULL, 0, slot, sslot, 0);
                 break;
