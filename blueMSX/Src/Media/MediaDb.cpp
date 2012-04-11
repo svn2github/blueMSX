@@ -132,6 +132,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "CasPatch")     return ROM_CASPATCH;
     if (name == "Coleco")       return ROM_COLECO;
     if (name == "MegaCart")     return ROM_CVMEGACART;
+    if (name == "ActivisionPCB")return ROM_ACTIVISIONPCB;
     if (name == "SG1000")       return ROM_SG1000;
     if (name == "SC3000")       return ROM_SC3000;
     if (name == "SG1000Castle") return ROM_SG1000CASTLE;
@@ -335,7 +336,7 @@ static void mediaDbAddDump(TiXmlElement* dmp,
             }
         }
 
-        if (romType != ROM_CVMEGACART) {
+        if (romType != ROM_CVMEGACART && romType != ROM_ACTIVISIONPCB) {
             if (strcmpnocase(system.c_str(), "coleco") == 0) {
                 romType = ROM_COLECO;
             }
@@ -684,6 +685,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_OPCODESAVE:  return "ColecoVision Opcode SaveRam";
     case ROM_OPCODESLOT:  return "ColecoVision Opcode Slot Manager";
     case ROM_CVMEGACART:  return "ColecoVision MegaCart(R)";
+    case ROM_ACTIVISIONPCB:return "Colecovision Activision PCB";
     case SRAM_MEGASCSI:   return langRomTypeMegaSCSI();
     case SRAM_MEGASCSI128:return langRomTypeMegaSCSI128();
     case SRAM_MEGASCSI256:return langRomTypeMegaSCSI256();
@@ -847,6 +849,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_YAMAHANET:   return "YAMAHA NET";
     case ROM_SF7000IPL:   return "SF-7000 IPL";
     case ROM_CVMEGACART:  return "MEGACART";
+    case ROM_ACTIVISIONPCB:return "ACTIVISION";
     case SRAM_MEGASCSI:   return "MEGASCSI";
     case SRAM_MEGASCSI128:return "MEGASCSI128";
     case SRAM_MEGASCSI256:return "MEGASCSI256";

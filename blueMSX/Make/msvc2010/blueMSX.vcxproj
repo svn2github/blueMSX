@@ -329,7 +329,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\Src\Input\ColecoSteeringWheel.c" />
     <ClCompile Include="..\..\Src\Input\ColecoSuperAction.c" />
+    <ClCompile Include="..\..\Src\IoDevice\Microchip24x00.c" />
     <ClCompile Include="..\..\Src\IoDevice\Z8530.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperActivisionPcb.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperArc.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperNms1210Rs232.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperOpcodeBios.c" />
@@ -621,7 +623,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\Src\Input\ColecoSteeringWheel.h" />
     <ClInclude Include="..\..\Src\Input\ColecoSuperAction.h" />
+    <ClInclude Include="..\..\Src\IoDevice\Microchip24x00.h" />
     <ClInclude Include="..\..\Src\IoDevice\Z8530.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperActivisionPcb.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperArc.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperNms1210Rs232.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperOpcodeBios.h" />
