@@ -418,6 +418,7 @@ char* langMenuToolsMachine() { return ls->menuToolsMachine; }
 char* langMenuToolsShortcuts() { return ls->menuToolsShortcuts; }
 char* langMenuToolsCtrlEditor() { return ls->menuToolsCtrlEditor; }
 char* langMenuToolsMixer() { return ls->menuToolsMixer; }
+char* langMenuToolsLoadMemory() { return ls->menuToolsLoadMemory; }
 char* langMenuToolsDebugger() { return ls->menuToolsDebugger; }
 char* langMenuToolsTrainer() { return ls->menuToolsTrainer; }
 char* langMenuToolsTraceLogger() { return ls->menuToolsTraceLogger; }

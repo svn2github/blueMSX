@@ -227,6 +227,7 @@ char* langMenuToolsMachine();
 char* langMenuToolsShortcuts();
 char* langMenuToolsCtrlEditor();
 char* langMenuToolsMixer();
+char* langMenuToolsLoadMemory();
 char* langMenuToolsDebugger();
 char* langMenuToolsTrainer();
 char* langMenuToolsTraceLogger();

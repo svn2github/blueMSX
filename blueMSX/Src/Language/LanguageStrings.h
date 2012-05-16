@@ -199,6 +199,7 @@ typedef struct {
     char* menuToolsKeyboard;
     char* menuToolsCtrlEditor;
     char* menuToolsMixer;
+    char* menuToolsLoadMemory;
     char* menuToolsDebugger;
     char* menuToolsTrainer;
     char* menuToolsTraceLogger;

@@ -202,6 +202,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Snelkoppelingen";
     ls->menuToolsCtrlEditor     = "Besturing";
     ls->menuToolsMixer          = "Geluidsmixer";
+    ls->menuToolsLoadMemory     = "Laden Geheugen";
     ls->menuToolsDebugger       = "Debugger";
     ls->menuToolsTrainer        = "Trainer";
     ls->menuToolsTraceLogger    = "Trace Logger";

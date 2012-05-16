@@ -203,6 +203,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuToolsKeyboard       = "Tangentbordseditor";
     ls->menuToolsCtrlEditor     = "Kontrollers / Tangenbordseditor"; 
     ls->menuToolsMixer          = "Mixer";
+    ls->menuToolsLoadMemory     = "Ladda Minne";
     ls->menuToolsDebugger       = "Avlusare";               
     ls->menuToolsTrainer        = "Spelfusk";                
     ls->menuToolsTraceLogger    = "Spårutskrift";           
