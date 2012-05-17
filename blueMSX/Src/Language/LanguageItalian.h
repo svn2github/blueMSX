@@ -203,6 +203,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuToolsShortcuts              = "Gestione tasti rapidi...";
     ls->menuToolsCtrlEditor             = "Periferiche di ingresso...";               
     ls->menuToolsMixer                  = "Mixer audio...";
+    ls->menuToolsLoadMemory             = "Carico di memoria";
     ls->menuToolsDebugger               = "Debugger...";
     ls->menuToolsTrainer                = "Trainer...";
     ls->menuToolsTraceLogger            = "Trace logger...";

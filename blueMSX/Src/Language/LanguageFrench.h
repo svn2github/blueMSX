@@ -202,6 +202,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Editeur de raccourcis";
     ls->menuToolsCtrlEditor     = "Editeur de contrôleurs/clavier";  
     ls->menuToolsMixer          = "Mélangeur audio";
+    ls->menuToolsLoadMemory     = "Charger en mémoire";
     ls->menuToolsDebugger       = "Débogueur";               
     ls->menuToolsTrainer        = "Trainer";                
     ls->menuToolsTraceLogger    = "Trace Logger";           

@@ -203,6 +203,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Pikanäppäinasetukset";
     ls->menuToolsCtrlEditor     = "Peliohjaimet / Näppäimistökartta"; 
     ls->menuToolsMixer          = "Mikseri";
+    ls->menuToolsLoadMemory     = "Lataa muisti";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
     ls->menuToolsTraceLogger    = "Seurantalogi";         

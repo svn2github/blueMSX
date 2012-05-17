@@ -202,6 +202,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->menuToolsShortcuts      = "Configuração de Atalhos";
     ls->menuToolsCtrlEditor     = "Configuração de Controladores/Teclado";  
     ls->menuToolsMixer          = "Mixer de Audio"; 
+    ls->menuToolsLoadMemory     = "Memória de carga";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
     ls->menuToolsTraceLogger    = "Trace Logger";           

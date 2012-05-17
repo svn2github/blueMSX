@@ -202,6 +202,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuToolsCtrlEditor     = "Controllers / Keyboard Editor"; // New in 2.6
     ls->menuToolsKeyboard       = "Edytor klawiatury";
     ls->menuToolsMixer          = "Mikser";
+    ls->menuToolsLoadMemory     = "Pamiec obciazenia";
     ls->menuToolsDebugger       = "Debugger";               
     ls->menuToolsTrainer        = "Trainer";                
     ls->menuToolsTraceLogger    = "Trace Logger";           
