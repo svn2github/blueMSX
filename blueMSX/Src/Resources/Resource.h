@@ -106,6 +106,8 @@
 
 #define IDD_RENDERVIDEO                 133
 
+#define IDD_LOAD_MEMORY                 134
+
 #define IDC_JOY1                        1000
 #define IDC_JOY2                        1001
 #define IDC_CHARSET                     1002
