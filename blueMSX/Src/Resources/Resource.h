@@ -409,6 +409,12 @@
 
 #define IDC_CONTROL                     2800
 
+#define IDC_LDMEM_FILENAME              2900
+#define IDC_LDMEM_CAPFIL                2901
+#define IDC_LDMEM_BROWSE                2902
+#define IDC_LDMEM_ADDRESS               2903
+#define IDC_LDMEM_CAPADR                2904
+
 #define IDC_STATIC                      -1
 
 
