@@ -3643,3 +3643,113 @@ void archTrap(UInt8 value)
         PostMessage(getMainHwnd(), WM_CLOSE, 0, 0);
     }
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+
+
+static int LoadMemory(const char* fileName, UInt16 address)
+{
+    FILE* file;
+
+    file = fopen(fileName, "rb");
+    if (file != NULL) {
+        UInt8 data;
+        while (address <= 0xffff && (fread(&data, 1, 1, file) == 1)) {
+            slotWrite(NULL, address, data);
+            address++;
+        }
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+static BOOL CALLBACK loadMemorProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
+{
+    static HICON hIconBtBrowse = NULL;
+    int i;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:
+        SetWindowText(hDlg, langMenuToolsLoadMemory());
+        SetWindowText(GetDlgItem(hDlg, IDC_LDMEM_CAPFIL), langConfEditMemFile());
+        SetWindowText(GetDlgItem(hDlg, IDC_LDMEM_CAPADR), langConfEditMemAddress());
+        SetWindowText(GetDlgItem(hDlg, IDOK), langDlgOK());
+        SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
+
+        if (hIconBtBrowse == NULL) {
+            hIconBtBrowse = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_BROWSE));
+        }
+        SendMessage(GetDlgItem(hDlg, IDC_LDMEM_BROWSE), BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconBtBrowse);
+
+        return FALSE;
+
+    case WM_COMMAND:
+        switch(LOWORD(wParam)) {
+
+        case IDC_LDMEM_BROWSE: {
+                static char  defDir[MAX_PATH] = { 0 };
+                char  curDir[MAX_PATH];
+                char* fileName;
+                char extensionList[512];
+
+                GetCurrentDirectory(MAX_PATH, curDir);
+                if (strlen(defDir) == 0) {
+                    strcpy(defDir, curDir);
+                }
+                sprintf(extensionList, "%s   (*.*)#*.*#", langFileAll());
+                replaceCharInString(extensionList, '#', 0);
+
+                fileName = openFile(hDlg, langConfOpenRom(), extensionList, defDir, -1, NULL, NULL);
+                if (fileName != NULL) {
+                   SetWindowText(GetDlgItem(hDlg, IDC_LDMEM_FILENAME), fileName);
+                }
+
+                SetFocus(GetDlgItem(hDlg, IDC_LDMEM_ADDRESS));
+            }
+            return TRUE;
+
+            case IDOK: {
+                char fileName[512];
+                char data[5];
+                int addr, rv;
+
+                GetWindowText(GetDlgItem(hDlg, IDC_LDMEM_FILENAME), fileName, sizeof(fileName));
+                GetWindowText(GetDlgItem(hDlg, IDC_LDMEM_ADDRESS), data, sizeof(data));
+
+                rv = sscanf(data, "%x", &addr);
+                if (rv == 1) {
+//                    emulatorSuspend();
+                    LoadMemory(fileName, (UInt16)addr);
+//                    emulatorResume();
+                }
+
+                EndDialog(hDlg, TRUE);
+                return TRUE;
+            }
+        case IDCANCEL:
+            EndDialog(hDlg, FALSE);
+            return TRUE;
+        }
+        break;
+
+    case WM_CLOSE:
+        EndDialog(hDlg, FALSE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+int showLoadMemoryDlg(HWND hwnd)
+{
+    int rv;
+
+    rv = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_LOAD_MEMORY), hwnd, loadMemorProc);
+    if (!rv) {
+        return 0;
+    }
+
+    return 1;
+}
