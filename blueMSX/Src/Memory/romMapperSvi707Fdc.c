@@ -29,6 +29,7 @@
 #include "WD2793.h"
 #include "Led.h"
 #include "MediaDb.h"
+#include "RomLoader.h"
 #include "Disk.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
@@ -164,11 +165,11 @@ static void write(RomMapperSvi707Fdc* rm, UInt16 address, UInt8 value)
                     wd2793SetDrive(rm->fdc, -1);
             }
             break;
-        case 0x3fbe:	// Set CP/M boot
+        case 0x3fbe:    // Set CP/M boot ROM
             rm->toCpm = value;
             memcpy(rm->romData, rm->romDataCpm, 0x4000);
             break;
-        case 0x3fbf:	// Set MSX DOS
+        case 0x3fbf:    // Set MSX ROM
             rm->toMsx = value;
             memcpy(rm->romData, rm->romDataMsx, 0x4000);
             break;
@@ -189,8 +190,23 @@ int romMapperSvi707FdcCreate(const char* filename, UInt8* romData,
     RomMapperSvi707Fdc* rm;
     int pages = 4;
     int i;
+    int sizeMsx = 0;
+    UInt8* bufMsx;
 
     if ((startPage + pages) > 8) {
+        return 0;
+    }
+
+    if (size != 0x4000) {
+        return 0;
+    }
+
+    bufMsx = romLoad("Machines/Shared Roms/sv707msx.rom", NULL, &sizeMsx);
+    if (bufMsx == NULL) {
+        return 0;
+    }
+    if (sizeMsx != 0x4000) {
+        free(bufMsx);
         return 0;
     }
 
@@ -200,8 +216,13 @@ int romMapperSvi707FdcCreate(const char* filename, UInt8* romData,
     slotRegister(slot, sslot, startPage, pages, read, peek, write, destroy, rm);
 
     rm->romData = malloc(size);
+    rm->romDataCpm = malloc(size);
+    rm->romDataMsx = malloc(sizeMsx);
     memcpy(rm->romData, romData, size);
-    
+    memcpy(rm->romDataCpm, romData, size);
+    memcpy(rm->romDataMsx, bufMsx, sizeMsx);
+    free(bufMsx);
+
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;
