@@ -60,16 +60,16 @@ static UInt32          sviRamSize;
 static UInt32          sviRamStart;
 static UInt8*          sviRam;
 static UInt8           psgAYReg15;
-static int             svi80ColEnabled;
+static int             svi328Col80Enabled;
 static UInt8           lastJoystickValue;
 
 extern void PatchZ80(void* ref, CpuRegs* cpu);
 
 static void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((svi80ColEnabled && svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
+    if ((svi328Col80Enabled && svi328col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
     {
-        svi80colMemWrite(address & 0xfff, value);
+        svi328col80MemWrite(address & 0xfff, value);
     }
     else
         slotWrite(ref, address, value);
@@ -77,8 +77,8 @@ static void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 static UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((svi80ColEnabled && svi80colMemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
-        return svi80colMemRead(address & 0xfff);
+    if ((svi328Col80Enabled && svi328col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
+        return svi328col80MemRead(address & 0xfff);
     else
         return slotRead(ref, address);
 }
@@ -202,8 +202,8 @@ static int sviLoad80Col(Machine* machine, VdpSyncMode vdpSyncMode)
             if (buf != NULL) {
                 if (machine->slotInfo[i].romType == ROM_SVI328COL80) {
                     int frameRate = (vdpSyncMode == VDP_SYNC_60HZ) ? 60 : 50;
-                    svi80ColEnabled = romMapperSvi80ColCreate(frameRate, buf, size);
-                    success &= svi80ColEnabled;
+                    svi328Col80Enabled = romMapperSvi328Col80Create(frameRate, buf, size);
+                    success &= svi328Col80Enabled;
                 }
                 free(buf);
             }
@@ -255,7 +255,7 @@ static void saveState()
 {
     SaveState* state = saveStateOpenForWrite("svi");
 
-    saveStateSet(state, "svi80ColEnabled", svi80ColEnabled);
+    saveStateSet(state, "svi328Col80Enabled", svi328Col80Enabled);
     saveStateSet(state, "psgAYReg15", psgAYReg15);
 
     saveStateClose(state);
@@ -270,7 +270,7 @@ static void loadState()
 {
     SaveState* state = saveStateOpenForRead("svi");
 
-    svi80ColEnabled = saveStateGet(state, "svi80ColEnabled", 0);
+    svi328Col80Enabled = saveStateGet(state, "svi328Col80Enabled", 0);
     psgAYReg15      = (UInt8)saveStateGet(state, "psgAYReg15", 0);
 
     saveStateClose(state);
@@ -330,7 +330,7 @@ int sviCreate(Machine* machine,
     sviPPICreate(joyIO);
     slotManagerCreate();
 
-    svi80ColEnabled = 0;
+    svi328Col80Enabled = 0;
 
     /* Initialize VDP */
     vdpCreate(VDP_SVI, machine->video.vdpVersion, vdpSyncMode, machine->video.vramSize / 0x4000);

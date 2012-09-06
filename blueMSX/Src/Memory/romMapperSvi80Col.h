@@ -31,10 +31,10 @@
 
 #include "MsxTypes.h"
 
-void svi80colMemWrite(UInt16 address, UInt8 value);
-UInt8 svi80colMemRead(UInt16 address);
-int svi80colMemBankCtrlStatus(void);
+void svi328col80MemWrite(UInt16 address, UInt8 value);
+UInt8 svi328col80MemRead(UInt16 address);
+int svi328col80MemBankCtrlStatus(void);
 
-int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size);
+int romMapperSvi328Col80Create(int frameRate, UInt8* romData, int size);
 
 #endif
