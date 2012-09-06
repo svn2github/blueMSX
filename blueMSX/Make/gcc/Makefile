@@ -262,6 +262,7 @@ SOURCE_FILES += romMapperSvi328Fdc.c
 SOURCE_FILES += romMapperSvi328Prn.c
 SOURCE_FILES += romMapperSvi328Rs232.c
 SOURCE_FILES += romMapperSvi727.c
+SOURCE_FILES += romMapperSvi707Fdc.c
 SOURCE_FILES += romMapperSvi738Fdc.c
 SOURCE_FILES += romMapperSvi80Col.c
 SOURCE_FILES += romMapperTC8566AF.c
