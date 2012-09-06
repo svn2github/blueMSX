@@ -85,6 +85,7 @@ static RomType romTypeList[] = {
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
+    ROM_SVI707FDC,
     ROM_SVI738FDC,
     ROM_MSXDOS2, /* related */
     ROM_BEERIDE,
@@ -125,7 +126,7 @@ static RomType romTypeList[] = {
     ROM_NATIONAL,
     ROM_SONYHBI55,
     ROM_SONYHBIV1,
-    ROM_SVI727,
+    ROM_SVI727COL80,
     ROM_MICROSOL80,
     ROM_FMDAS,
     

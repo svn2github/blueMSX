@@ -63,6 +63,7 @@
 #include "romMapperMicrosol.h"
 #include "romMapperNationalFdc.h"
 #include "romMapperPhilipsFdc.h"
+#include "romMapperSvi707Fdc.h"
 #include "romMapperSvi738Fdc.h"
 #include "romMapperGameMaster2.h"
 #include "romMapperASCII8sram.h"
@@ -319,6 +320,7 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
                                 machine->slotInfo[i].romType == ROM_NATIONALFDC ||
                                 machine->slotInfo[i].romType == ROM_PHILIPSFDC  ||
                                 machine->slotInfo[i].romType == ROM_SVI328FDC   ||
+                                machine->slotInfo[i].romType == ROM_SVI707FDC   ||
                                 machine->slotInfo[i].romType == ROM_SVI738FDC;
 
         arg = extractToken(slotBuf, 5);
@@ -641,6 +643,7 @@ void machineUpdate(Machine* machine)
                                 machine->slotInfo[i].romType == ROM_NATIONALFDC   ||
                                 machine->slotInfo[i].romType == ROM_PHILIPSFDC    ||
                                 machine->slotInfo[i].romType == ROM_SVI328FDC     ||
+                                machine->slotInfo[i].romType == ROM_SVI707FDC     ||
                                 machine->slotInfo[i].romType == ROM_SVI738FDC;
     }
 
@@ -1496,6 +1499,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperPhilipsFdcCreate(romName, buf, size, slot, subslot, startPage);
             break;
 
+        case ROM_SVI707FDC:
+            success &= romMapperSvi707FdcCreate(romName, buf, size, slot, subslot, startPage);
+            break;
+
         case ROM_SVI738FDC:
             success &= romMapperSvi738FdcCreate(romName, buf, size, slot, subslot, startPage);
             break;
@@ -1558,7 +1565,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             }
             break;
 
-        case ROM_SVI727:
+        case ROM_SVI727COL80:
             success &= romMapperSvi727Create(romName, buf, size, slot, subslot, startPage);
             break;
         }

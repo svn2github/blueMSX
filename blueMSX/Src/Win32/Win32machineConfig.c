@@ -617,8 +617,8 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC ||
         editSlotInfo.romType == ROM_JOYREXPSG || 
         editSlotInfo.romType == ROM_OPCODEPSG || editSlotInfo.romType == ROM_OPCODESLOT ||
-        editSlotInfo.romType == ROM_SVI80COL || editSlotInfo.romType == ROM_SVI328PRN ||
-        editSlotInfo.romType == ROM_SVI727 || editSlotInfo.romType == ROM_SVI328RSIDE ||
+        editSlotInfo.romType == ROM_SVI328COL80 || editSlotInfo.romType == ROM_SVI328PRN ||
+        editSlotInfo.romType == ROM_SVI727COL80 || editSlotInfo.romType == ROM_SVI328RSIDE ||
         editSlotInfo.romType == ROM_MSXPRN || editSlotInfo.romType == ROM_SVI328RS232) {
         return;
     }
@@ -652,6 +652,7 @@ static void getAddressControl(HWND hDlg)
         editSlotInfo.romType == ROM_MICROSOL     ||
         editSlotInfo.romType == ROM_NATIONALFDC  ||
         editSlotInfo.romType == ROM_PHILIPSFDC   ||
+        editSlotInfo.romType == ROM_SVI707FDC    ||
         editSlotInfo.romType == ROM_SVI738FDC    ||
         editSlotInfo.romType == ROM_BEERIDE      ||
         editSlotInfo.romType == ROM_FMPAC        ||
@@ -750,6 +751,7 @@ static void endEditControls(HWND hDlg)
 
     case ROM_NATIONALFDC:
     case ROM_PHILIPSFDC:
+    case ROM_SVI707FDC:
     case ROM_SVI738FDC:
         editSlotInfo.pageCount = 4;
         break;
@@ -787,8 +789,8 @@ static void endEditControls(HWND hDlg)
     case ROM_KANJI:
     case ROM_KANJI12:
     case ROM_MOONSOUND:
-    case ROM_SVI80COL:
-    case ROM_SVI727:
+    case ROM_SVI328COL80:
+    case ROM_SVI727COL80:
         editSlotInfo.slot      = 0;
         editSlotInfo.subslot   = 0;
         editSlotInfo.startPage = 0;
@@ -947,7 +949,7 @@ static void setEditControls(HWND hDlg)
         romType != ROM_OPCODEPSG && romType != ROM_OPCODESLOT && romType != ROM_OPCODEMEGA &&
         romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
         romType != ROM_SVI328RSIDE &&
-        romType != ROM_SVI727 && romType != ROM_SVI80COL && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
+        romType != ROM_SVI727COL80 && romType != ROM_SVI328COL80 && romType != ROM_SVI328PRN && romType != ROM_SVI328RS232)
     {
         if (romSize == 0) {
             sprintf(buffer, langTextUnknown());
@@ -973,7 +975,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM || romType == ROM_JOYREXPSG ||
         romType == ROM_KANJI12 || romType == ROM_JISYO || 
         romType == ROM_OPCODEPSG || romType == ROM_OPCODESLOT ||
-        romType == ROM_SVI328FDC || romType == ROM_SVI80COL || romType == ROM_SVI727 ||
+        romType == ROM_SVI328FDC || romType == ROM_SVI328COL80 || romType == ROM_SVI727COL80 ||
         romType == ROM_SVI328PRN || romType == ROM_MSXPRN || romType == ROM_SVI328RS232 || romType == ROM_SVI328RSIDE)
     {
         EnableWindow(GetDlgItem(hDlg, IDC_ROMSLOT), FALSE);
@@ -1011,13 +1013,13 @@ static void setEditControls(HWND hDlg)
     if (romType == RAM_NORMAL || romType == RAM_1KB_MIRRORED || romType == RAM_2KB_MIRRORED ||
         romType == ROM_NORMAL || romType == ROM_DISKPATCH || romType == ROM_CASPATCH ||
         romType == ROM_MICROSOL || romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || 
-        romType == ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || romType == ROM_DRAM ||
+        romType == ROM_SVI707FDC || ROM_SVI738FDC || romType == ROM_MSXMUSIC || romType == ROM_BEERIDE || romType == ROM_DRAM ||
         romType == ROM_FMPAC || romType == ROM_PAC || romType == ROM_BUNSETU || romType == ROM_MICROSOL80)
     {
         int size = romType == RAM_NORMAL ? editRamNormalSize / 0x2000 : 
                    romType == RAM_1KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
                    romType == RAM_2KB_MIRRORED ? editRamMirroredSize / 0x2000 : 
-                   (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC || romType == ROM_SVI738FDC) ? 4 : 
+                   (romType == ROM_NATIONALFDC || romType == ROM_PHILIPSFDC ||  romType == ROM_SVI707FDC || romType == ROM_SVI738FDC) ? 4 : 
                    romType == ROM_FMPAC || romType == ROM_PAC ? 2 : 
                    romPages > 8 ? 8 : romPages < 1 ? 1 : romPages;
         int end = 8 - size;
@@ -1203,6 +1205,7 @@ static void setEditControls(HWND hDlg)
     case ROM_MICROSOL:
     case ROM_NATIONALFDC:
     case ROM_PHILIPSFDC:
+    case ROM_SVI707FDC:
     case ROM_SVI738FDC:
     case ROM_BEERIDE:
     case ROM_FMPAC:
@@ -1361,8 +1364,8 @@ static void setEditControls(HWND hDlg)
     case ROM_KANJI:
     case ROM_KANJI12:
     case ROM_MOONSOUND:
-    case ROM_SVI80COL:
-    case ROM_SVI727:
+    case ROM_SVI328COL80:
+    case ROM_SVI727COL80:
         SetWindowText(GetDlgItem(hDlg, IDC_ROMIMAGE), editSlotInfo.name);
         SetWindowText(GetDlgItem(hDlg, IDC_ROMADDR), "n/a");
         EnableWindow(GetDlgItem(hDlg, IDC_ROMADDR), FALSE);
@@ -1417,6 +1420,7 @@ static RomType romTypeList[] = {
     ROM_MICROSOL,
     ROM_NATIONALFDC,
     ROM_PHILIPSFDC,
+    ROM_SVI707FDC,
     ROM_SVI738FDC,
     ROM_MSXDOS2, /* related */
     ROM_BEERIDE,
@@ -1472,7 +1476,7 @@ static RomType romTypeList[] = {
     ROM_NATIONAL,
     ROM_SONYHBI55,
     ROM_SONYHBIV1,
-    ROM_SVI727,
+    ROM_SVI727COL80,
     ROM_MICROSOL80,
     ROM_FMDAS,
     
@@ -1526,7 +1530,7 @@ static RomType romTypeList[] = {
     ROM_SVI328FDC,
     ROM_SVI328PRN,
     ROM_SVI328RS232,
-    ROM_SVI80COL,
+    ROM_SVI328COL80,
     ROM_SF7000IPL,
     ROM_OPCODEBIOS,
     ROM_OPCODEMEGA,

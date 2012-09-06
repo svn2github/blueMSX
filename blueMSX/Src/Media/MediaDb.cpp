@@ -144,6 +144,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "Kanji1")       return ROM_KANJI;
     if (name == "Kanji12")      return ROM_KANJI12;
     if (name == "MB8877A")      return ROM_NATIONALFDC;
+    if (name == "SVI707FDC")    return ROM_SVI707FDC;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "TC8566AF")     return ROM_TC8566AF;
     if (name == "TC8566AFTR")   return ROM_TC8566AF_TR;
@@ -171,8 +172,9 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "FSA1FM1")      return ROM_FSA1FMMODEM;
     if (name == "Standard16K")  return ROM_MSXDOS2;
     if (name == "SVI328CART")   return ROM_SVI328;
-    if (name == "SVI80COL")     return ROM_SVI80COL;
-    if (name == "SVI727")       return ROM_SVI727;
+    if (name == "SVI328COL80")  return ROM_SVI328COL80;
+    if (name == "SVI727COL80")  return ROM_SVI727COL80;
+    if (name == "SVI707FDC")    return ROM_SVI707FDC;
     if (name == "SVI738FDC")    return ROM_SVI738FDC;
     if (name == "MSX-AUDIO")    return ROM_MSXAUDIO;
     if (name == "MSX-MUSIC")    return ROM_MSXMUSIC;
@@ -343,7 +345,7 @@ static void mediaDbAddDump(TiXmlElement* dmp,
         }
 
         if (strcmpnocase(system.c_str(), "svi") == 0) {
-            if (romType != ROM_SVI80COL) {
+            if (romType != ROM_SVI328COL80) {
                 romType = ROM_SVI328;
             }
         }
@@ -594,6 +596,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_ARC:         return "Parallax ARC";
     case ROM_NATIONALFDC: return langRomTypeNationalFdc();
     case ROM_PHILIPSFDC:  return langRomTypePhilipsFdc();
+    case ROM_SVI707FDC:   return langRomTypeSvi707Fdc();
     case ROM_SVI738FDC:   return langRomTypeSvi738Fdc();
     case RAM_MAPPER:      return langRomTypeMappedRam();
     case RAM_1KB_MIRRORED:return langRomTypeMirroredRam1k();
@@ -652,9 +655,9 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SVI328FDC:   return langRomTypeSvi328Fdc();
     case ROM_SVI328PRN:   return langRomTypeSvi328Prn();
     case ROM_SVI328RS232: return langRomTypeSvi328Uart();
-    case ROM_SVI80COL:    return langRomTypeSvi328col80();
+    case ROM_SVI328COL80: return langRomTypeSvi328col80();
     case ROM_SVI328RSIDE: return langRomTypeSvi328RsIde();
-    case ROM_SVI727:      return langRomTypeSvi727col80();
+    case ROM_SVI727COL80: return langRomTypeSvi727col80();
     case ROM_COLECO:      return langRomTypeColecoCart();
     case ROM_SG1000:      return langRomTypeSg1000Cart();
     case ROM_SC3000:      return langRomTypeSc3000Cart();
@@ -760,6 +763,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_ARC:         return "ARC";
     case ROM_NATIONALFDC: return "NATNL FDC";
     case ROM_PHILIPSFDC:  return "PHILIPSFDC";
+    case ROM_SVI707FDC:   return "SVI707 FDC";
     case ROM_SVI738FDC:   return "SVI738 FDC";
     case RAM_MAPPER:      return "MAPPED RAM";
     case RAM_1KB_MIRRORED:return "1K MIR RAM";
@@ -816,9 +820,9 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
-    case ROM_SVI80COL:    return "SVI80COL";
+    case ROM_SVI328COL80: return "SVI328COL80";
     case ROM_SVI328RSIDE: return "SVI328RSIDE";
-    case ROM_SVI727:      return "SVI727";
+    case ROM_SVI727COL80: return "SVI727COL80";
     case ROM_COLECO:      return "COLECO";
     case ROM_SG1000:      return "SG-1000";
     case ROM_SC3000:      return "SC-3000";
@@ -899,6 +903,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_ARC:         return 1;
     case ROM_NATIONALFDC: return 1;
     case ROM_PHILIPSFDC:  return 1;
+    case ROM_SVI707FDC:   return 1;
     case ROM_SVI738FDC:   return 1;
     case ROM_HOLYQURAN:   return 1;
     case SRAM_MATSUCHITA: return 1;

@@ -101,6 +101,7 @@ char* langRomTypeTc8566afTrFdc()    { return "TC8566AF Turbo-R Disk Controller";
 char* langRomTypeMicrosolFdc()      { return "Microsol Disk Controller"; }
 char* langRomTypeNationalFdc()      { return "National Disk Controller"; }
 char* langRomTypePhilipsFdc()       { return "Philips Disk Controller"; }
+char* langRomTypeSvi707Fdc()        { return "SVI-707 Disk Controller"; }
 char* langRomTypeSvi738Fdc()        { return "SVI-738 Disk Controller"; }
 char* langRomTypeMappedRam()        { return "Mapped RAM"; }
 char* langRomTypeMirroredRam1k()    { return "1kB Mirrored RAM"; }

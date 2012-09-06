@@ -348,7 +348,7 @@ CRTC6845* crtc6845Create(int frameRate, UInt8* romData, int size, int vramSize,
     {
         DeviceCallbacks callbacks = { crtc6845Destroy, crtc6845Reset, saveState, loadState };
         DebugCallbacks dbgCallbacks = { getDebugInfo, dbgWriteMemory, dbgWriteRegister, NULL };
-        crtc->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, crtc);
+        crtc->deviceHandle = deviceManagerRegister(ROM_SVI328COL80, &callbacks, crtc);
         crtc->debugHandle = debugDeviceRegister(DBGTYPE_VIDEO, langDbgDevCrtc6845(), &dbgCallbacks, crtc);
     }
 

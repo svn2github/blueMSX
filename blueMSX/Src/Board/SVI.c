@@ -200,7 +200,7 @@ static int sviLoad80Col(Machine* machine, VdpSyncMode vdpSyncMode)
             UInt8* buf = romLoad(machine->slotInfo[i].name, machine->slotInfo[i].inZipName, &size);
 
             if (buf != NULL) {
-                if (machine->slotInfo[i].romType == ROM_SVI80COL) {
+                if (machine->slotInfo[i].romType == ROM_SVI328COL80) {
                     int frameRate = (vdpSyncMode == VDP_SYNC_60HZ) ? 60 : 50;
                     svi80ColEnabled = romMapperSvi80ColCreate(frameRate, buf, size);
                     success &= svi80ColEnabled;

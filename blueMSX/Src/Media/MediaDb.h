@@ -109,7 +109,7 @@ enum  {
     ROM_MOONSOUND   = 79,
     ROM_MSXAUDIODEV = 80,
     ROM_V9958       = 81,
-    ROM_SVI80COL    = 82,
+    ROM_SVI328COL80 = 82,
     ROM_SVI328PRN   = 83,
     ROM_MSXPRN      = 84,
     ROM_SVI328RS232 = 85,
@@ -130,7 +130,7 @@ enum  {
     ROM_MICROSOL80  = 100,
     ROM_NMS8280DIGI = 101,
     ROM_SONYHBIV1   = 102,
-    ROM_SVI727      = 103,
+    ROM_SVI727COL80 = 103,
     ROM_FMDAS       = 104,
     ROM_YAMAHASFG05 = 105,
     ROM_YAMAHASFG01 = 106,
@@ -189,7 +189,8 @@ enum  {
     SRAM_MATSUCHITA_INV = 159,
     ROM_SVI328RSIDE = 160,
     ROM_ACTIVISIONPCB = 161,
-    ROM_MAXROMID    = 161
+    ROM_SVI707FDC   = 162,
+    ROM_MAXROMID    = 162
 };
 
 typedef struct MediaType MediaType;

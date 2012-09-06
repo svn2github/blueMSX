@@ -658,6 +658,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->romTypeMicrosolFdc      = "Microsol контроллер дисковода";
     ls->romTypeNationalFdc      = "National контроллер дисковода";
     ls->romTypePhilipsFdc       = "Philips контроллер дисковода";
+    ls->romTypeSvi707Fdc        = "SVI-707 контроллер дисковода";
     ls->romTypeSvi738Fdc        = "SVI-738 контроллер дисковода";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";

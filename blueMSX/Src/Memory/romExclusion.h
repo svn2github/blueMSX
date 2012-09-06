@@ -72,6 +72,7 @@
 #define romMapperSvi328PrnCreate() 0
 #define romMapperSvi328Rs232Create(a) 0
 #define romMapperSvi328RsIdeCreate(a) 0
+#define romMapperSvi707FdcCreate(a, b, c, d, e, f) 0
 #define romMapperSvi738FdcCreate(a, b, c, d, e, f) 0
 #define romMapperSvi727Create(a, b, c, d, e, f) 0
 #endif

@@ -201,7 +201,7 @@ int romMapperSvi707FdcCreate(const char* filename, UInt8* romData,
         return 0;
     }
 
-    bufMsx = romLoad("Machines/Shared Roms/sv707msx.rom", NULL, &sizeMsx);
+    bufMsx = romLoad("Machines/Shared Roms/svi707msx.rom", NULL, &sizeMsx);
     if (bufMsx == NULL) {
         return 0;
     }

@@ -156,7 +156,7 @@ int romMapperSvi80ColCreate(int frameRate, UInt8* romData, int size)
     svi80col = malloc(sizeof(RomMapperSvi80Col));
     svi80colInstance = svi80col;
 
-    svi80col->deviceHandle = deviceManagerRegister(ROM_SVI80COL, &callbacks, svi80col);
+    svi80col->deviceHandle = deviceManagerRegister(ROM_SVI328COL80, &callbacks, svi80col);
 
     svi80col->crtc6845 = NULL;
     svi80col->crtc6845 = crtc6845Create(frameRate, romData, size, 0x800, 7, 0, 82, 4);

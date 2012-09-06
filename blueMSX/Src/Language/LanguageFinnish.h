@@ -664,6 +664,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeMicrosolFdc      = "Microsol Diskettiasemaohjain";
     ls->romTypeNationalFdc      = "National Diskettiasemaohjain";
     ls->romTypePhilipsFdc       = "Philips Diskettiasemaohjain";
+    ls->romTypeSvi707Fdc        = "SVI-707 Diskettiasemaohjain";
     ls->romTypeSvi738Fdc        = "SVI-738 Diskettiasemaohjain";
     ls->romTypeMappedRam        = "Mapper RAM";
     ls->romTypeMirroredRam1k    = "1kB peilattu RAM";

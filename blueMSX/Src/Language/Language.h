@@ -699,6 +699,7 @@ char* langRomTypeTc8566afTrFdc();
 char* langRomTypeMicrosolFdc();
 char* langRomTypeNationalFdc();
 char* langRomTypePhilipsFdc();
+char* langRomTypeSvi707Fdc();
 char* langRomTypeSvi738Fdc();
 char* langRomTypeMappedRam();
 char* langRomTypeMirroredRam1k();

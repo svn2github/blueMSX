@@ -120,7 +120,7 @@ int romMapperSvi727Create(const char* filename, UInt8* charRom, int charSize,
 
     rm = malloc(sizeof(RomMapperSvi727));
 
-    rm->deviceHandle = deviceManagerRegister(ROM_SVI727, &callbacks, rm);
+    rm->deviceHandle = deviceManagerRegister(ROM_SVI727COL80, &callbacks, rm);
     slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);
 
     rm->charData = calloc(1, 0x2000);

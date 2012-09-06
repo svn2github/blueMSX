@@ -659,6 +659,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->romTypeMicrosolFdc      = "Controladora de disc Microsol";
     ls->romTypeNationalFdc      = "Controladora de disc National";
     ls->romTypePhilipsFdc       = "Controladora de disc Philips";
+    ls->romTypeSvi707Fdc        = "Controladora de disc SVI-707";
     ls->romTypeSvi738Fdc        = "Controladora de disc SVI-738";
     ls->romTypeMappedRam        = "RAM mapejada";
     ls->romTypeMirroredRam1k    = "1kB de RAM replicada";

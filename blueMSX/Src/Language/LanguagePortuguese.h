@@ -659,6 +659,7 @@ void langInitPortuguese(LanguageStrings* ls)
     ls->romTypeMicrosolFdc      = "Microsol Disk Controller";
     ls->romTypeNationalFdc      = "National Disk Controller";
     ls->romTypePhilipsFdc       = "Philips Disk Controller";
+    ls->romTypeSvi707Fdc        = "SVI-707 Disk Controller";
     ls->romTypeSvi738Fdc        = "SVI-738 Disk Controller";
     ls->romTypeMappedRam        = "Mapped RAM";
     ls->romTypeMirroredRam1k    = "1kB Mirrored RAM";

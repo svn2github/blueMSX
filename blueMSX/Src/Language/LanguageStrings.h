@@ -655,6 +655,7 @@ typedef struct {
     char* romTypeMicrosolFdc;
     char* romTypeNationalFdc;
     char* romTypePhilipsFdc;
+    char* romTypeSvi707Fdc;
     char* romTypeSvi738Fdc;
     char* romTypeMappedRam;
     char* romTypeMirroredRam1k;

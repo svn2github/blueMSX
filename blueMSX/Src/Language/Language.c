@@ -890,6 +890,7 @@ char* langRomTypeTc8566afTrFdc() { return ls->romTypeTc8566afTrFdc; }
 char* langRomTypeMicrosolFdc() { return ls->romTypeMicrosolFdc; }
 char* langRomTypeNationalFdc() { return ls->romTypeNationalFdc; }
 char* langRomTypePhilipsFdc() { return ls->romTypePhilipsFdc; }
+char* langRomTypeSvi707Fdc() { return ls->romTypeSvi707Fdc; }
 char* langRomTypeSvi738Fdc() { return ls->romTypeSvi738Fdc; }
 char* langRomTypeMappedRam() { return ls->romTypeMappedRam; }
 char* langRomTypeMirroredRam1k() { return ls->romTypeMirroredRam1k; }

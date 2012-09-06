@@ -157,6 +157,7 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "diskpatch"))    return ROM_DISKPATCH;
     if (0 == strcmpnocase(name, "caspatch"))     return ROM_CASPATCH;
     if (0 == strcmpnocase(name, "wd2793"))       return ROM_PHILIPSFDC;
+    if (0 == strcmpnocase(name, "svi707fdc"))    return ROM_SVI707FDC;
     if (0 == strcmpnocase(name, "svi738fdc"))    return ROM_SVI738FDC;
     if (0 == strcmpnocase(name, "microsol"))     return ROM_MICROSOL;
     if (0 == strcmpnocase(name, "rtype"))        return ROM_RTYPE;

@@ -74,6 +74,7 @@
 #include "romMapperMicrosol.h"
 #include "romMapperNationalFdc.h"
 #include "romMapperPhilipsFdc.h"
+#include "romMapperSvi707Fdc.h"
 #include "romMapperSvi738Fdc.h"
 #include "romMapperSonyHBI55.h"
 #include "romMapperMoonsound.h"
@@ -647,6 +648,10 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
             success &= romMapperPhilipsFdcCreate(romName, buf, size, slot, sslot, 2);
             break;
 
+        case ROM_SVI707FDC:
+            success &= romMapperSvi707FdcCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
         case ROM_SVI738FDC:
             success &= romMapperSvi738FdcCreate(romName, buf, size, slot, sslot, 2);
             break;
@@ -728,7 +733,7 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
             success &= romMapperPlayBallCreate(romName, buf, size, slot, sslot, 2);
             break;
 
-        case ROM_SVI727:
+        case ROM_SVI727COL80:
             success &= romMapperSvi727Create(romName, buf, size, slot, sslot, 2);
             break;
 

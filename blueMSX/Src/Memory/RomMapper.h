@@ -67,6 +67,7 @@ const char* romTypeToString(RomType romType) {
     case ROM_MICROSOL:    return "Microsol Disk Controller";
     case ROM_NATIONALFDC: return "National Disk Controller";
     case ROM_PHILIPSFDC:  return "Philips Disk Controller";
+    case ROM_SVI707FDC:   return "SVI-707 Disk Controller";
     case ROM_SVI738FDC:   return "SVI-738 Disk Controller";
     case RAM_MAPPER:      return "Mapped RAM";
     case RAM_NORMAL:      return "Normal RAM";
@@ -116,7 +117,7 @@ const char* romTypeToString(RomType romType) {
     case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
     case ROM_SVI328PRN:   return "SVI-328 Printer";
     case ROM_SVI328RS232: return "SVI-328 Serial Port";
-    case ROM_SVI80COL:    return "SVI 80 Column Card";
+    case ROM_SVI328COL80: return "SVI-328 80 Column Card";
     case ROM_SVI328RSIDE: return "SVI-328 RS IDE";
     case ROM_COLECO:      return "Coleco Cartridge";
     case ROM_SONYHBI55:   return "Sony HBI-55";
@@ -163,6 +164,7 @@ const char* romTypeToShortString(RomType romType) {
     case ROM_MICROSOL:    return "MICROSOL";
     case ROM_NATIONALFDC: return "NATNL FDC";
     case ROM_PHILIPSFDC:  return "PHILIPSFDC";
+    case ROM_SVI707FDC:   return "SVI707 FDC";
     case ROM_SVI738FDC:   return "SVI738 FDC";
     case RAM_MAPPER:      return "MAPPED RAM";
     case RAM_NORMAL:      return "NORMAL RAM";
@@ -213,7 +215,7 @@ const char* romTypeToShortString(RomType romType) {
     case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
-    case ROM_SVI80COL:    return "SVI80COL";
+    case ROM_SVI328COL80: return "SVI328COL80";
     case ROM_SVI328RSIDE: return "SVI328RSIDE";
     case ROM_COLECO:      return "COLECO";
     case ROM_SONYHBI55:   return "HBI-55";
