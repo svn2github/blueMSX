@@ -43,21 +43,21 @@ typedef struct {
     int sslot;
     int startPage;
     CRTC6845* crtc6845;
-} RomMapperSvi727;
+} RomMapperSvi727Col80;
 
-static void saveState(RomMapperSvi727* rm)
+static void saveState(RomMapperSvi727Col80* rm)
 {
     SaveState* state = saveStateOpenForWrite("Svi727");
     saveStateClose(state);
 }
 
-static void loadState(RomMapperSvi727* rm)
+static void loadState(RomMapperSvi727Col80* rm)
 {
     SaveState* state = saveStateOpenForRead("Svi727");
     saveStateClose(state);
 }
 
-static void destroy(RomMapperSvi727* rm)
+static void destroy(RomMapperSvi727Col80* rm)
 {
     ioPortUnregister(0x78);
     ioPortUnregister(0x79);
@@ -69,7 +69,7 @@ static void destroy(RomMapperSvi727* rm)
     free(rm);
 }
 
-static UInt8 read(RomMapperSvi727* rm, UInt16 address)
+static UInt8 read(RomMapperSvi727Col80* rm, UInt16 address)
 {
     UInt8 value = 0xff;
     if (address >= 0xb800 && address < 0xc000) {
@@ -79,20 +79,20 @@ static UInt8 read(RomMapperSvi727* rm, UInt16 address)
     return value;
 }
 
-static void write(RomMapperSvi727* rm, UInt16 address, UInt8 value) 
+static void write(RomMapperSvi727Col80* rm, UInt16 address, UInt8 value) 
 {
     if (address >= 0xb800 && address < 0xc000) {
         crtcMemWrite(rm->crtc6845, address & 0x07ff, value);
     }
 }
 
-static UInt8 readIo(RomMapperSvi727* rm, UInt16 ioPort) 
+static UInt8 readIo(RomMapperSvi727Col80* rm, UInt16 ioPort) 
 {
     UInt8 value = crtcRead(rm->crtc6845);
     return value;
 }
 
-static void writeIo(RomMapperSvi727* rm, UInt16 ioPort, UInt8 value) 
+static void writeIo(RomMapperSvi727Col80* rm, UInt16 ioPort, UInt8 value) 
 {
     switch (ioPort) {
     case 0x78:
@@ -104,7 +104,7 @@ static void writeIo(RomMapperSvi727* rm, UInt16 ioPort, UInt8 value)
     }
 }
 
-static void reset(RomMapperSvi727* rm)
+static void reset(RomMapperSvi727Col80* rm)
 {
 }
 
@@ -112,13 +112,13 @@ int romMapperSvi727Col80Create(const char* filename, UInt8* charRom, int charSiz
                                  int slot, int sslot, int startPage) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
-    RomMapperSvi727* rm;
+    RomMapperSvi727Col80* rm;
     int pages = 8;
     int i;
 
     startPage = 0;
 
-    rm = malloc(sizeof(RomMapperSvi727));
+    rm = malloc(sizeof(RomMapperSvi727Col80));
 
     rm->deviceHandle = deviceManagerRegister(ROM_SVI727COL80, &callbacks, rm);
     slotRegister(slot, sslot, startPage, pages, read, read, write, destroy, rm);

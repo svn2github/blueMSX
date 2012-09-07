@@ -114,17 +114,17 @@ static void writeIo(RomMapperSvi328Col80* svi328col80, UInt16 ioPort, UInt8 valu
     }
 }  
 
-int svi328col80MemBankCtrlStatus(void)
+int svi328Col80MemBankCtrlStatus(void)
 {
    return svi328col80Instance->memBankCtrl;
 }
 
-void svi328col80MemWrite(UInt16 address, UInt8 value)
+void svi328Col80MemWrite(UInt16 address, UInt8 value)
 {
     crtcMemWrite(svi328col80Instance->crtc6845, address, value);
 }
 
-UInt8 svi328col80MemRead(UInt16 address)
+UInt8 svi328Col80MemRead(UInt16 address)
 {
     return crtcMemRead(svi328col80Instance->crtc6845, address);
 }

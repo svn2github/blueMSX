@@ -67,9 +67,9 @@ extern void PatchZ80(void* ref, CpuRegs* cpu);
 
 static void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 {
-    if ((svi328Col80Enabled && svi328col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
+    if ((svi328Col80Enabled && svi328Col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000)
     {
-        svi328col80MemWrite(address & 0xfff, value);
+        svi328Col80MemWrite(address & 0xfff, value);
     }
     else
         slotWrite(ref, address, value);
@@ -77,8 +77,8 @@ static void sviMemWrite(void* ref, UInt16 address, UInt8 value)
 
 static UInt8 sviMemRead(void* ref, UInt16 address)
 {
-    if ((svi328Col80Enabled && svi328col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
-        return svi328col80MemRead(address & 0xfff);
+    if ((svi328Col80Enabled && svi328Col80MemBankCtrlStatus()) && (address & 0xf800) == 0xf000) 
+        return svi328Col80MemRead(address & 0xfff);
     else
         return slotRead(ref, address);
 }
