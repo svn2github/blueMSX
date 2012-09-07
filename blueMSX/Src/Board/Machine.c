@@ -1566,7 +1566,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             break;
 
         case ROM_SVI727COL80:
-            success &= romMapperSvi727Create(romName, buf, size, slot, subslot, startPage);
+            success &= romMapperSvi727Col80Create(romName, buf, size, slot, subslot, startPage);
             break;
         }
         if( buf != NULL ) {

@@ -67,14 +67,17 @@
 #define romMapperOpcodeSlotManagerCreate() 0
 #define romMapperOpcodeBiosCreate(a, b, c, d, e, f) 0
 #endif
-#ifdef EXCLUDE_SVI_DEVICES
+#ifdef EXCLUDE_SVI328_DEVICES
 #define svi328FdcCreate() 0
 #define romMapperSvi328PrnCreate() 0
 #define romMapperSvi328Rs232Create(a) 0
 #define romMapperSvi328RsIdeCreate(a) 0
+#define romMapperSvi328Col80Create(a, b, c) 0
+#endif
+#ifdef EXCLUDE_SVIMSX_DEVICES
 #define romMapperSvi707FdcCreate(a, b, c, d, e, f) 0
 #define romMapperSvi738FdcCreate(a, b, c, d, e, f) 0
-#define romMapperSvi727Create(a, b, c, d, e, f) 0
+#define romMapperSvi727Col80Create(a, b, c, d, e, f) 0
 #endif
 #ifdef EXCLUDE_FORTEII
 #define romMapperForteIICreate(a, b, c, d, e, f) 0

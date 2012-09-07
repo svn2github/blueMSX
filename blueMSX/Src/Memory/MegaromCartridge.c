@@ -734,7 +734,7 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
             break;
 
         case ROM_SVI727COL80:
-            success &= romMapperSvi727Create(romName, buf, size, slot, sslot, 2);
+            success &= romMapperSvi727Col80Create(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_MICROSOL80:

@@ -31,6 +31,6 @@
 
 #include "MsxTypes.h"
 
-int romMapperSvi727Create(const char* filename, UInt8* charRom, int charSize,
+int romMapperSvi727Col80Create(const char* filename, UInt8* charRom, int charSize,
                                  int slot, int sslot, int startPage);
 #endif
