@@ -88,7 +88,7 @@ static UInt8 sviMemRead(void* ref, UInt16 address)
 FFFF +---------+---------+---------+---------+
      | BANK 02 | BANK 12 | BANK 22 | BANK 32 | PAGE 3
      |   RAM   |ROM CART |   RAM   |   RAM   |
-8000 |00000000 |00000000 |10100000 |11110000 | PAGE 2
+8000 |00000000 |01010000 |10100000 |11110000 | PAGE 2
      +---------+---------+---------+---------+
 7FFF | BANK 01 | BANK 11 | BANK 21 | BANK 31 | PAGE 1
      |ROM BASIC|ROM CART |   RAM   |   RAM   |
@@ -96,18 +96,23 @@ FFFF +---------+---------+---------+---------+
 0000 +---------+---------+---------+---------+
 */
 
-typedef enum { BANK_02=0x00, BANK_12=0x00, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
+typedef enum { BANK_02=0x00, BANK_12=0x50, BANK_22=0xa0, BANK_32=0xf0 } sviBanksHigh;
 typedef enum { BANK_01=0x00, BANK_11=0x05, BANK_21=0x0a, BANK_31=0x0f } sviBanksLow;
 
 static void sviMemSetBank(UInt8 value)
 {
-    UInt8 pages;
+    UInt8 pages, bankLow, bankHigh;
     int i;
     psgAYReg15 = value;
 
-    /* Map the SVI-328 bank to pages */
-    pages = (value&1)?(value&2)?(value&8)?BANK_01:BANK_31:BANK_21:BANK_11;
-    pages |= (value&4)?(value&16)?BANK_02:BANK_32:BANK_22;
+    /* Map the SVI-328 bank to slot and page */
+    bankLow = (value&1)?(value&2)?(value&8)?BANK_01:BANK_31:BANK_21:BANK_11;
+    bankHigh = (value&4)?(value&16)?(value&64)?BANK_02:BANK_12:BANK_32:BANK_22;
+
+    if ((bankHigh == BANK_12) && (bankLow != BANK_11)) {
+        bankHigh = BANK_02;
+    }
+    pages = bankLow | bankHigh;
 
     for (i = 0; i < 4; i++) {
         slotSetRamSlot(i, pages & 3);
