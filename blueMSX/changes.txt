@@ -1,5 +1,7 @@
 Next release
 ============
+- New mapper to support the Spectravideo SVI-707 FDC
+- 64KB cartridge support for Spectravideo SVI-328
 - **later, 4<->2** Fixed Z80 IRQ timing
 - ** Fixed Z80 IRQ timing (not yet)
 - ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
