@@ -517,8 +517,8 @@ char** machineGetAvailable(int checkRoms)
 
     if (machineName != NULL) {
         char filename[128];
-        static char* machineNames[256];
-        static char  names[256][64];
+        static char* machineNames[512];
+        static char  names[512][64];
         int index = 0;
 
         FILE* file;
@@ -539,8 +539,8 @@ char** machineGetAvailable(int checkRoms)
         return machineNames;
     }
     else {
-        static char* machineNames[256];
-        static char  names[256][64];
+        static char* machineNames[512];
+        static char  names[512][64];
         ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
         int index = 0;
         int i;

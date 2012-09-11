@@ -1,5 +1,6 @@
 Next release
 ============
+- Increased number of machine configs to 512
 - New mapper to support the Spectravideo SVI-707 FDC
 - 64KB cartridge support for Spectravideo SVI-328
 - **later, 4<->2** Fixed Z80 IRQ timing

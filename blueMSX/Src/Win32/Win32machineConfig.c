@@ -99,7 +99,6 @@ static void updateMachine() {
 static updateMachineList(HWND hDlg) {
     char** machineNames = machineGetAvailable(0);
     int index = 0;
-    int rv;
 
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_DELETESTRING, 0, 0));
 
@@ -108,15 +107,7 @@ static updateMachineList(HWND hDlg) {
 
         sprintf(buffer, "%s", *machineNames);
 
-        rv =SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_ADDSTRING, 0, (LPARAM)buffer);
-        if (rv == CB_ERR) {
-            MessageBox(NULL, "Error loading machine config", "blueMSX Error", MB_OK |  MB_ICONERROR);
-            return;
-        }
-        if (rv == CB_ERRSPACE) {
-            MessageBox(NULL, "Error loading machine config, out of memory", "blueMSX Error", MB_OK |  MB_ICONERROR);
-            return;
-        }
+        SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_ADDSTRING, 0, (LPARAM)buffer);
         if (index == 0 || 0 == strcmp(*machineNames, machineName)) {
             SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_SETCURSEL, index, 0);
             foundMachine = 1;
@@ -2531,6 +2522,9 @@ static BOOL CALLBACK configProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
             tcItem.pszText = langConfChipExtras();
             TabCtrl_InsertItem(GetDlgItem(hDlg, IDC_CONF_TAB), 3, &tcItem);
         }
+
+        if (CB_ERRSPACE == SendMessage(GetDlgItem(hDlg, IDC_CONF_CONFIGS), CB_INITSTORAGE, (WPARAM)256, (LPARAM)64))
+            MessageBox(NULL, "Error allocating machine config", "blueMSX Error", MB_OK |  MB_ICONERROR);
 
         updateMachineList(hDlg);
 

@@ -292,27 +292,20 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
 
         SendDlgItemMessage(hDlg, IDC_VDPFREQ, CB_SETCURSEL, pProperties->emulation.vdpSyncMode, 0);
 
+        if (CB_ERRSPACE == SendMessage(GetDlgItem(hDlg, IDC_EMUFAMILY), CB_INITSTORAGE, (WPARAM)128, (LPARAM)64))
+            MessageBox(NULL, "Error allocating machine names", "blueMSX Error", MB_OK |  MB_ICONERROR);
+
         machineName[0] = 0;
 
         {
             char** machineNames = machineGetAvailable(1);
             int index = 0;
-            int rv;
             while (*machineNames != NULL) {
                 char buffer[128];
 
                 sprintf(buffer, "%s", *machineNames);
 
-                rv =SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_ADDSTRING, 0, (LPARAM)buffer);
-                if (rv == CB_ERR) {
-                    MessageBox(NULL, "Error loading machine", "blueMSX Error", MB_OK |  MB_ICONERROR);
-                    return FALSE;
-                }
-                if (rv == CB_ERRSPACE) {
-                    MessageBox(NULL, "Error loading machine, out of memory", "blueMSX Error", MB_OK |  MB_ICONERROR);
-                    return FALSE;
-                }
-
+                SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_ADDSTRING, 0, (LPARAM)buffer);
                 if (index == 0 || 0 == strcmp(*machineNames, pProperties->emulation.machineName)) {
                     SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_SETCURSEL, index, 0);
                     strcpy(machineName, *machineNames);
