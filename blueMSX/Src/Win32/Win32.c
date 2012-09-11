@@ -2511,7 +2511,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
 
     scrDepth = getScreenBitDepth();
     if (scrDepth != 16 && scrDepth != 32) {
-        MessageBox(NULL, "blueMSX works best in 16 or 32 bits color depth", "blueMSX Info", MB_OK);
+        MessageBox(NULL, "blueMSX works best in 16 or 32 bits color depth", "blueMSX Info", MB_OK | MB_ICONINFORMATION);
     }
 
     hwnd = FindWindow("blueMSX", "  blueMSX");
