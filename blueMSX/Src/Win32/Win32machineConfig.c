@@ -113,7 +113,7 @@ static updateMachineList(HWND hDlg) {
             MessageBox(NULL, "Error loading machine config", "blueMSX Error", MB_OK |  MB_ICONERROR);
             return;
         }
-        if (rv = CB_ERRSPACE) {
+        if (rv == CB_ERRSPACE) {
             MessageBox(NULL, "Error loading machine config, out of memory", "blueMSX Error", MB_OK |  MB_ICONERROR);
             return;
         }

@@ -308,7 +308,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
                     MessageBox(NULL, "Error loading machine", "blueMSX Error", MB_OK |  MB_ICONERROR);
                     return FALSE;
                 }
-                if (rv = CB_ERRSPACE) {
+                if (rv == CB_ERRSPACE) {
                     MessageBox(NULL, "Error loading machine, out of memory", "blueMSX Error", MB_OK |  MB_ICONERROR);
                     return FALSE;
                 }
