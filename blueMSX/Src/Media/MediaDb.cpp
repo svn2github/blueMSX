@@ -171,7 +171,7 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "fsa1fm1")      return ROM_FSA1FMMODEM;
     if (name == "FSA1FM1")      return ROM_FSA1FMMODEM;
     if (name == "Standard16K")  return ROM_MSXDOS2;
-    if (name == "SVI328CART")   return ROM_SVI328;
+    if (name == "SVI328CART")   return ROM_SVI328CART;
     if (name == "SVI328COL80")  return ROM_SVI328COL80;
     if (name == "SVI727COL80")  return ROM_SVI727COL80;
     if (name == "SVI707FDC")    return ROM_SVI707FDC;
@@ -346,7 +346,7 @@ static void mediaDbAddDump(TiXmlElement* dmp,
 
         if (strcmpnocase(system.c_str(), "svi") == 0) {
             if (romType != ROM_SVI328COL80) {
-                romType = ROM_SVI328;
+                romType = ROM_SVI328CART;
             }
         }
 
@@ -651,7 +651,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MSXMUSIC:    return langRomTypeMsxMusic();
     case ROM_MSXAUDIO:    return langRomTypeMsxAudio();
     case ROM_MOONSOUND:   return langRomTypeMoonsound();
-    case ROM_SVI328:      return langRomTypeSvi328Cart();
+    case ROM_SVI328CART:  return langRomTypeSvi328Cart();
     case ROM_SVI328FDC:   return langRomTypeSvi328Fdc();
     case ROM_SVI328PRN:   return langRomTypeSvi328Prn();
     case ROM_SVI328RS232: return langRomTypeSvi328Uart();
@@ -816,7 +816,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MSXMUSIC:    return "MSXMUSIC";
     case ROM_MSXAUDIO:    return "MSXAUDIO";
     case ROM_MOONSOUND:   return "MOONSOUND";
-    case ROM_SVI328:      return "SVI328";
+    case ROM_SVI328CART:  return "SVI328CART";
     case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";
@@ -1043,7 +1043,7 @@ extern "C" MediaType* mediaDbLookupRom(const void *buffer, int size)
 {
     const char* romData = (const char*)buffer;
     static MediaType defaultColeco(ROM_COLECO, "Unknown Coleco rom");
-    static MediaType defaultSvi(ROM_SVI328, "Unknown SVI rom");
+    static MediaType defaultSvi(ROM_SVI328CART, "Unknown SVI rom");
     static MediaType defaultSg1000(ROM_SG1000, "Unknown SG-1000 rom");
     static MediaType defaultSc3000(ROM_SC3000, "Unknown SC-3000 rom");
 
@@ -1200,7 +1200,7 @@ extern "C" MediaType* mediaDbGuessRom(const void *buffer, int size)
 
     switch (boardType) {
     case BOARD_SVI:
-        staticMediaType.romType = ROM_SVI328;
+        staticMediaType.romType = ROM_SVI328CART;
         return &staticMediaType;
     case BOARD_COLECO:
     case BOARD_COLECOADAM:

@@ -173,7 +173,7 @@ RomType romMapperTypeFromString(const char* name)
     if (0 == strcmpnocase(name, "jisyo"))        return ROM_JISYO;    
     if (0 == strcmpnocase(name, "bunsetsu"))     return ROM_BUNSETU;
     if (0 == strcmpnocase(name, "coleco"))       return ROM_COLECO;
-    if (0 == strcmpnocase(name, "svi328"))       return ROM_SVI328;
+    if (0 == strcmpnocase(name, "svi328"))       return ROM_SVI328CART;
 
     return ROM_UNKNOWN;
 }    
@@ -273,8 +273,8 @@ RomType romMapperGuessRom(const void *buffer, int size, int guess, char* extende
     romType = romMapperRomFromFile(romData, size, extendedName);
 
     if (romType == ROM_UNKNOWN &&
-        size < 0x8001 && romData[0] == 0xF3 && romData[1] == 0x31) {
-            romType = ROM_SVI328;
+        size < 0x10000 && romData[0] == 0xF3 && romData[1] == 0x31) {
+            romType = ROM_SVI328CART;
     }
 
     if (romType == ROM_UNKNOWN &&

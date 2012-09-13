@@ -113,7 +113,7 @@ const char* romTypeToString(RomType romType) {
     case ROM_MSXRS232:    return "MSX RS-232";
     case ROM_MOONSOUND:   return "Moonsound";
     case ROM_KOREAN90:    return "Korean 90 in 1";
-    case ROM_SVI328:      return "SVI-328 Cartridge";
+    case ROM_SVI328CART:  return "SVI-328 Cartridge";
     case ROM_SVI328FDC:   return "SVI-328 Disk Controller";
     case ROM_SVI328PRN:   return "SVI-328 Printer";
     case ROM_SVI328RS232: return "SVI-328 Serial Port";
@@ -211,7 +211,7 @@ const char* romTypeToShortString(RomType romType) {
     case ROM_MSXRS232:    return "MSXRS232";
     case ROM_MOONSOUND:   return "MOONSOUND";
     case ROM_KOREAN90:    return "90IN1";
-    case ROM_SVI328:      return "SVI328";
+    case ROM_SVI328CART:  return "SVI328CART";
     case ROM_SVI328FDC:   return "SVI328FDC";
     case ROM_SVI328PRN:   return "SVI328PRN";
     case ROM_SVI328RS232: return "SVI328RS232";

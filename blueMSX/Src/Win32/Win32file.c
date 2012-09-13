@@ -131,7 +131,7 @@ static RomType romTypeList[] = {
     ROM_FMDAS,
     
     /* no msx */
-    ROM_SVI328,
+    ROM_SVI328CART,
     ROM_COLECO,
     ROM_CVMEGACART,
     ROM_ACTIVISIONPCB,

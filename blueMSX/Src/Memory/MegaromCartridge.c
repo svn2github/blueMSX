@@ -656,7 +656,7 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
             success &= romMapperSvi738FdcCreate(romName, buf, size, slot, sslot, 2);
             break;
 
-        case ROM_SVI328:
+        case ROM_SVI328CART:
             success &= romMapperNormalCreate(romName, buf, size, 1, 0, 0);
             break;
 

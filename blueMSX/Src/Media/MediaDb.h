@@ -101,7 +101,7 @@ enum  {
     ROM_EXTRAM1MB   = 71,
     ROM_EXTRAM2MB   = 72,
     ROM_EXTRAM4MB   = 73,
-    ROM_SVI328      = 74,
+    ROM_SVI328CART  = 74,
     ROM_SVI328FDC   = 75,
     ROM_COLECO      = 76,
     ROM_SONYHBI55   = 77,
