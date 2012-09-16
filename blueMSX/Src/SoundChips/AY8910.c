@@ -194,6 +194,13 @@ static void getDebugInfo(AY8910* ay8910, DbgDevice* dbgDevice)
         dbgIoPortsAddPort(ioPorts, 2, 0xa2, DBG_IO_READ, ay8910PeekData(ay8910, 0xa2));
         break;
 
+    case AY8910_MSX_SCCPLUS:
+        ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevAy8910(), 3);
+        dbgIoPortsAddPort(ioPorts, 0, 0x10, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 1, 0x11, DBG_IO_WRITE, 0);
+        dbgIoPortsAddPort(ioPorts, 2, 0x12, DBG_IO_READ, ay8910PeekData(ay8910, 0xa2));
+        break;
+
     case AY8910_SVI:
         ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevAy8910(), 3);
         dbgIoPortsAddPort(ioPorts, 0, 0x88, DBG_IO_WRITE, 0);
@@ -263,6 +270,12 @@ AY8910* ay8910Create(Mixer* mixer, Ay8910Connector connector, PsgType type, Int3
         ioPortRegister(0xa2, ay8910ReadData, NULL,               ay8910);
         break;
 
+    case AY8910_MSX_SCCPLUS:
+        ioPortRegister(0x10, NULL,           ay8910WriteAddress, ay8910);
+        ioPortRegister(0x11, NULL,           ay8910WriteData,    ay8910);
+        ioPortRegister(0x12, ay8910ReadData, NULL,               ay8910);
+        break;
+
     case AY8910_SVI:
         ioPortRegister(0x88, NULL,           ay8910WriteAddress, ay8910);
         ioPortRegister(0x8c, NULL,           ay8910WriteData,    ay8910);
@@ -297,7 +310,13 @@ void ay8910Destroy(AY8910* ay8910)
         ioPortUnregister(0xa1);
         ioPortUnregister(0xa2);
         break;
-        
+
+    case AY8910_MSX_SCCPLUS:
+        ioPortUnregister(0x10);
+        ioPortUnregister(0x11);
+        ioPortUnregister(0x12);
+        break;
+
     case AY8910_SVI:
         ioPortUnregister(0x88);
         ioPortUnregister(0x8c);
