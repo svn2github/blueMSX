@@ -104,6 +104,8 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "Konami")           return ROM_KONAMI4;
     if (name == "KonamiSCC")        return ROM_KONAMI5;
     if (name == "Manbow2")          return ROM_MANBOW2;
+    if (name == "Manbow2v2")        return ROM_MANBOW2_V2;
+    if (name == "HamarajaNight")    return ROM_HAMARAJANIGHT;
     if (name == "MegaFlashRomScc")  return ROM_MEGAFLSHSCC;
     if (name == "Halnote")          return ROM_HALNOTE;
     if (name == "HarryFox")         return ROM_HARRYFOX;
@@ -556,6 +558,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_MSXDOS2:     return langRomTypeMsxdos2();
     case ROM_KONAMI5:     return langRomTypeKonamiScc();
     case ROM_MANBOW2:     return langRomTypeManbow2();
+    case ROM_HAMARAJANIGHT:return "Hamaraja Night";
+    case ROM_MANBOW2_V2:  return "Manbow 2 v2";
     case ROM_MEGAFLSHSCC: return langRomTypeMegaFlashRomScc();
     case ROM_OBSONET:     return langRomTypeObsonet();
     case ROM_DUMAS:       return langRomTypeDumas();
@@ -723,6 +727,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_MSXDOS2:     return "MSXDOS2";
     case ROM_KONAMI5:     return "KONAMI SCC";
     case ROM_MANBOW2:     return "MANBOW 2";
+    case ROM_HAMARAJANIGHT:return "HAMARAJANGT";
+    case ROM_MANBOW2_V2:  return "MANBOW 2 v2";
     case ROM_MEGAFLSHSCC: return "MEGAFLSHSCC";
     case ROM_OBSONET:     return "OBSONET";
     case ROM_DUMAS:       return "DUMAS";
@@ -936,6 +942,8 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_MSXDOS2:     return 1;
     case ROM_KONAMI5:     return 1;
     case ROM_MANBOW2:     return 1;
+    case ROM_HAMARAJANIGHT: return 1;
+    case ROM_MANBOW2_V2:  return 1;
     case ROM_MEGAFLSHSCC: return 1;
     case ROM_OBSONET:     return 1;
     case ROM_DUMAS:       return 1;

@@ -14,7 +14,7 @@ Next release
 - Memory watchpoint
 
 
-v 2.8.3     May 30, 2010
+v 2.9.0     November 18, 2012
 =============================
 
 - Added support for smooth rewind of emulation
@@ -23,6 +23,8 @@ v 2.8.3     May 30, 2010
 - Added support for ColecoVision Expansion Module #2 using mouse
 - Added support for ColecoVision ActivisionPCB (a cartridge for homebrew games)
 - Added support for Parallax ARC cartridge
+- Added support for Manbow 2 v2 cartridge
+- Added support for Hamaraja Night cartridge
 - Added support for stereo PSG in MSX machine configuration
 - Added support for inverted turbo mode bits on Panasonic MSX2+ machines
 - Added support for loading data from file directly into memory

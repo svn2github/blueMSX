@@ -3668,7 +3668,6 @@ static int LoadMemory(const char* fileName, UInt16 address)
 static BOOL CALLBACK loadMemorProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
     static HICON hIconBtBrowse = NULL;
-    int i;
 
     switch (iMsg) {
     case WM_INITDIALOG:

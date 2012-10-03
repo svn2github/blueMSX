@@ -190,7 +190,9 @@ enum  {
     ROM_SVI328RSIDE = 160,
     ROM_ACTIVISIONPCB = 161,
     ROM_SVI707FDC   = 162,
-    ROM_MAXROMID    = 162
+    ROM_MANBOW2_V2  = 163,
+    ROM_HAMARAJANIGHT = 164,
+    ROM_MAXROMID    = 164
 };
 
 typedef struct MediaType MediaType;

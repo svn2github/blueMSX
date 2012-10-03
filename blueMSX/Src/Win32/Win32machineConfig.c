@@ -806,6 +806,8 @@ static void endEditControls(HWND hDlg)
     case ROM_KONAMI4:
     case ROM_KONAMI5:
     case ROM_MANBOW2:
+    case ROM_MANBOW2_V2:
+    case ROM_HAMARAJANIGHT:
     case ROM_MEGAFLSHSCC:
     case ROM_OBSONET:
     case ROM_DUMAS:
@@ -1295,6 +1297,8 @@ static void setEditControls(HWND hDlg)
     case ROM_KONAMI4:
     case ROM_KONAMI5:
     case ROM_MANBOW2:
+    case ROM_MANBOW2_V2:
+    case ROM_HAMARAJANIGHT:
     case ROM_MEGAFLSHSCC:
     case ROM_OBSONET:
     case ROM_DUMAS:
@@ -1506,7 +1510,9 @@ static RomType romTypeList[] = {
     ROM_SNATCHER, /* SCC-I */
     ROM_SDSNATCHER, /* SCC-I */
     ROM_MANBOW2, /* contains SCC */
-    ROM_MEGAFLSHSCC,
+    ROM_MANBOW2, /* contains SCC */
+    ROM_HAMARAJANIGHT, /* contains SCC */
+    ROM_MEGAFLSHSCC, /* contains SCC */
     SRAM_ESESCC, /* contains SCC */
     SRAM_ESERAM,
     ROM_CROSSBLAIM,

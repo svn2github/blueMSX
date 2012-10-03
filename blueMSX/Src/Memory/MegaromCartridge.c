@@ -433,6 +433,14 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
             success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f);
             break;
 
+        case ROM_MANBOW2_V2:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f);
+            break;
+
+        case ROM_HAMARAJANIGHT:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0xcf);
+            break;
+
         case ROM_MEGAFLSHSCC:
             success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0);
             break;

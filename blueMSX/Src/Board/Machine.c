@@ -1233,6 +1233,14 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f);
             break;
 
+        case ROM_MANBOW2_V2:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f);
+            break;
+
+        case ROM_HAMARAJANIGHT:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0xcf);
+            break;
+
         case ROM_MEGAFLSHSCC:
             success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0);
             break;
