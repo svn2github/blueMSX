@@ -30,7 +30,9 @@
 #include "MediaDb.h"
 #include "SlotManager.h"
 #include "DeviceManager.h"
+#include "IoPort.h"
 #include "sramLoader.h"
+#include "AY8910.h"
 #include "SCC.h"
 #include "Board.h"
 #include "SaveState.h"
@@ -40,6 +42,7 @@
 
 typedef struct {
     int deviceHandle;
+    int    debugHandle;
     UInt8* romData;
     AmdFlash* flash;
     int slot;
@@ -51,6 +54,7 @@ typedef struct {
     int flashPage[4];
     int sccEnable;
     SCC* scc;
+    AY8910* ay8910;
 } RomMapperMegaFlashRomScc;
 
 static void mapPage(RomMapperMegaFlashRomScc* rm, int bank, int page)
@@ -89,6 +93,7 @@ static void saveState(RomMapperMegaFlashRomScc* rm)
     saveStateClose(state);
 
     sccSaveState(rm->scc);
+    ay8910SaveState(rm->ay8910);
     amdFlashSaveState(rm->flash);
 }
 
@@ -108,6 +113,7 @@ static void loadState(RomMapperMegaFlashRomScc* rm)
     saveStateClose(state);
 
     sccLoadState(rm->scc);    
+    ay8910LoadState(rm->ay8910);
     amdFlashLoadState(rm->flash);
 
     for (i = 0; i < 4; i++) {   
@@ -120,7 +126,13 @@ static void destroy(RomMapperMegaFlashRomScc* rm)
     amdFlashDestroy(rm->flash);
     slotUnregister(rm->slot, rm->sslot, rm->startPage);
     deviceManagerUnregister(rm->deviceHandle);
+    debugDeviceUnregister(rm->debugHandle);
+    ay8910Destroy(rm->ay8910);
     sccDestroy(rm->scc);
+
+    ioPortUnregister(0x10);
+    ioPortUnregister(0x11);
+    ioPortUnregister(0x12);
 
     free(rm->romData);
     free(rm);
@@ -130,6 +142,7 @@ static void reset(RomMapperMegaFlashRomScc* rm)
 {
     amdFlashReset(rm->flash);
     sccReset(rm->scc);
+    ay8910Reset(rm->ay8910);
 }
 
 static UInt8 read(RomMapperMegaFlashRomScc* rm, UInt16 address) 
@@ -199,16 +212,44 @@ static void write(RomMapperMegaFlashRomScc* rm, UInt16 address, UInt8 value)
     }
 }
 
+static UInt8 ioRead(RomMapperMegaFlashRomScc* rm, UInt16 ioPort)
+{
+    return ay8910ReadData(rm->ay8910, ioPort);
+}
+
+static void ioWrite(RomMapperMegaFlashRomScc* rm, UInt16 ioPort, UInt8 value)
+{
+    if ((ioPort & 3) == 0) {
+        ay8910WriteAddress(rm->ay8910, ioPort, value);
+    }
+    if ((ioPort & 3) == 1) {
+        ay8910WriteData(rm->ay8910, ioPort, value);
+    }
+}
+
+static void getDebugInfo(RomMapperMegaFlashRomScc* rm, DbgDevice* dbgDevice)
+{
+    DbgIoPorts* ioPorts;
+
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, "AY8910", 3);
+
+    dbgIoPortsAddPort(ioPorts, 0, 0x10, DBG_IO_WRITE, 0xff);
+    dbgIoPortsAddPort(ioPorts, 1, 0x11, DBG_IO_WRITE, 0xff);
+    dbgIoPortsAddPort(ioPorts, 2, 0x12, DBG_IO_READ,  peek(rm, 0x12));
+}
+
 int romMapperMegaFlashRomSccCreate(const char* filename, UInt8* romData, 
                                    int size, int slot, int sslot, int startPage, UInt32 writeProtectMask) 
 {
     DeviceCallbacks callbacks = { destroy, reset, saveState, loadState };
+    DebugCallbacks dbgCallbacks = { getDebugInfo, NULL, NULL, NULL };
     RomMapperMegaFlashRomScc* rm;
     int i;
 
     rm = calloc(1, sizeof(RomMapperMegaFlashRomScc));
 
     rm->deviceHandle = deviceManagerRegister(ROM_MEGAFLSHSCC, &callbacks, rm);
+    rm->debugHandle = debugDeviceRegister(DBGTYPE_AUDIO, "AY8910", &dbgCallbacks, rm);
     slotRegister(slot, sslot, startPage, 4, read, peek, write, destroy, rm);
 
     if (size >= 0x80000) {
@@ -226,12 +267,17 @@ int romMapperMegaFlashRomSccCreate(const char* filename, UInt8* romData,
     rm->scc = sccCreate(boardGetMixer());
     sccSetMode(rm->scc, SCC_REAL);
     rm->sccEnable = 0;
+    rm->ay8910 = ay8910Create(boardGetMixer(), AY8910_MSX, PSGTYPE_AY8910, 0, NULL);
 
     rm->flash = amdFlashCreate(AMD_TYPE_2, 0x80000, 0x10000, writeProtectMask, romData, size, sramCreateFilenameWithSuffix(filename, "", ".sram"), 1);
 
     for (i = 0; i < 4; i++) {   
         mapPage(rm, i, i);
     }
+
+    ioPortRegister(0x10, NULL, ioWrite, rm);
+    ioPortRegister(0x11, NULL, ioWrite, rm);
+    ioPortRegister(0x12, ioRead, NULL, rm);
 
     return 1;
 }
