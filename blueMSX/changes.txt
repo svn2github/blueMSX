@@ -29,6 +29,7 @@ v 2.9.0     November 18, 2012
 - Added support for inverted turbo mode bits on Panasonic MSX2+ machines
 - Added support for loading data from file directly into memory
 - Added build system for Visual Studio 2010 (Needs some old SDK's downloadable from Microsoft)
+- Fix 64kB vram handling (now correctly detects 64kB vram)
 - Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
   when any of the follwing languages were selected:
     Catalan

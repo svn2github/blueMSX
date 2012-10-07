@@ -109,6 +109,7 @@
 #include "romMapperNet.h"
 #include "romMapperJoyrexPsg.h"
 #include "romMapperArc.h"
+#include "romMapperDooly.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -368,7 +369,11 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
                 break;
 
             case ROM_MEGAFLSHSCC:
-                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, 0);
+                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, 0, 0x80000, 0);
+                break;
+
+            case ROM_MEGAFLSHSCCPLUS:
+                success &= romMapperMegaFlashRomSccCreate("MegaFlashRomScc.rom", NULL, 0, slot, sslot, 2, 0, 0x100000, 1);
                 break;
             }
             break;
@@ -430,19 +435,23 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
 
         case ROM_MANBOW2:
             if (size > 0x70000) size = 0x70000;
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f, 0x80000, 0);
             break;
 
         case ROM_MANBOW2_V2:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0x7f, 0x100000, 1);
             break;
 
         case ROM_HAMARAJANIGHT:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0xcf);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0xcf, 0x100000, 1);
             break;
 
         case ROM_MEGAFLSHSCC:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0, 0x80000, 0);
+            break;
+
+        case ROM_MEGAFLSHSCCPLUS:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, sslot, 2, 0, 0x100000, 1);
             break;
 
         case ROM_OBSONET:
@@ -739,6 +748,10 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
 
         case ROM_PLAYBALL:
             success &= romMapperPlayBallCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
+        case ROM_DOOLY:
+            success &= romMapperDoolyCreate(romName, buf, size, slot, sslot, 2);
             break;
 
         case ROM_SVI727COL80:

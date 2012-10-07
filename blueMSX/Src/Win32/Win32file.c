@@ -64,6 +64,7 @@ static RomType romTypeList[] = {
     ROM_MANBOW2_V2, /* contains SCC */
     ROM_HAMARAJANIGHT, /* contains SCC */
     ROM_MEGAFLSHSCC, /* contains SCC */
+    ROM_MEGAFLSHSCCPLUS, /* contains SCC */
     SRAM_ESESCC, /* contains SCC */
     SRAM_ESERAM,
     ROM_CROSSBLAIM,
@@ -75,6 +76,7 @@ static RomType romTypeList[] = {
     ROM_MATRAINK,
     ROM_RTYPE,
     ROM_PLAYBALL,
+    ROM_DOOLY,
     ROM_ASCII16NF, /* super pierrot */
     ROM_KOREAN80,
     ROM_KOREAN90,

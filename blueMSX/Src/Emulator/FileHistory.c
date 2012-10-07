@@ -150,6 +150,7 @@ void verifyFileHistory(char* history, RomType* historyType) {
             strcmp(fname, CARTNAME_ESERAM512)   &&
             strcmp(fname, CARTNAME_ESERAM1MB)   &&
             strcmp(fname, CARTNAME_MEGAFLSHSCC) &&
+            strcmp(fname, CARTNAME_MEGAFLSHSCCPLUS) &&
             strcmp(fname, CARTNAME_WAVESCSI128) &&
             strcmp(fname, CARTNAME_WAVESCSI256) &&
             strcmp(fname, CARTNAME_WAVESCSI512) &&
@@ -416,6 +417,7 @@ int createSaveFileBaseName(char* fileBase,Properties* properties, int useExtende
                 strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM512)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_ESERAM1MB)    &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_MEGAFLSHSCC)  &&
+                strcmp(properties->media.carts[i].fileName, CARTNAME_MEGAFLSHSCCPLUS) &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI128)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI256)  &&
                 strcmp(properties->media.carts[i].fileName, CARTNAME_WAVESCSI512)  &&

@@ -1,13 +1,13 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMegaFlashRomScc.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperNormal.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.7 $
 **
 ** $Date: 2008-03-30 18:38:44 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik
+** Copyright (C) 2003-2012 Daniel Vik
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -25,13 +25,12 @@
 **
 ******************************************************************************
 */
-#ifndef ROMMAPPER_MEGA_FLASH_ROM_SCC_H
-#define ROMMAPPER_MEGA_FLASH_ROM_SCC_H
- 
+#ifndef ROMMAPPER_DOOLY_H
+#define ROMMAPPER_DOOLY_H
+
 #include "MsxTypes.h"
 
-int romMapperMegaFlashRomSccCreate(const char* filename, UInt8* romData, 
-                                   int size, int slot, int sslot, int startPage, 
-                                   UInt32 writeProtectMask, int flashSize, int hasPsg);
+int romMapperDoolyCreate(const char* filename, UInt8* romData, 
+                         int size, int slot, int sslot, int startPage);
 
 #endif

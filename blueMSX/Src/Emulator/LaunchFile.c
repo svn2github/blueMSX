@@ -219,6 +219,7 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
               0 == strcmp(CARTNAME_ESERAM512,   filename) ? SRAM_ESERAM512 :
               0 == strcmp(CARTNAME_ESERAM1MB,   filename) ? SRAM_ESERAM1MB :
               0 == strcmp(CARTNAME_MEGAFLSHSCC, filename) ? ROM_MEGAFLSHSCC :
+              0 == strcmp(CARTNAME_MEGAFLSHSCCPLUS, filename) ? ROM_MEGAFLSHSCCPLUS :
               0 == strcmp(CARTNAME_WAVESCSI128, filename) ? SRAM_WAVESCSI128 :
               0 == strcmp(CARTNAME_WAVESCSI256, filename) ? SRAM_WAVESCSI256 :
               0 == strcmp(CARTNAME_WAVESCSI512, filename) ? SRAM_WAVESCSI512 :

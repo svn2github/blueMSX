@@ -143,6 +143,7 @@
 #include "romMapperOpcodeMegaRam.h"
 #include "romMapperOpcodeSaveRam.h"
 #include "romMapperOpcodeSlotManager.h"
+#include "romMapperDooly.h"
 
 
 // PacketFileSystem.h Need to be included after all other includes
@@ -1174,7 +1175,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
             switch (machine->slotInfo[i].romType) {
             case ROM_MEGAFLSHSCC:
-                success &= romMapperMegaFlashRomSccCreate("Manbow2.rom", NULL, 0, slot, subslot, startPage, 0);
+                success &= romMapperMegaFlashRomSccCreate("Manbow2.rom", NULL, 0, slot, subslot, startPage, 0, 0x80000, 0);
                 break;
             default:
                 success = 0;
@@ -1230,19 +1231,23 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
         case ROM_MANBOW2:
             if (size > 0x70000) size = 0x70000;
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f, 0x80000, 0);
             break;
 
         case ROM_MANBOW2_V2:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0x7f, 0x100000, 1);
             break;
 
         case ROM_HAMARAJANIGHT:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0xcf);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0xcf, 0x100000, 1);
             break;
 
         case ROM_MEGAFLSHSCC:
-            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0);
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0, 0x80000, 0);
+            break;
+
+        case ROM_MEGAFLSHSCCPLUS:
+            success &= romMapperMegaFlashRomSccCreate(romName, buf, size, slot, subslot, startPage, 0, 0x100000, 1);
             break;
 
         case ROM_OBSONET:
@@ -1546,6 +1551,9 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         case ROM_PLAYBALL:
             success &= romMapperPlayBallCreate(romName, buf, size, slot, subslot, startPage);
             break;
+
+        case ROM_DOOLY:
+            success &= romMapperDoolyCreate(romName, buf, size, slot, subslot, startPage);
 
         case ROM_OPCODEBIOS:
             success &= romMapperOpcodeBiosCreate(romName, buf, size, slot, subslot, startPage);

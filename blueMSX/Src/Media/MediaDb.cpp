@@ -107,9 +107,11 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "Manbow2v2")        return ROM_MANBOW2_V2;
     if (name == "HamarajaNight")    return ROM_HAMARAJANIGHT;
     if (name == "MegaFlashRomScc")  return ROM_MEGAFLSHSCC;
+    if (name == "MegaFlashRomSccPlus") return ROM_MEGAFLSHSCCPLUS;
     if (name == "Halnote")          return ROM_HALNOTE;
     if (name == "HarryFox")         return ROM_HARRYFOX;
     if (name == "Playball")         return ROM_PLAYBALL;
+    if (name == "Dooly")            return ROM_DOOLY;
     if (name == "HolyQuran")        return ROM_HOLYQURAN;
     if (name == "CrossBlaim")       return ROM_CROSSBLAIM;
     if (name == "Zemina80in1")      return ROM_KOREAN80;
@@ -561,6 +563,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_HAMARAJANIGHT:return "Hamaraja Night";
     case ROM_MANBOW2_V2:  return "Manbow 2 v2";
     case ROM_MEGAFLSHSCC: return langRomTypeMegaFlashRomScc();
+    case ROM_MEGAFLSHSCCPLUS: return "Mega Flash Rom SCC+";
     case ROM_OBSONET:     return langRomTypeObsonet();
     case ROM_DUMAS:       return langRomTypeDumas();
     case ROM_NOWIND:      return langRomTypeNoWind();
@@ -682,6 +685,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_NMS8280DIGI: return langRomTypeNms8280Digitiz();
     case ROM_SONYHBIV1:   return langRomTypeHbiV1Digitiz();
     case ROM_PLAYBALL:    return langRomTypePlayBall();
+    case ROM_DOOLY:       return "Dooly";
     case ROM_FMDAS:       return langRomTypeFmdas();
     case ROM_YAMAHASFG01: return langRomTypeSfg01();
     case ROM_YAMAHASFG05: return langRomTypeSfg05();
@@ -730,6 +734,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_HAMARAJANIGHT:return "HAMARAJANGT";
     case ROM_MANBOW2_V2:  return "MANBOW 2 v2";
     case ROM_MEGAFLSHSCC: return "MEGAFLSHSCC";
+    case ROM_MEGAFLSHSCCPLUS: return "MEGAFLSHSCC+";
     case ROM_OBSONET:     return "OBSONET";
     case ROM_DUMAS:       return "DUMAS";
     case ROM_NOWIND:      return "NOWIND";
@@ -853,6 +858,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_NMS8280DIGI: return "8280 DIGI";
     case ROM_SONYHBIV1:   return "SONY HBI-V1";
     case ROM_PLAYBALL:    return "PLAYBALL";
+    case ROM_DOOLY:       return "DOOLY";
     case ROM_FMDAS:       return "FM-DAS";
     case ROM_YAMAHASFG01: return "SFG-01";
     case ROM_YAMAHASFG05: return "SFG-05";
@@ -923,6 +929,7 @@ int romTypeIsRom(RomType romType) {
     case ROM_MICROSOL80:  return 1;
     case ROM_SONYHBIV1:   return 1;
     case ROM_PLAYBALL:    return 1;
+    case ROM_DOOLY:       return 1;
     case ROM_FMDAS:       return 1;
     case ROM_YAMAHASFG01: return 1;
     case ROM_YAMAHASFG05: return 1;
@@ -945,6 +952,7 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_HAMARAJANIGHT: return 1;
     case ROM_MANBOW2_V2:  return 1;
     case ROM_MEGAFLSHSCC: return 1;
+    case ROM_MEGAFLSHSCCPLUS: return 1;
     case ROM_OBSONET:     return 1;
     case ROM_DUMAS:       return 1;
     case ROM_NOWIND:      return 1;

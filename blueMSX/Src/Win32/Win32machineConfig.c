@@ -809,6 +809,7 @@ static void endEditControls(HWND hDlg)
     case ROM_MANBOW2_V2:
     case ROM_HAMARAJANIGHT:
     case ROM_MEGAFLSHSCC:
+    case ROM_MEGAFLSHSCCPLUS:
     case ROM_OBSONET:
     case ROM_DUMAS:
     case ROM_SCC:
@@ -825,6 +826,7 @@ static void endEditControls(HWND hDlg)
     case ROM_HOLYQURAN:
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
+    case ROM_DOOLY:
     case ROM_NETTOUYAKYUU:
     case ROM_YAMAHANET:
         editSlotInfo.startPage = 2;
@@ -1300,6 +1302,7 @@ static void setEditControls(HWND hDlg)
     case ROM_MANBOW2_V2:
     case ROM_HAMARAJANIGHT:
     case ROM_MEGAFLSHSCC:
+    case ROM_MEGAFLSHSCCPLUS:
     case ROM_OBSONET:
     case ROM_DUMAS:
     case ROM_SCC:
@@ -1316,6 +1319,7 @@ static void setEditControls(HWND hDlg)
     case ROM_HOLYQURAN:
     case ROM_SONYHBIV1:
     case ROM_PLAYBALL:
+    case ROM_DOOLY:
     case ROM_NETTOUYAKYUU:
     case ROM_YAMAHANET:
     case ROM_ARC:
@@ -1513,6 +1517,7 @@ static RomType romTypeList[] = {
     ROM_MANBOW2, /* contains SCC */
     ROM_HAMARAJANIGHT, /* contains SCC */
     ROM_MEGAFLSHSCC, /* contains SCC */
+    ROM_MEGAFLSHSCCPLUS, /* contains SCC */
     SRAM_ESESCC, /* contains SCC */
     SRAM_ESERAM,
     ROM_CROSSBLAIM,
@@ -1524,6 +1529,7 @@ static RomType romTypeList[] = {
     ROM_MATRAINK,
     ROM_RTYPE,
     ROM_PLAYBALL,
+    ROM_DOOLY,
     ROM_ASCII16NF, /* super pierrot */
     ROM_KOREAN80,
     ROM_KOREAN90,

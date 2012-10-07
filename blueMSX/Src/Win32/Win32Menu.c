@@ -153,14 +153,15 @@
 #define ID_FILE_CART_ESESCC512          41106
 #define ID_FILE_CART_GOUDASCSI          41107
 #define ID_FILE_CART_MEGAFLASHROMSCC    41108
-#define ID_FILE_CART_JOYREXPSG          41109
-#define ID_FILE_CART_EXTRAM16KB         41110
-#define ID_FILE_CART_EXTRAM32KB         41111
-#define ID_FILE_CART_EXTRAM48KB         41112
-#define ID_FILE_CART_EXTRAM64KB         41113
-#define ID_FILE_CART_NOWINDDOS1         41114
-#define ID_FILE_CART_NOWINDDOS2         41115
-#define ID_FILE_CART_NMS1210            41116
+#define ID_FILE_CART_MEGAFLSHSCCPLUS    41109
+#define ID_FILE_CART_JOYREXPSG          41110
+#define ID_FILE_CART_EXTRAM16KB         41111
+#define ID_FILE_CART_EXTRAM32KB         41112
+#define ID_FILE_CART_EXTRAM48KB         41113
+#define ID_FILE_CART_EXTRAM64KB         41114
+#define ID_FILE_CART_NOWINDDOS1         41115
+#define ID_FILE_CART_NOWINDDOS2         41116
+#define ID_FILE_CART_NMS1210            41117
 
 #define ID_FILE_DISK_OFFSET               100
 
@@ -292,6 +293,7 @@ static const char* getCleanFileName(const char* fileName)
     if (strcmp(fileName, CARTNAME_NOWINDDOS2) == 0)     return "Nowind USB MSXDOS2";
     if (strcmp(fileName, CARTNAME_ESERAM128) == 0)      return langRomTypeEseRam128();
     if (strcmp(fileName, CARTNAME_MEGAFLSHSCC) == 0)    return langRomTypeMegaFlashRomScc();
+    if (strcmp(fileName, CARTNAME_MEGAFLSHSCCPLUS) == 0)return "Mega Flash Rom SCC+";
     if (strcmp(fileName, CARTNAME_ESERAM256) == 0)      return langRomTypeEseRam256();
     if (strcmp(fileName, CARTNAME_ESERAM512) == 0)      return langRomTypeEseRam512();
     if (strcmp(fileName, CARTNAME_ESERAM1MB) == 0)      return langRomTypeEseRam1mb();
@@ -481,8 +483,9 @@ static HMENU menuCreateCartSpecial(int cartNo, Properties* pProperties, Shortcut
 
     AppendMenu(hMenuNowind, MF_STRING, idOffset + ID_FILE_CART_NOWINDDOS1, "MSXDOS1");
     AppendMenu(hMenuNowind, MF_STRING, idOffset + ID_FILE_CART_NOWINDDOS2, "MSXDOS2");
-
+    
     AppendMenu(hMenuFlashRom, MF_STRING, idOffset + ID_FILE_CART_MEGAFLASHROMSCC, langRomTypeMegaFlashRomScc());
+    AppendMenu(hMenuFlashRom, MF_STRING, idOffset + ID_FILE_CART_MEGAFLSHSCCPLUS, "Mega Flash Rom SCC+");
 
     AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI128, "128 kB");
     AppendMenu(hMenuWaveSCSI, MF_STRING, idOffset + ID_FILE_CART_WAVESCSI256, "256 kB");
@@ -1646,6 +1649,9 @@ int menuCommand(Properties* pProperties, int command)
             return 1;
         case ID_FILE_CART_MEGAFLASHROMSCC:
             insertCartridge(pProperties, i, CARTNAME_MEGAFLSHSCC, NULL, ROM_MEGAFLSHSCC, 0);
+            return 1;
+        case ID_FILE_CART_MEGAFLSHSCCPLUS:
+            insertCartridge(pProperties, i, CARTNAME_MEGAFLSHSCCPLUS, NULL, ROM_MEGAFLSHSCCPLUS, 0);
             return 1;
         case ID_FILE_CART_WAVESCSI128:
             insertCartridge(pProperties, i, CARTNAME_WAVESCSI128, NULL, SRAM_WAVESCSI128, 0);
