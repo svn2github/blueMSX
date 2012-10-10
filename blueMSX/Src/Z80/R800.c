@@ -138,8 +138,9 @@ static void fd_cb(R800* r800);
     if ((port & 0xfc) == 0x98) {                                             \
         delayT9769(r800);                                                    \
     }                                                                        \
-    if ((port & 0xf8) == 0x98) {                                             \
-        if (r800->cpuMode == CPU_R800) {                                     \
+    if (r800->cpuMode == CPU_R800) {                                         \
+        r800->systemTime = 6 * ((r800->systemTime + 5) / 6);                 \
+        if ((port & 0xf8) == 0x98) {                                         \
             if (r800->systemTime - r800->vdpTime < r800->delay[DLY_S1990VDP])\
                 r800->systemTime = r800->vdpTime + r800->delay[DLY_S1990VDP];\
             r800->vdpTime = r800->systemTime;                                \
@@ -304,8 +305,8 @@ static void XOR(R800* r800, UInt8 reg) {
 
 static void MULU(R800* r800, UInt8 reg) { // Diff on mask // RuMSX: (S_FLAG & V_FLAG)
     r800->regs.HL.W = (Int16)r800->regs.AF.B.h * reg;
-    r800->regs.AF.B.l = (r800->regs.AF.B.l & (N_FLAG | H_FLAG)) |
-        (r800->regs.HL.W ? 0 : Z_FLAG) | ((r800->regs.HL.W >> 15) & C_FLAG);
+    r800->regs.AF.B.l = (r800->regs.AF.B.l & (N_FLAG | H_FLAG | X_FLAG | Y_FLAG)) |
+        (r800->regs.HL.W ? 0 : Z_FLAG) | ((r800->regs.HL.W &0xff00) ? C_FLAG : 0);
     delayMul8(r800);
 }
 
@@ -313,8 +314,8 @@ static void MULUW(R800* r800, UInt16 reg) { // Diff on mask // RuMSX: (S_FLAG & 
     UInt32 rv = (UInt32)r800->regs.HL.W * reg;
     r800->regs.DE.W = (UInt16)(rv >> 16);
     r800->regs.HL.W = (UInt16)(rv & 0xffff);
-    r800->regs.AF.B.l = (r800->regs.AF.B.l & (N_FLAG | H_FLAG)) |
-        (rv ? 0 : Z_FLAG) | (UInt8)((rv >> 31) & C_FLAG);
+    r800->regs.AF.B.l = (r800->regs.AF.B.l & (N_FLAG | H_FLAG | X_FLAG | Y_FLAG)) |
+        (rv ? 0 : Z_FLAG) | ((rv & 0xFFFF0000) ? C_FLAG : 0);
     delayMul16(r800);
 }
 

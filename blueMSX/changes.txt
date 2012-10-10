@@ -1,15 +1,8 @@
 Next release
 ============
-- Increased number of machine configs to 512
-- New mapper to support the Spectravideo SVI-707 FDC
-- 64KB cartridge support for Spectravideo SVI-328
-- **later, 4<->2** Fixed Z80 IRQ timing
-- ** Fixed Z80 IRQ timing (not yet)
-- ** Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0 (add better support later, "secret" setting for now :p)
-
+- Z80 IRQ timing (not yet)
 - Fix DER files in panasonic FDC
 - Add search for numbers (byte, word, dword) in degugger
-
 - Wildcard search (part of numbers or strings)
 - Memory watchpoint
 
@@ -18,28 +11,31 @@ v 2.9.0     November 18, 2012
 =============================
 
 - Added support for smooth rewind of emulation
+- Added support for the Spectravideo SVI-707 FDC cartridge
+- Added support for Spectravideo SVI-328 64KB cartridge 
+- Added support for SVI-328 80 track single sided drive 
 - Added support for ColecoVision Super Action Controller
 - Added support for ColecoVision Super Expansion Module hardware
 - Added support for ColecoVision Expansion Module #2 using mouse
 - Added support for ColecoVision ActivisionPCB (a cartridge for homebrew games)
 - Added support for Parallax ARC cartridge
+- Added support for Dooly cartridge
 - Added support for Manbow 2 v2 cartridge
 - Added support for Hamaraja Night cartridge
+- Added support for Korean SG-1000 Ram expander cartridge
 - Added support for stereo PSG in MSX machine configuration
 - Added support for inverted turbo mode bits on Panasonic MSX2+ machines
 - Added support for loading data from file directly into memory
+- Added preliminary support for PC joystick POV hat switch, use the joystick.POV0isAxes setting to swap X/Y axes with POV0
 - Added build system for Visual Studio 2010 (Needs some old SDK's downloadable from Microsoft)
-- Fix 64kB vram handling (now correctly detects 64kB vram)
+- Increased number of supported machine configs to 512 
 - Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
-  when any of the follwing languages were selected:
-    Catalan
-    Chinese Simplified
-    Chinese Traditional
-    Dutch
-    Finnish
-    Russian
+  when when language is any of: Catalan, Chinese, Dutch, Finnish, or Russian
+- Fixed Gunstick and ASCII Laser bug
+- Fixed 64kB vram handling (now correctly detects 64kB vram)
 - Fixed bug in handling of transparent sprites
 - Fix ARTRAGs VDP command engine bug
+- Fixed bug in handling C flag in MUL instructions
 - Fixed 'no frequency' bug in SN76489 emulation
 - Fixed minor bug in Beer IDE emulation
 - Fixed minor bug in video capture

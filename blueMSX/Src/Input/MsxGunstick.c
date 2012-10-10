@@ -56,7 +56,7 @@ static UInt8 read(MsxGunstick* joystick) {
 
     my = my * joystick->scanlines / 0x10000;
     
-    frameBuffer = frameBufferGetDrawFrame(my);
+    frameBuffer = frameBufferGetDrawFrame();
 
     if (frameBuffer != NULL) {
         int scanline = frameBufferGetScanline();
@@ -68,13 +68,13 @@ static UInt8 read(MsxGunstick* joystick) {
 
         myLow  = MAX(myLow, 0);
         myHigh = MIN(myHigh, frameBufferGetLineCount(frameBuffer));
-
+        
         for (y = myLow; y < myHigh; y++) {
             int x = mx * (frameBufferGetDoubleWidth(frameBuffer, y) ? 2 : 1) * frameBufferGetMaxWidth(frameBuffer) / 0x10000;
             Pixel rgb = frameBufferGetLine(frameBuffer, y)[x];
-            int R = 8 * ((rgb >> COLSHIFT_R) & COLMASK_R);
-            int G = 8 * ((rgb >> COLSHIFT_G) & COLMASK_G);
-            int B = 8 * ((rgb >> COLSHIFT_B) & COLMASK_B);
+            int R = 256 * ((rgb >> COLSHIFT_R) & COLMASK_R) / COLMASK_R;
+            int G = 256 * ((rgb >> COLSHIFT_G) & COLMASK_G) / COLMASK_G;
+            int B = 256 * ((rgb >> COLSHIFT_B) & COLMASK_B) / COLMASK_B;
             int Y = (int)(0.2989*R + 0.5866*G + 0.1145*B);
         
             if (Y > TRESHOLD) {

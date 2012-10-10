@@ -122,6 +122,7 @@
 #include "romMapperObsonet.h"
 #include "romMapperSg1000Castle.h"
 #include "romMapperSg1000.h"
+#include "romMapperSg1000RamExpander.h"
 #include "romMapperSegaBasic.h"
 #include "romMapperDumas.h"
 #include "sramMapperMegaSCSI.h"
@@ -1471,6 +1472,14 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         case ROM_SG1000:
         case ROM_SC3000:
             success &= romMapperSg1000Create(romName, buf, size, slot, subslot, startPage);
+            break;
+
+        case ROM_SG1000_RAMEXPANDER_A:
+            success &= romMapperSg1000RamExpanderCreate(romName, buf, size, slot, subslot, startPage, ROM_SG1000_RAMEXPANDER_A);
+            break;
+
+        case ROM_SG1000_RAMEXPANDER_B:
+            success &= romMapperSg1000RamExpanderCreate(romName, buf, size, slot, subslot, startPage, ROM_SG1000_RAMEXPANDER_B);
             break;
 
         case ROM_SG1000CASTLE:

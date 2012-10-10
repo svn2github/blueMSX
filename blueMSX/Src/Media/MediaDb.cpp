@@ -140,6 +140,8 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "SG1000")       return ROM_SG1000;
     if (name == "SC3000")       return ROM_SC3000;
     if (name == "SG1000Castle") return ROM_SG1000CASTLE;
+    if (name == "SG1000RamA")   return ROM_SG1000_RAMEXPANDER_A;
+    if (name == "SG1000RamB")   return ROM_SG1000_RAMEXPANDER_B;
     if (name == "SegaBasic")    return ROM_SEGABASIC;
     if (name == "FMPAC")        return ROM_FMPAC;
     if (name == "FMPAK")        return ROM_FMPAK;
@@ -242,11 +244,13 @@ RomType mediaDbStringToType(const char* romName)
     if (name == "opcodeslot")   return ROM_OPCODESLOT;
     if (name == "opcodeega")    return ROM_OPCODEMEGA;
     if (name == "coleco")       return ROM_COLECO;
-    if (name == "sg1000")       return ROM_SG1000;
-    if (name == "castle")       return ROM_SG1000CASTLE;
 
 
     // SG-1000 roms
+    if (name == "sg1000")       return ROM_SG1000;
+    if (name == "castle")       return ROM_SG1000CASTLE;
+    if (name == "sg1000ramA")   return ROM_SG1000_RAMEXPANDER_A;
+    if (name == "sg1000ramB")   return ROM_SG1000_RAMEXPANDER_B;
     if (name == "sg1000castle") return ROM_SG1000CASTLE;
 
 
@@ -354,7 +358,8 @@ static void mediaDbAddDump(TiXmlElement* dmp,
             }
         }
 
-        if (romType != ROM_SG1000CASTLE && romType != ROM_SEGABASIC) {
+        if (romType != ROM_SG1000CASTLE && romType != ROM_SEGABASIC &&
+            romType != ROM_SG1000_RAMEXPANDER_A && romType != ROM_SG1000_RAMEXPANDER_B) {
             if (strcmpnocase(system.c_str(), "sg1000") == 0) {
                 romType = ROM_SG1000;
             }
@@ -669,6 +674,8 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_SG1000:      return langRomTypeSg1000Cart();
     case ROM_SC3000:      return langRomTypeSc3000Cart();
     case ROM_SG1000CASTLE:return langRomTypeTheCastle();
+    case ROM_SG1000_RAMEXPANDER_A: return "Sega Ram Expander Type A";
+    case ROM_SG1000_RAMEXPANDER_B: return "Sega Ram Expander Type B";
     case ROM_SEGABASIC:   return langRomTypeSegaBasic();
     case ROM_SONYHBI55:   return langRomTypeSonyHbi55();
     case ROM_MSXAUDIODEV: return langRomTypeY8950();
@@ -839,6 +846,8 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_SC3000:      return "SC-3000";
     case ROM_SG1000CASTLE:return "THECASTLE";
     case ROM_SEGABASIC:   return "SEGABASIC";
+    case ROM_SG1000_RAMEXPANDER_A: return "SEGARAM A";
+    case ROM_SG1000_RAMEXPANDER_B: return "SEGARAM B";
     case ROM_SONYHBI55:   return "HBI-55";
     case ROM_MSXAUDIODEV: return "MSXAUDIO";
     case ROM_MSXPRN:      return "MSXPRN";

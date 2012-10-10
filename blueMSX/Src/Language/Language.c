@@ -956,7 +956,7 @@ char* langRomTypeSvi727col80() { return ls->romTypeSvi727col80; }
 char* langRomTypeColecoCart() { return ls->romTypeColecoCart; }
 char* langRomTypeSg1000Cart() { return ls->romTypeSg1000Cart; }
 char* langRomTypeSc3000Cart() { return ls->romTypeSc3000Cart; }
-char* langRomTypeTheCastle() { return "The Castle"; }
+char* langRomTypeTheCastle() { return "SG-1000 The Castle"; }
 char* langRomTypeSonyHbi55() { return "Sony HBI-55"; }
 char* langRomTypeMsxPrinter() { return ls->romTypeMsxPrinter; }
 char* langRomTypeTurborPcm() { return ls->romTypeTurborPcm; }

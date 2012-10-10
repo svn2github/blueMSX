@@ -110,6 +110,7 @@
 #include "romMapperJoyrexPsg.h"
 #include "romMapperArc.h"
 #include "romMapperDooly.h"
+#include "romMapperSg1000RamExpander.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -696,6 +697,14 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
 
         case ROM_SG1000CASTLE:
             success &= romMapperSg1000CastleCreate(romName, buf, size, slot, sslot, 0);
+            break;
+
+        case ROM_SG1000_RAMEXPANDER_A:
+            success &= romMapperSg1000RamExpanderCreate(romName, buf, size, slot, sslot, 0, ROM_SG1000_RAMEXPANDER_A);
+            break;
+
+        case ROM_SG1000_RAMEXPANDER_B:
+            success &= romMapperSg1000RamExpanderCreate(romName, buf, size, slot, sslot, 0, ROM_SG1000_RAMEXPANDER_B);
             break;
 
         case ROM_SEGABASIC:
