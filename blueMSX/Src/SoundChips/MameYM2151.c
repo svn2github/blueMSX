@@ -135,12 +135,12 @@ struct MameYm2151
     signed int chanout[8];
     signed int m2,c1,c2; /* Phase Modulation input for operators 2,3,4 */
     signed int mem;		/* one sample delay memory */
-
 };
 
 extern void	ym2151TimerSet(void* ref, int timer, int count);
 extern void	ym2151TimerStart(void* ref, int timer, int start);
-extern void	ym2151Irq(void* ref, int irq);
+extern void	ym2151ClearIrq(void* ref, int irq);
+extern void	ym2151SetIrq(void* ref, int irq);
 extern void ym2151WritePortCallback(void* ref, UInt32 port, UInt8 value);
 
 #define FREQ_SH			16  /* 16.16 fixed point (frequency calculations) */
@@ -677,7 +677,7 @@ void YM2151TimerCallback(MameYm2151 *chip, int timer)
     if (timer == 0) {
         if (chip->irq_enable & 0x04)
 	    {
-            if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 1);
+            if ((chip->status & 3) == 0) ym2151SetIrq(chip->ref, 1);
 		    chip->status |= 1;
 	    }
 	    if (chip->irq_enable & 0x80)
@@ -686,7 +686,7 @@ void YM2151TimerCallback(MameYm2151 *chip, int timer)
     if (timer == 1) {
 	    if (chip->irq_enable & 0x08)
 	    {
-            if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 1);
+            if ((chip->status & 3) == 0) ym2151SetIrq(chip->ref, 2);
 		    chip->status |= 2;
 	    }
     }
@@ -925,17 +925,17 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
 			if (v&0x10)	/* reset timer A irq flag */
 			{
 				chip->status &= ~1;
-                if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 0);
+                if ((chip->status & 3) == 0) ym2151ClearIrq(chip->ref, 1);
 			}
 
 			if (v&0x20)	/* reset timer B irq flag */
 			{
 				chip->status &= ~2;
-                if ((chip->status & 3) == 0) ym2151Irq(chip->ref, 0);
+                if ((chip->status & 3) == 0) ym2151ClearIrq(chip->ref, 2);
 			}
 
-			ym2151TimerStart(chip->ref, 0, v & 4);
-			ym2151TimerStart(chip->ref, 1, v & 8);
+			ym2151TimerStart(chip->ref, 1, v & 2);
+			ym2151TimerStart(chip->ref, 0, v & 1);
 			break;
 
 		case 0x18:	/* LFO frequency */
@@ -955,6 +955,7 @@ void YM2151WriteReg(MameYm2151 *chip, int r, int v)
 		case 0x1b:	/* CT2, CT1, LFO waveform */
 			chip->ct = v >> 6;
 			chip->lfo_wsel = v & 3;
+
             ym2151WritePortCallback(chip->ref, 0 , chip->ct);
 			break;
 

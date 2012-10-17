@@ -693,7 +693,7 @@ int archMidiInGetNoteOn(ArchMidi* archMidi, int note)
     if (archMidi->devInfo == NULL) {
         return 0;
     }
-    if (note > 256) {
+    if (note >= 256) {
         return 0;
     }
     return archMidi->devInfo->notes[note];

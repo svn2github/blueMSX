@@ -37,7 +37,7 @@
 
 #define FREQUENCY        3579545
 #define SAMPLERATE       (FREQUENCY / 64 )
-#define TIMER_FREQUENCY  (boardFrequency() / (FREQUENCY / 2) * 64)
+#define TIMER_FREQUENCY  (boardFrequency() / (SAMPLERATE / 1))  // Divided by 2 ???
 
 
 struct YM2151 {
@@ -57,6 +57,7 @@ struct YM2151 {
     UInt8  address;
     UInt8  latch;
     UInt8  irqVector;
+    int irqState;
     // Variables used for resampling
     Int32  off;
     Int32  s1l;
@@ -68,14 +69,21 @@ struct YM2151 {
 
 void ym2151TimerStart(void* ptr, int timer, int start);
 
-void ym2151Irq(void* ptr, int irq)
+void ym2151SetIrq(void* ptr, int timer)
 {
     YM2151* ym2151 = (YM2151*)ptr;
-    if (irq) {
+    if (ym2151->irqState == 0) {
         boardSetDataBus(ym2151->irqVector, 0, 0);
 		boardSetInt(0x40);
     }
-    else {
+    ym2151->irqState |= timer;
+}
+
+void ym2151ClearIrq(void* ptr, int timer)
+{
+    YM2151* ym2151 = (YM2151*)ptr;
+    ym2151->irqState &= ~timer;
+    if (ym2151->irqState == 0) {
 		boardClearInt(0x40);
     }
 }
@@ -87,7 +95,7 @@ void ym2151WritePortCallback(void* ref, UInt32 port, UInt8 value)
 static void onTimeout1(void* ptr, UInt32 time)
 {
     YM2151* ym2151 = (YM2151*)ptr;
-    ym2151->timerRunning1 = 0;
+   ym2151->timerRunning1 = 0;
     YM2151TimerCallback(ym2151->opl, 0);
     ym2151TimerStart(ptr, 0, 1);
 }
@@ -95,7 +103,6 @@ static void onTimeout1(void* ptr, UInt32 time)
 static void onTimeout2(void* ptr, UInt32 time)
 {
     YM2151* ym2151 = (YM2151*)ptr;
-
     ym2151->timerRunning2 = 0;
     YM2151TimerCallback(ym2151->opl, 1);
     ym2151TimerStart(ptr, 1, 1);
@@ -153,7 +160,8 @@ UInt8 ym2151Peek(YM2151* ym2151, UInt16 ioPort)
 
 UInt8 ym2151Read(YM2151* ym2151, UInt16 ioPort)
 {
-    return (UInt8)YM2151ReadStatus(ym2151->opl);
+    UInt8 value = (UInt8)YM2151ReadStatus(ym2151->opl);
+    return value;
 }
 
 void ym2151Write(YM2151* ym2151, UInt16 ioPort, UInt8 value)
@@ -207,6 +215,7 @@ void ym2151SaveState(YM2151* ym2151)
     SaveState* state = saveStateOpenForWrite("ym2151");
 
     saveStateSet(state, "address",       ym2151->address);
+    saveStateSet(state, "irqState",      ym2151->irqState);
     saveStateSet(state, "latch",         ym2151->latch);
     saveStateSet(state, "timerValue1",   ym2151->timerValue1);
     saveStateSet(state, "timerRunning1", ym2151->timerRunning1);
@@ -226,6 +235,7 @@ void ym2151LoadState(YM2151* ym2151)
     SaveState* state = saveStateOpenForRead("ym2151");
 
     ym2151->address       = (UInt8)saveStateGet(state, "address",       0);
+    ym2151->irqState      =        saveStateGet(state, "irqState",      0);
     ym2151->latch         = (UInt8)saveStateGet(state, "latch",         0);
     ym2151->timerValue1   =        saveStateGet(state, "timerValue1",   0);
     ym2151->timerRunning1 =        saveStateGet(state, "timerRunning1", 0);
@@ -269,6 +279,7 @@ void ym2151Reset(YM2151* ym2151)
     ym2151->s1r = 0;
     ym2151->s2r = 0;
     ym2151->latch = 0;
+    ym2151->irqState = 0;
 }
 
 void ym2151SetSampleRate(void* ref, UInt32 rate)

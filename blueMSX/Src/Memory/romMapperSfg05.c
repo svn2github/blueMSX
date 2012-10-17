@@ -46,16 +46,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// SFG05 Midi: The MIDI Out is probably buffered. If UART is unbuffered, all
-//             data will not be transmitted correctly. Question is how big
-//             the buffer is.
-//             The command bits are not clear at all. Only known bit is the
-//             reset bit.
-
-// NOTES: Cmd bit 3: seems to be enable/disable something (checked before RX
-//        Cmd bit 4: is set when IM2 is used, cleared when IM1 is used
-
 #include "ArchEvent.h"
+
 
 #define RX_QUEUE_SIZE 256
 
@@ -63,8 +55,9 @@ typedef struct {
     MidiIO*     midiIo;
     UInt8       command;
     UInt8       rxData;
-    UInt8       status;
-    UInt8       txBuffer;
+    UInt32      status;
+    UInt8       sendByte;
+    UInt8       sendBuffer;
     int         txPending;
     UInt8       rxQueue[RX_QUEUE_SIZE];
     int         rxPending;
@@ -78,15 +71,18 @@ typedef struct {
     UInt32      timeTrans;
 } YM2148;
 
-#define STAT_RXRDY      0x02
-#define STAT_TXEMPTY    0x01
+#define STAT_TXRDY      0x01
+#define STAT_RXRBSY     0x02
+#define STAT_TXEMPTY    0x100
 #define STAT_PE         0x10
-#define STAT_OE         0x20        //???  MR checks 0x30
+#define STAT_OE         0x20
 #define ST_INT          0x800
 
-#define CMD_RDINT  0x08
+#define CMD_TXEN   0x01
+#define CMD_TXINT  0x02
+#define CMD_RXEN   0x04
+#define CMD_RXINT  0x08
 #define CMD_RSTER  0x10
-#define CMD_WRINT  0x100
 #define CMD_RST    0x80
 
 static void ym2148Reset(YM2148* midi);
@@ -108,50 +104,54 @@ static void onRecv(YM2148* midi, UInt32 time)
 {
     midi->timeRecv = 0;
 
-	if (midi->status & STAT_RXRDY) {
-        midi->status |= STAT_OE;
-        if (midi->command & CMD_RSTER) {
-            ym2148Reset(midi);
-            return;
-        }
-	} 
+    if (midi->command & CMD_RXEN) {
+	    if (midi->status & STAT_RXRBSY) {
+            midi->status |= STAT_OE;
+            if (midi->command & CMD_RSTER) {
+                ym2148Reset(midi);
+                return;
+            }
+	    } 
     
-    if (midi->rxPending != 0) {
-        archSemaphoreWait(midi->semaphore, -1);
-        midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
-        midi->rxPending--;
-        archSemaphoreSignal(midi->semaphore);
-        midi->status |= STAT_RXRDY;
-        if (midi->command & CMD_RDINT) {
-            boardSetDataBus(midi->vector, 0, 0);
-            boardSetInt(0x800);
-            midi->status |= ST_INT;
+        if (midi->rxPending != 0) {
+            archSemaphoreWait(midi->semaphore, -1);
+            midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
+            midi->rxPending--;
+            archSemaphoreSignal(midi->semaphore);
+            midi->status |= STAT_RXRBSY;
+            if (midi->command & CMD_RXINT) {
+                boardSetDataBus(midi->vector, 0, 0);
+                boardSetInt(0x800);
+                midi->status |= ST_INT;
+            }
         }
     }
-    
+
     midi->timeRecv = boardSystemTime() + midi->charTime;
     boardTimerAdd(midi->timerRecv, midi->timeRecv);
 }
 
 static void onTrans(YM2148* midi, UInt32 time)
 {
-    midi->timeTrans = 0;
+    midi->timeTrans  = 0;
 
-    if (midi->status & STAT_TXEMPTY) {
-        midi->txPending = 0;
-    }
-    else {
-        midiIoTransmit(midi->midiIo, midi->txBuffer);
-        midi->timeTrans = boardSystemTime() + midi->charTime;
-        boardTimerAdd(midi->timerTrans, midi->timeTrans);
-
-        midi->status |= STAT_TXEMPTY;
-        if (midi->command & CMD_WRINT) {
+    midiIoTransmit(midi->midiIo, midi->sendByte);
+	if (midi->status &  STAT_TXRDY) {
+		midi->status |= STAT_TXEMPTY;
+        if (midi->command & CMD_TXINT) {
             boardSetDataBus(midi->vector, 0, 0);
             boardSetInt(0x800);
             midi->status |= ST_INT;
         }
-    }
+	}
+    else {
+		midi->status |= STAT_TXRDY;
+	    midi->status &= ~STAT_TXEMPTY;
+	    midi->sendByte = midi->sendBuffer;
+
+        midi->timeTrans = boardSystemTime() + midi->charTime;
+        boardTimerAdd(midi->timerTrans, midi->timeTrans);
+	}
 }
 
 static void ym2148Reset(YM2148* midi)
@@ -180,8 +180,7 @@ static YM2148* ym2148Create()
     midi->timerRecv   = boardTimerCreate(onRecv, midi);
     midi->timerTrans  = boardTimerCreate(onTrans, midi);
 
-    midi->timeRecv = boardSystemTime() + midi->charTime;
-    boardTimerAdd(midi->timerRecv, midi->timeRecv);
+    ym2148Reset(midi);
 
     return midi;
 }
@@ -204,7 +203,8 @@ static UInt8 ym2148ReadStatus(YM2148* midi)
 
 static UInt8 ym2148ReadData(YM2148* midi)
 {
-    midi->status &= ~(STAT_RXRDY | STAT_OE);
+    midi->status &= ~STAT_OE;
+    midi->status &= ~STAT_RXRBSY;
     return midi->rxData;
 }
 
@@ -216,34 +216,42 @@ static void ym2148SetVector(YM2148* midi, UInt8 value)
 
 static void ym2148WriteCommand(YM2148* midi, UInt8 value)
 {
+    UInt8 oldValue = midi->command;
+
     midi->command = value;
-
-    if (value & 0x02) {
-    }
-
+    
     if (value & CMD_RST) {
         ym2148Reset(midi);
+        return;
     }
 
-    midi->charTime = (UInt32)((UInt64)144 * boardFrequency() / 500000);
+	if (value & CMD_TXINT) {
+        if ((midi->status & STAT_TXEMPTY) && (value & CMD_TXEN)) {
+                if (midi->command & CMD_TXINT) {
+                boardSetDataBus(midi->vector, 0, 0);
+                boardSetInt(0x800);
+                midi->status |= ST_INT;
+            }
+        }
+    }
 }
 
 static void ym2148WriteData(YM2148* midi, UInt8 value)
 {
-    if (!(midi->status & STAT_TXEMPTY)) {
-        return;
-    }
+    if (!(midi->command & CMD_TXEN)) {
+		return;
+	}
+	if (midi->status & STAT_TXEMPTY) {
+	    midi->status &= ~STAT_TXEMPTY;
+	    midi->sendByte = value;
 
-    if (midi->txPending == 0) {
-        midiIoTransmit(midi->midiIo, value);
         midi->timeTrans = boardSystemTime() + midi->charTime;
         boardTimerAdd(midi->timerTrans, midi->timeTrans);
-        midi->txPending = 1;
-    }
+	} 
     else {
-        midi->status &= ~STAT_TXEMPTY;
-        midi->txBuffer = value;
-    }
+		midi->sendBuffer = value;
+		midi->status &= ~STAT_TXRDY;
+	}
 }
 
 
@@ -394,7 +402,7 @@ static void write(RomMapperSfg05* rm, UInt16 address, UInt8 value)
     if (address < 0x3ff0 || address >= 0x3ff8) {
     	return;
     }
-
+    
     switch (address & 0x3fff) {
     case 0x3ff0:
         ym2151Write(rm->ym2151, 0, value);
@@ -467,3 +475,48 @@ int romMapperSfg05Create(const char* filename, UInt8* romData,
     return 1;
 }
 
+#if 0
+// Not used as the UART is buffered, and this is for supporting unbuffered reads
+static void onRecv(YM2148* midi, UInt32 time)
+{
+    midi->timeRecv = 0;
+
+    if (midi->overrun) {
+        if (midi->command & CMD_RSTER) {
+            ym2148Reset(midi);
+            return;
+        }
+    }
+
+    if (midi->rxPending > 0) {
+        if ((midi->status & STAT_RXRBSY) == 0) {
+            midi->status |= STAT_RXRBSY;
+            if (midi->command & CMD_RXINT) {
+                boardSetDataBus(midi->vector, 0, 0);
+                boardSetInt(0x800);
+                midi->status |= ST_INT;
+            }
+        }
+    }
+     
+    midi->timeRecv = boardSystemTime() + midi->charTime;
+    boardTimerAdd(midi->timerRecv, midi->timeRecv);
+}
+
+static UInt8 ym2148ReadData(YM2148* midi)
+{
+    archSemaphoreWait(midi->semaphore, -1);
+    if (midi->rxPending > 0) {
+        midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
+        midi->rxPending--;
+    }
+    archSemaphoreSignal(midi->semaphore);
+
+    midi->status &= ~STAT_OE; // Is Overrun really cleared on read???
+    if (midi->rxPending == 0) {
+        midi->status &= ~STAT_RXRBSY;
+    }
+
+    return midi->rxData;
+}
+#endif

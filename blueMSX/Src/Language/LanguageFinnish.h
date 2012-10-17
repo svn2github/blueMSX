@@ -7,9 +7,9 @@
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik, NYYRIKKI
+** Copyright (C) 2003-2012 Daniel Vik, NYYRIKKI
 **
-** Translated By : NYYRIKKI 2006
+** Translated By : NYYRIKKI 2012
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ void langInitFinnish(LanguageStrings* ls)
     // Language lines
     //----------------------
 
-    ls->langCatalan             = "Catalan";
+    ls->langCatalan             = "Katalaani";
     ls->langChineseSimplified   = "Kiina, yksinkertaistettu";
     ls->langChineseTraditional  = "Kiina, perinteinen";
     ls->langDutch               = "Hollanti";
@@ -51,7 +51,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->langKorean              = "Korea";
     ls->langPolish              = "Puola";
     ls->langPortuguese          = "Portugali";
-    ls->langRussian             = "Russian";            // v2.8
+    ls->langRussian             = "Venäjä";            // v2.8
     ls->langSpanish             = "Espanja";
     ls->langSwedish             = "Ruotsi";
 
@@ -129,7 +129,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuCartMegaFlashRom    = "Mega Flash ROM";      // New in 2.7
 
     ls->menuDiskInsertNew       = "Uusi levytiedosto";
-    ls->menuDiskInsertCdrom     = "Insert CD-Rom";       // New in 2.7
+    ls->menuDiskInsertCdrom     = "Aseta CD-ROM";       // New in 2.7
     ls->menuDiskDirInsert       = "Aseta hakemisto";
     ls->menuDiskAutoStart       = "Käynnistä uudelleen asettamisen jälkeen";
     ls->menuCartAutoReset       = "Käynnistä uudelleen muutettaessa";
@@ -190,7 +190,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuFileExit            = "Poistu";
     ls->menuFileHarddisk        = "Kovalevy";
     ls->menuFileHarddiskNoPesent= "Ohjaimia ei ole kytketty";
-    ls->menuFileHarddiskRemoveAll= "Eject All Harddisk";    // New in 2.7
+    ls->menuFileHarddiskRemoveAll= "Poista kaikki kovalevyt";    // New in 2.7
 
     ls->menuRunRun              = "Käynnistä";
     ls->menuRunPause            = "Keskeytä";
@@ -273,7 +273,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->dlgAboutBuildDate       = "Päiväys:";
     ls->dlgAboutCreat           = "Tekijä: Daniel Vik";
     ls->dlgAboutDevel           = "KEHITTÄJÄT\r\n=======";
-    ls->dlgAboutThanks          = "ERITYIS KIITOKSET\r\n===========";       // New in 2.7 (retranslate, see english)
+    ls->dlgAboutThanks          = "AVUSTAJAT\r\n===========";       // New in 2.7
     ls->dlgAboutLisence         = "LISENSSI\r\n"
                                   "=====\r\n\r\n"
                                   "Tämä ohjelmisto toimitetaan sellaisenaan ilman minkäänlaista takuuta. "
@@ -299,7 +299,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propPerformance         = "Suorituskyky";
     ls->propSettings            = "Asetukset";
     ls->propFile                = "Tiedostot";
-    ls->propDisk                = "Disks";              // New in 2.7
+    ls->propDisk                = "Levyt";              // New in 2.7
     ls->propPorts               = "Liitännät";
 
     ls->propEmuGeneralGB        = "Yleistä ";
@@ -664,7 +664,6 @@ void langInitFinnish(LanguageStrings* ls)
     ls->romTypeMicrosolFdc      = "Microsol Diskettiasemaohjain";
     ls->romTypeNationalFdc      = "National Diskettiasemaohjain";
     ls->romTypePhilipsFdc       = "Philips Diskettiasemaohjain";
-    ls->romTypeSvi707Fdc        = "SVI-707 Diskettiasemaohjain";
     ls->romTypeSvi738Fdc        = "SVI-738 Diskettiasemaohjain";
     ls->romTypeMappedRam        = "Mapper RAM";
     ls->romTypeMirroredRam1k    = "1kB peilattu RAM";
