@@ -162,6 +162,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Language";
     ls->menuPropsPorts          = "Ports";
+    ls->menuPropsD3D            = "Direct3D";
     
     ls->menuVideoSource         = "Video Out Source";
     ls->menuVideoSourceDefault  = "No Video Out Source Connected";
@@ -292,6 +293,7 @@ void langInitEnglish(LanguageStrings* ls)
 
     ls->propTitle               = "blueMSX - Properties";
     ls->propEmulation           = "Emulation";
+    ls->propD3D                 = "Direct3D";
     ls->propVideo               = "Video";
     ls->propSound               = "Sound";
     ls->propControls            = "Controls";
@@ -311,6 +313,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Panasonic Switches ";
     ls->propEmuFrontSwitch      = " Front Switch";
     ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Pause Switch";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
@@ -398,6 +401,18 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
     ls->propCdromDrive          = "Drive:";          // New in 2.7
 
+    ls->propD3DParametersGB         = "Parameters ";
+    ls->propD3DAspectRatioText      = "Aspect ratio";
+    ls->propD3DLinearFilteringText  = " Linear filtering";
+    ls->propD3DForceHighResText     = " Force high resolution";
+    ls->propD3DExtendBorderColorText    = " Extend border color";
+
+    ls->propD3DCroppingGB               = "Cropping ";
+    ls->propD3DCroppingTypeText         = "Cropping type:";
+    ls->propD3DCroppingLeftText         = "Left:";
+    ls->propD3DCroppingRightText        = "Right:";
+    ls->propD3DCroppingTopText          = "Top:";
+    ls->propD3DCroppingBottomText       = "Bottom:";
 
     //----------------------
     // Dropdown related lines
@@ -427,6 +442,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "DirectDraw HW accel."; 
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "None";
     ls->enumVideoFrameskip1     = "1 frame";
@@ -434,6 +450,19 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3 frames";
     ls->enumVideoFrameskip4     = "4 frames";
     ls->enumVideoFrameskip5     = "5 frames";
+
+    ls->enumD3DARAuto           = "Auto";
+    ls->enumD3DARStretch        = "Stretch";
+    ls->enumD3DARPAL            = "PAL";
+    ls->enumD3DARNTSC           = "NTSC";
+    ls->enumD3DAR11             = "1:1";
+
+    ls->enumD3DCropNone         = "None";
+    ls->enumD3DCropMSX1         = "MSX1";
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";
+    ls->enumD3DCropMSX2         = "MSX2";
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";
+    ls->enumD3DCropCustom       = "Custom";
 
     ls->enumSoundDrvNone        = "No Sound";
     ls->enumSoundDrvWMM         = "WMM driver";
@@ -610,6 +639,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowPerfProp    = "Show Performance Properties";
     ls->shortcutShowSettProp    = "Show Settings Properties";
     ls->shortcutShowPorts       = "Show Ports Properties";
+    ls->shortcutShowD3D         = "Show Direct3D Properties";
     ls->shortcutShowLanguage    = "Show Language Dialog";
     ls->shortcutShowMachines    = "Show Machine Editor";
     ls->shortcutShowShortcuts   = "Show Shortcuts Editor";
@@ -622,6 +652,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Show Files Properties";
     ls->shortcutToggleSpriteEnable = "Show/Hide Sprites";
     ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";
     ls->shortcutToggleCpuTrace  = "Enable/Disable CPU Trace";
     ls->shortcutVideoLoad       = "Load Video Capture";             
     ls->shortcutVideoPlay       = "Play Last Video Capture";   

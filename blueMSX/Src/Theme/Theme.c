@@ -77,6 +77,7 @@ static int actionTypeToInt(ThemeTrigger actionType)
     case THEME_TRIGGER_IMG_RUNNING:     idx = TEST(actionType, themeTriggerEmuRunning()); break;
 
     case THEME_TRIGGER_IMG_FDCTIMING:   idx = TEST(actionType, themeTriggerFdcTiming()); break;
+    case THEME_TRIGGER_IMG_NOSPRITELIMITS:   idx = TEST(actionType, themeTriggerNoSpriteLimits()); break;
     case THEME_TRIGGER_IMG_KBD:         idx = TEST(actionType, themeTriggerAudioKbd()); break;
     case THEME_TRIGGER_IMG_MOON:        idx = TEST(actionType, themeTriggerAudioMoonsound()); break;
     case THEME_TRIGGER_IMG_SFG:         idx = TEST(actionType, themeTriggerAudioYamahaSfg()); break;

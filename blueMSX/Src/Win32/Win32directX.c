@@ -419,6 +419,31 @@ int DirectXEnterFullscreenMode(HWND hwnd, int useVideoBackBuffer, int useSysMemB
 
     lpTheDD = lpDD;
 
+    {
+        LONG w, h;
+        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+
+        w = ddm->width;
+        h = ddm->height;
+
+        SetWindowPos(
+            GetParent(hwnd),
+            HWND_TOPMOST,
+            0,
+            0,
+            w,
+            h,
+            SWP_SHOWWINDOW);
+
+        SetWindowPos(
+            hwnd,
+            NULL,
+            0,
+            0,
+            w,
+            h,
+            SWP_NOZORDER);
+    }
     return DXE_OK;
 }
 

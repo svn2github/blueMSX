@@ -136,6 +136,9 @@ int boardUseMegaRom();
 int boardUseMegaRam();
 int boardUseFmPac();
 
+void boardSetNoSpriteLimits(int enable);
+int boardGetNoSpriteLimits();
+
 RomType boardGetRomType(int cartNo);
 
 typedef enum { HD_NONE, HD_SUNRISEIDE, HD_BEERIDE, HD_GIDE, HD_RSIDE,

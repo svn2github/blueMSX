@@ -43,6 +43,8 @@ int  vdpGetRefreshRate();
 
 void vdpSetSpritesEnable(int enable);
 int  vdpGetSpritesEnable();
+void vdpSetNoSpriteLimits(int enable);
+int  vdpGetNoSpritesLimit();
 void vdpSetDisplayEnable(int enable);
 int  vdpGetDisplayEnable();
 

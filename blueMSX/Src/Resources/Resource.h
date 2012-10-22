@@ -76,6 +76,7 @@
 #define IDD_SOUND                       104
 #define IDD_EMULATION                   105
 #define IDD_SETTINGS                    106
+#define IDD_D3D                         107
 #define IDD_ABOUT                       108
 #define IDD_ZIPDSK                      109
 #define IDD_TAPEPOS                     110
@@ -162,6 +163,7 @@
 #define IDC_EMUFRONTSWITCHGROUPBOX      1809
 #define IDC_EMUFDCTIMING                1810
 #define IDC_EMUREVERSEPLAY              1811
+#define IDC_NOSPRITELIMITS              1812
 
 #define IDC_MONGROUPBOX                 1900
 #define IDC_MONTYPETEXT                 1901
@@ -414,6 +416,33 @@
 #define IDC_LDMEM_BROWSE                2902
 #define IDC_LDMEM_ADDRESS               2903
 #define IDC_LDMEM_CAPADR                2904
+
+#define IDC_D3D_PARAMETERSGROUPBOX			3000
+#define IDC_D3D_ASPECTRATIO					3001
+#define IDC_D3D_ASPECTRATIOTEXT				3002
+#define IDC_D3D_LINEARFILTERING				3003
+#define IDC_D3D_EXTENDBORDERCOLOR			3004
+#define IDC_D3D_FORCEHIGHRES				3005
+
+#define IDC_D3D_CROPPINGGROUPBOX			3006
+#define IDC_D3D_CROPPING_TYPE				3007
+#define IDC_D3D_CROPPING_TYPETEXT			3008
+
+#define IDC_D3D_CROPPING_RIGHTTEXT			3009
+#define IDC_D3D_CROPPING_RIGHT				3010
+#define IDC_D3D_CROPPING_RIGHTVALUETEXT		3011
+
+#define IDC_D3D_CROPPING_LEFTTEXT			3012
+#define IDC_D3D_CROPPING_LEFT				3013
+#define IDC_D3D_CROPPING_LEFTVALUETEXT		3014
+
+#define IDC_D3D_CROPPING_TOPTEXT			3015
+#define IDC_D3D_CROPPING_TOP				3016
+#define IDC_D3D_CROPPING_TOPVALUETEXT		3017
+
+#define IDC_D3D_CROPPING_BOTTOMTEXT			3018
+#define IDC_D3D_CROPPING_BOTTOM				3019
+#define IDC_D3D_CROPPING_BOTTOMVALUETEXT	3020
 
 #define IDC_STATIC                      -1
 

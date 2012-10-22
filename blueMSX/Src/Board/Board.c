@@ -469,6 +469,14 @@ static void boardCaptureLoadState()
 //------------------------------------------------------
 
 
+int boardGetNoSpriteLimits() {
+    return vdpGetNoSpritesLimit();
+}
+
+void boardSetNoSpriteLimits(int enable) {
+    vdpSetNoSpriteLimits(enable);
+}
+
 RomType boardGetRomType(int cartNo)
 {
     return currentRomType[cartNo];

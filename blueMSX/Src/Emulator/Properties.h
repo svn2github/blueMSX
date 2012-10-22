@@ -95,7 +95,8 @@ typedef enum {
     PROP_SETTINGS, 
     PROP_DISK,
     PROP_APEARANCE, 
-    PROP_PORTS 
+    PROP_PORTS,
+	PROP_D3D
 } PropPage;
 
 typedef enum { 
@@ -187,7 +188,8 @@ enum {
 enum { 
     P_VIDEO_DRVDIRECTX_VIDEO = 0, 
     P_VIDEO_DRVDIRECTX, 
-    P_VIDEO_DRVGDI 
+    P_VIDEO_DRVGDI,
+    P_VIDEO_DRVDIRECTX_D3D
 };
 
 enum { 
@@ -209,6 +211,7 @@ typedef struct {
     char machineName[PROP_MAXPATH];
     char shortcutProfile[PROP_MAXPATH];
     int  enableFdcTiming;
+    int  noSpriteLimits;
     int  frontSwitch;
     int  audioSwitch;
     int  pauseSwitch;
@@ -222,6 +225,20 @@ typedef struct {
     int  reverseEnable;
     int  reverseMaxTime;
 } EmulationProperties;
+
+typedef struct {
+		int linearFiltering;
+		int extendBorderColor;
+		int forceHighRes;
+
+		int aspectRatioType;
+		int cropType;
+
+		int cropLeft;
+		int cropRight;
+		int cropTop;
+		int cropBottom;
+} D3DProperties;
 
 typedef struct {
     int monitorColor;
@@ -255,7 +272,34 @@ typedef struct {
     int detectActiveMonitor;
     int captureFps;
     int captureSize;
+	D3DProperties d3d;
 } VideoProperties;
+
+enum {
+	P_D3D_AR_AUTO = 0,
+	P_D3D_AR_STRETCH,
+	P_D3D_AR_PAL,
+	P_D3D_AR_NTSC,
+	P_D3D_AR_1
+};
+
+enum {
+	P_D3D_RES_AUTO = 0,
+	P_D3D_RES_256,
+	P_D3D_RES_512
+};
+
+enum {
+	P_D3D_CROP_SIZE_NONE = 0,
+	P_D3D_CROP_SIZE_MSX1,
+	P_D3D_CROP_SIZE_MSX1_PLUS_8,
+	P_D3D_CROP_SIZE_MSX2,
+	P_D3D_CROP_SIZE_MSX2_PLUS_8,
+	P_D3D_CROP_SIZE_CUSTOM
+};
+
+
+
 
 typedef struct {
     int disabled;

@@ -98,6 +98,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     }
 
     if (0 == strcmp(action, "switch-togglefdctiming"))  return (ButtonEvent)actionToggleFdcTiming;
+    if (0 == strcmp(action, "switch-nospritelimits"))  return (ButtonEvent)actionToggleNoSpriteLimits;
     
     if (0 == strcmp(action, "switch-videohstretch"))    return (ButtonEvent)actionToggleHorizontalStretch;
     if (0 == strcmp(action, "switch-videovstretch"))    return (ButtonEvent)actionToggleVerticalStretch;
@@ -267,6 +268,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "cas-setautorewind"))    return (ButtonEvent)actionSetCasAutoRewind;
     if (0 == strcmp(action, "sprite-setenable"))     return (ButtonEvent)actionSetSpriteEnable;
     if (0 == strcmp(action, "switch-setfdctiming"))  return (ButtonEvent)actionSetFdcTiming;
+    if (0 == strcmp(action, "switch-setnospritelimits"))  return (ButtonEvent)actionSetNoSpriteLimits;
     if (0 == strcmp(action, "switch-setmsxaudio"))   return (ButtonEvent)actionSetMsxAudioSwitch;
     if (0 == strcmp(action, "switch-setfront"))      return (ButtonEvent)actionSetFrontSwitch;
     if (0 == strcmp(action, "switch-setpause"))      return (ButtonEvent)actionSetPauseSwitch;
@@ -362,6 +364,7 @@ static int getTrigger(TiXmlElement* el, char* triggerName)
     if (0 == strcmp(s, "led-pause"))                return t | THEME_TRIGGER_IMG_PAUSE;
     
     if (0 == strcmp(s, "enable-fdctiming"))         return t | THEME_TRIGGER_IMG_FDCTIMING;
+    if (0 == strcmp(s, "enable-nospritelimits"))    return t | THEME_TRIGGER_IMG_NOSPRITELIMITS;
 
     if (0 == strcmp(s, "enable-keyboard"))          return t | THEME_TRIGGER_IMG_KBD;
     if (0 == strcmp(s, "enable-moonsound"))         return t | THEME_TRIGGER_IMG_MOON;

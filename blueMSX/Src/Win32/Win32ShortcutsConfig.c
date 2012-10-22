@@ -724,6 +724,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(msxAudioSwitch);
     LOAD_SHORTCUT(spritesEnable);
     LOAD_SHORTCUT(fdcTiming);
+    LOAD_SHORTCUT(noSpriteLimits);
     LOAD_SHORTCUT(frontSwitch);
     LOAD_SHORTCUT(pauseSwitch);
     LOAD_SHORTCUT(quit);
@@ -796,6 +797,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(propShowSettings);
     LOAD_SHORTCUT(propShowApearance);
     LOAD_SHORTCUT(propShowPorts);
+    LOAD_SHORTCUT(propShowD3D);
     LOAD_SHORTCUT(optionsShowLanguage);
     LOAD_SHORTCUT(toolsShowMachineEditor);
     LOAD_SHORTCUT(toolsShowShorcutEditor);
@@ -822,6 +824,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(msxAudioSwitch);
     SAVE_SHORTCUT(spritesEnable);
     SAVE_SHORTCUT(fdcTiming);
+    SAVE_SHORTCUT(noSpriteLimits);
     SAVE_SHORTCUT(frontSwitch);
     SAVE_SHORTCUT(pauseSwitch);
     SAVE_SHORTCUT(quit);
@@ -894,6 +897,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(propShowSettings);
     SAVE_SHORTCUT(propShowApearance);
     SAVE_SHORTCUT(propShowPorts);
+    SAVE_SHORTCUT(propShowD3D);
     SAVE_SHORTCUT(optionsShowLanguage);
     SAVE_SHORTCUT(toolsShowMachineEditor);
     SAVE_SHORTCUT(toolsShowShorcutEditor);
@@ -1062,6 +1066,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(propShowSettings, langShortcutShowFiles());
     ADD_SHORTCUT(propShowApearance, langShortcutShowSettProp());
     ADD_SHORTCUT(propShowPorts, langShortcutShowPorts());
+    ADD_SHORTCUT(propShowD3D, langShortcutShowD3D());
     ADD_SHORTCUT(optionsShowLanguage, langShortcutShowLanguage());
     
     ADD_SHORTCUTSEPARATOR();
@@ -1082,6 +1087,7 @@ static void updateShortcutEntries(HWND hDlg)
     
     ADD_SHORTCUT(spritesEnable, langShortcutToggleSpriteEnable());
     ADD_SHORTCUT(fdcTiming,     langShortcutToggleFdcTiming());
+    ADD_SHORTCUT(noSpriteLimits,     langShortcutToggleNoSpriteLimits());
 }
 
 

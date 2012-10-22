@@ -48,6 +48,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 static int spritesEnable = 1;
+static int noSpriteLimits = 0;
 static int displayEnable = 1;
 static int refreshRate   = 0;
 static int canFlipFrameBuffer = 0;
@@ -59,6 +60,15 @@ void vdpSetSpritesEnable(int enable) {
 int vdpGetSpritesEnable() {
     return spritesEnable;
 }
+
+void vdpSetNoSpriteLimits(int enable) {
+    noSpriteLimits = enable ? 1 : 0;
+}
+
+int vdpGetNoSpritesLimit() {
+    return noSpriteLimits;
+}
+
 
 void vdpSetDisplayEnable(int enable) {
     displayEnable = enable ? 1 : 0;

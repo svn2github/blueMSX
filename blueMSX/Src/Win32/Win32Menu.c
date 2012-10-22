@@ -93,6 +93,7 @@
 #define ID_OPTIONS_APEARANCE            40047
 #define ID_OPTIONS_PORTS                40048
 #define ID_OPTIONS_DISK                 40049
+#define ID_OPTIONS_D3D                  40050
 
 #define ID_HELP_HELP                    40051
 #define ID_HELP_ABOUT                   40052
@@ -947,6 +948,9 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, in
     }
     if (appConfigGetInt("menu.options.emulation", 1) != 0) {
         AppendMenu(hMenu, MF_STRING, ID_OPTIONS_EMULATION, langMenuPropsEmulation());
+    }
+    if (appConfigGetInt("menu.options.d3d", 1) != 0) {
+        AppendMenu(hMenu, MF_STRING, ID_OPTIONS_D3D, langMenuPropsD3D());
     }
     if (appConfigGetInt("menu.options.video", 1) != 0) {
         AppendMenu(hMenu, MF_STRING, ID_OPTIONS_VIDEO, langMenuPropsVideo());
@@ -1875,6 +1879,7 @@ int menuCommand(Properties* pProperties, int command)
     case ID_OPTIONS_DISK:                   actionPropShowDisk();           return 0;
     case ID_OPTIONS_APEARANCE:              actionPropShowApearance();      return 0;
     case ID_OPTIONS_PORTS:                  actionPropShowPorts();          return 0;
+    case ID_OPTIONS_D3D:					actionPropShowD3D();            return 0;
     case ID_OPTIONS_LANGUAGE:               actionOptionsShowLanguage();    return 0;
     case ID_TOOLS_MACHINEEDITOR:            actionToolsShowMachineEditor(); return 0;
     case ID_TOOLS_SHORTCUTSEDITOR:          actionToolsShowShorcutEditor(); return 0;

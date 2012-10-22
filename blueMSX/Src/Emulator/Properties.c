@@ -138,6 +138,7 @@ ValueNamePair VideoDriverPair[] = {
     { P_VIDEO_DRVDIRECTX_VIDEO,    "directx hw" },
     { P_VIDEO_DRVDIRECTX,          "directx" },
     { P_VIDEO_DRVGDI,              "gdi" },
+    { P_VIDEO_DRVDIRECTX_D3D,      "directx d3d" },
     { -1,                           "" },
 };
 #endif
@@ -240,6 +241,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
     properties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
     properties->emulation.enableFdcTiming   = 1;
+    properties->emulation.noSpriteLimits    = 0;
     properties->emulation.frontSwitch       = 0;
     properties->emulation.pauseSwitch       = 0;
     properties->emulation.audioSwitch       = 0;
@@ -279,6 +281,17 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     properties->video.captureFps            = 60;
     properties->video.captureSize           = 1;
     
+    properties->video.d3d.aspectRatioType   = P_D3D_AR_NTSC;
+    properties->video.d3d.cropType          = P_D3D_CROP_SIZE_MSX2_PLUS_8;
+    properties->video.d3d.extendBorderColor = 1;
+    properties->video.d3d.linearFiltering   = 1;
+    properties->video.d3d.forceHighRes      = 0;
+
+    properties->video.d3d.cropLeft          = 0;
+    properties->video.d3d.cropRight         = 0;
+    properties->video.d3d.cropTop           = 0;
+    properties->video.d3d.cropBottom        = 0;
+
     properties->videoIn.disabled            = 0;
     properties->videoIn.inputIndex          = 0;
     properties->videoIn.inputName[0]        = 0;
@@ -531,6 +544,7 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(emulation, syncMethod, EmuSyncPair);
     GET_ENUM_VALUE_2(emulation, vdpSyncMode, VdpSyncPair);
     GET_ENUM_VALUE_2(emulation, enableFdcTiming, BoolPair);
+    GET_ENUM_VALUE_2(emulation, noSpriteLimits, BoolPair);
     GET_ENUM_VALUE_2(emulation, frontSwitch, BoolPair);
     GET_ENUM_VALUE_2(emulation, pauseSwitch, BoolPair);
     GET_ENUM_VALUE_2(emulation, audioSwitch, BoolPair);
@@ -565,6 +579,17 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(video, detectActiveMonitor, BoolPair);
     GET_INT_VALUE_2(video, captureFps);
     GET_INT_VALUE_2(video, captureSize);
+
+    GET_ENUM_VALUE_3(video, d3d, linearFiltering, BoolPair);
+    GET_ENUM_VALUE_3(video, d3d, extendBorderColor, BoolPair);
+    GET_ENUM_VALUE_3(video, d3d, forceHighRes, BoolPair);
+    GET_INT_VALUE_3(video, d3d, aspectRatioType);
+    GET_INT_VALUE_3(video, d3d, cropType);
+
+    GET_INT_VALUE_3(video, d3d, cropLeft);
+    GET_INT_VALUE_3(video, d3d, cropRight);
+    GET_INT_VALUE_3(video, d3d, cropTop);
+    GET_INT_VALUE_3(video, d3d, cropBottom);
 
     GET_INT_VALUE_2(videoIn, disabled);
     GET_INT_VALUE_2(videoIn, inputIndex);
@@ -765,6 +790,7 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(emulation, syncMethod, EmuSyncPair);
     SET_ENUM_VALUE_2(emulation, vdpSyncMode, VdpSyncPair);
     SET_ENUM_VALUE_2(emulation, enableFdcTiming, YesNoPair);
+    SET_ENUM_VALUE_2(emulation, noSpriteLimits, YesNoPair);
     SET_ENUM_VALUE_2(emulation, frontSwitch, OnOffPair);
     SET_ENUM_VALUE_2(emulation, pauseSwitch, OnOffPair);
     SET_ENUM_VALUE_2(emulation, audioSwitch, OnOffPair);
@@ -807,7 +833,18 @@ void propSave(Properties* properties)
     SET_INT_VALUE_2(video, captureFps);
     
     SET_INT_VALUE_2(video, captureSize);
-    
+
+    SET_ENUM_VALUE_3(video, d3d, linearFiltering, BoolPair);
+    SET_ENUM_VALUE_3(video, d3d, extendBorderColor, BoolPair);
+    SET_ENUM_VALUE_3(video, d3d, forceHighRes, BoolPair);
+    SET_INT_VALUE_3(video, d3d, aspectRatioType);
+    SET_INT_VALUE_3(video, d3d, cropType);
+
+    SET_INT_VALUE_3(video, d3d, cropLeft);
+    SET_INT_VALUE_3(video, d3d, cropRight);
+    SET_INT_VALUE_3(video, d3d, cropTop);
+    SET_INT_VALUE_3(video, d3d, cropBottom);
+
     SET_INT_VALUE_2(videoIn, disabled);
     SET_INT_VALUE_2(videoIn, inputIndex);
     SET_STR_VALUE_2(videoIn, inputName);

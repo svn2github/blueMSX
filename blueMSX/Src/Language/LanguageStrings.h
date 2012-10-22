@@ -159,6 +159,7 @@ typedef struct {
     char* menuPropsDisk;
     char* menuPropsLanguage;
     char* menuPropsPorts;
+    char* menuPropsD3D;
 
     char* menuVideoSource;
     char* menuVideoSourceDefault;
@@ -284,6 +285,7 @@ typedef struct {
 
     char* propTitle;
     char* propEmulation;
+    char* propD3D;
     char* propVideo;
     char* propSound;
     char* propControls;
@@ -303,6 +305,7 @@ typedef struct {
     char* propEmuFrontSwitchGB;
     char* propEmuFrontSwitch;
     char* propEmuFdcTiming;
+    char* propEmuNoSpriteLimits;
     char* propEmuReversePlay;
     char* propEmuPauseSwitch;
     char* propEmuAudioSwitch;
@@ -390,6 +393,19 @@ typedef struct {
     char* propCdromMethodAspi;
     char* propCdromDrive;
 
+	char* propD3DParametersGB;
+    char* propD3DAspectRatioText;
+    char* propD3DLinearFilteringText;
+    char* propD3DForceHighResText;
+    char* propD3DExtendBorderColorText;
+
+    char* propD3DCroppingGB;
+	char* propD3DCroppingTypeText;
+	char* propD3DCroppingLeftText;
+    char* propD3DCroppingRightText;
+    char* propD3DCroppingTopText;
+    char* propD3DCroppingBottomText;
+
 
     //----------------------
     // Dropdown related lines
@@ -419,6 +435,7 @@ typedef struct {
     char* enumVideoDrvDirectDrawHW;
     char* enumVideoDrvDirectDraw;
     char* enumVideoDrvGDI;
+    char* enumVideoDrvD3D;
 
     char* enumVideoFrameskip0;
     char* enumVideoFrameskip1;
@@ -426,6 +443,19 @@ typedef struct {
     char* enumVideoFrameskip3;
     char* enumVideoFrameskip4;
     char* enumVideoFrameskip5;
+
+	char* enumD3DARAuto;
+	char* enumD3DARStretch;
+	char* enumD3DARPAL;
+	char* enumD3DARNTSC;
+	char* enumD3DAR11;
+
+	char* enumD3DCropNone;
+	char* enumD3DCropMSX1;
+	char* enumD3DCropMSX1Plus8;
+	char* enumD3DCropMSX2;
+	char* enumD3DCropMSX2Plus8;
+	char* enumD3DCropCustom;
 
     char* enumSoundDrvNone;
     char* enumSoundDrvWMM;
@@ -602,6 +632,7 @@ typedef struct {
     char* shortcutShowPerfProp;
     char* shortcutShowSettProp;
     char* shortcutShowPorts;
+    char* shortcutShowD3D;
     char* shortcutShowLanguage;
     char* shortcutShowMachines;
     char* shortcutShowShortcuts;
@@ -614,6 +645,7 @@ typedef struct {
     char* shortcutShowFiles;
     char* shortcutToggleSpriteEnable;
     char* shortcutToggleFdcTiming;
+    char* shortcutToggleNoSpriteLimits;
     char* shortcutToggleCpuTrace;
     char* shortcutVideoLoad;
     char* shortcutVideoPlay;

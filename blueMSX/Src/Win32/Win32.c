@@ -62,6 +62,7 @@
 #include "Win32keyboard.h"
 #include "Win32Printer.h"
 #include "Win32directx.h"
+#include "Win32D3D.h"
 #include "Win32Avi.h"
 #include "FileHistory.h"
 #include "Win32Dir.h"
@@ -90,6 +91,7 @@
 #include "ArchFile.h"
 #include "ArchInput.h"
 #include "AppConfig.h"
+#include "SlotManager.h"
 
 #pragma warning(disable: 4996)
 
@@ -210,7 +212,8 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize)
         w = r2.right - r2.left;
         h = r2.bottom - r2.top;
     }
-
+    /* Laurent Halter : Removed because window might be on a secondary display*/
+    /*
     if (x + w > screenWidth) {
         x = screenWidth - w;
     }
@@ -221,7 +224,7 @@ void updateDialogPos(HWND hwnd, int dialogID, int noMove, int noSize)
 
     if (y < 0) {
         y = 0;
-    }
+    }*/
 
     SetWindowPos(hwnd, NULL, x, y, w, h, SWP_NOZORDER | (noSize ? SWP_NOSIZE : 0));
 }
@@ -847,6 +850,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
 
     if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();
     if (hotkeyEq(key, s->fdcTiming))                    actionToggleFdcTiming();
+    if (hotkeyEq(key, s->noSpriteLimits))               actionToggleNoSpriteLimits();
     if (hotkeyEq(key, s->msxAudioSwitch))               actionToggleMsxAudioSwitch();
     if (hotkeyEq(key, s->frontSwitch))                  actionToggleFrontSwitch();
     if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();
@@ -918,6 +922,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
     if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
     if (hotkeyEq(key, s->propShowPorts))                actionPropShowPorts();
+    if (hotkeyEq(key, s->propShowD3D))					actionPropShowD3D();
     if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();
@@ -1125,6 +1130,7 @@ void archShowPropertiesDialog(PropPage  startPane) {
     }
 
     boardSetFdcTimingEnable(pProperties->emulation.enableFdcTiming);
+    boardSetNoSpriteLimits(pProperties->emulation.noSpriteLimits);
 
     /* Update switches */
     switchSetAudio(pProperties->emulation.audioSwitch);
@@ -1387,11 +1393,17 @@ void themeSet(char* themeName, int forceMatch) {
     }
 
     {
-        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
+        WINDOWPLACEMENT p;
+        LONG w, h;
+
+        GetWindowPlacement(st.hwnd, &p);
+        w = p.rcNormalPosition.right - p.rcNormalPosition.left;
+        h = p.rcNormalPosition.bottom - p.rcNormalPosition.top;
+
         menuSetInfo(st.themePageActive->menu.color, st.themePageActive->menu.focusColor, 
                     st.themePageActive->menu.textColor, 
                     st.themePageActive->menu.x, st.themePageActive->menu.y,
-                    pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN ? ddm->width : st.themePageActive->menu.width, 32);
+                    pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN ? w : st.themePageActive->menu.width, 32);
     }
 
     if (pProperties->video.windowSize != P_VIDEO_SIZEFULLSCREEN) {
@@ -1409,12 +1421,9 @@ void themeSet(char* themeName, int forceMatch) {
             ew = appConfigGetInt("screen.normal.width", 640);
             eh = appConfigGetInt("screen.normal.height", 480);
         }
-    }
-    else {
-        DxDisplayMode* ddm = DirectDrawGetDisplayMode();
-        w = ew = ddm->width;
-        h = eh = ddm->height;
-        z  = HWND_TOPMOST;
+
+        SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
+        SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
     }
 
     if (st.hBitmap) { DeleteObject(st.hBitmap); st.hBitmap=NULL; }
@@ -1428,8 +1437,6 @@ void themeSet(char* themeName, int forceMatch) {
     }
     
     if (strcmp(themeName,"Classic")) SetWindowText(st.hwnd, "  blueMSX");
-    SetWindowPos(st.hwnd, z, x, y, w, h, SWP_SHOWWINDOW);
-    SetWindowPos(st.emuHwnd, NULL, ex, ey, ew, eh, SWP_NOZORDER);
 
     if (st.rgnData != NULL) {
 //        SetWindowRgn(st.hwnd, NULL, TRUE);
@@ -1522,7 +1529,10 @@ void archUpdateWindow() {
     st.enteringFullscreen = 1;
     emulatorSuspend();
 
-    DirectXExitFullscreenMode();
+    if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+        D3DExitFullscreenMode();
+    else
+        DirectXExitFullscreenMode();
 
     if (st.bmBitsGDI != NULL) {
         free(st.bmBitsGDI);
@@ -1537,12 +1547,21 @@ void archUpdateWindow() {
             int rv;
             SetWindowLong(st.hwnd, GWL_STYLE, WS_POPUP | WS_CLIPCHILDREN | WS_VISIBLE);
 
-            rv = DirectXEnterFullscreenMode(st.emuHwnd, 
-                                            pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
-                                            pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+            if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+                rv = D3DEnterFullscreenMode(st.emuHwnd, 
+                                                pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
+                                                pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+            else
+                rv = DirectXEnterFullscreenMode(st.emuHwnd, 
+                                                pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
+                                                pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+
             if (rv != DXE_OK) {
                 MessageBox(NULL, langErrorEnterFullscreen(), langErrorTitle(), MB_OK);
-                DirectXExitFullscreenMode();
+                if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+                    D3DExitFullscreenMode();
+                else
+                    DirectXExitFullscreenMode();
                 pProperties->video.windowSize = P_VIDEO_SIZEX2;
             }
         }
@@ -1556,7 +1575,14 @@ void archUpdateWindow() {
         }
 
         if (pProperties->video.driver != P_VIDEO_DRVGDI) {
-            int rv = DirectXEnterWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT, 
+            int rv;
+
+            if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+                rv = D3DEnterWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT, 
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+            else
+                rv = DirectXEnterWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT, 
                                               pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
                                               pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
             if (rv != DXE_OK) {
@@ -1580,9 +1606,10 @@ void archUpdateWindow() {
         RECT r = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
         RECT d = { 0, 0, zoom * WIDTH, zoom * HEIGHT };
         if (pProperties->video.windowSize == P_VIDEO_SIZEFULLSCREEN) {
-            DxDisplayMode* ddm = DirectDrawGetDisplayMode();
-            r.right  = ddm->width;
-            r.bottom = ddm->height;
+            WINDOWPLACEMENT p;
+            GetWindowPlacement(st.hwnd, &p);
+            r.right  = p.rcNormalPosition.right - p.rcNormalPosition.left;
+            r.bottom = p.rcNormalPosition.bottom - p.rcNormalPosition.top;
         }
         if (!pProperties->video.horizontalStretch) {
             d.left  += zoom * (320 - 272) / 2;
@@ -1619,18 +1646,43 @@ static void emuWindowDraw(int onlyOnVblank)
 
     if (!st.enteringFullscreen && 
         (pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO || 
-        pProperties->video.driver == P_VIDEO_DRVDIRECTX))
+        (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D) || 
+        (pProperties->video.driver == P_VIDEO_DRVDIRECTX)))
     {
-        
+#define PRINT_RENDERING_TIME 0
+#if PRINT_RENDERING_TIME
+        LARGE_INTEGER	iCurrentTime;
+        double fStartTime;
+        if(QueryPerformanceCounter(&iCurrentTime))
+            fStartTime = (long double) iCurrentTime.QuadPart;
+#endif
+
         st.diplaySync |= onlyOnVblank;
 
-        rv = DirectXUpdateSurface(st.pVideo, 
-                                  st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
-                                  0, 0, getZoom(), 
-                                  pProperties->video.horizontalStretch, 
-                                  pProperties->video.verticalStretch,
-                                  st.diplaySync,
-                                  pProperties->video.windowSize == P_VIDEO_SIZEX2);
+
+        if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D) 
+            rv = D3DUpdateSurface(st.emuHwnd, st.pVideo, st.diplaySync, &pProperties->video.d3d);
+        else
+            rv = DirectXUpdateSurface(st.pVideo, 
+                                      st.showMenu | st.showDialog || emulatorGetState() != EMU_RUNNING, 
+                                      0, 0, getZoom(), 
+                                      pProperties->video.horizontalStretch, 
+                                      pProperties->video.verticalStretch,
+                                      st.diplaySync,
+                                      pProperties->video.windowSize == P_VIDEO_SIZEX2);
+
+#if PRINT_RENDERING_TIME
+        {
+            char output[1024];
+            double t;
+            LARGE_INTEGER	iFrequency;
+            QueryPerformanceFrequency(&iFrequency);
+            QueryPerformanceCounter(&iCurrentTime);
+            t = (double) (iCurrentTime.QuadPart - fStartTime) / (double) iFrequency.QuadPart;
+            sprintf(output, "Rendering time: %fms\n", t*1000.0f);
+            OutputDebugString(output);
+        }
+#endif
         st.diplaySync = 0;
         if (rv) {
             st.frameCount++;
@@ -1989,9 +2041,14 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         if (pProperties->video.driver != P_VIDEO_DRVGDI) {
             int zoom = getZoom();
             if (st.enteringFullscreen) {
-                DirectXUpdateWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT,
-                                          pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
-                                          pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+                if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+                    D3DUpdateWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT,
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
+                else
+                    DirectXUpdateWindowedMode(st.emuHwnd, zoom * WIDTH, zoom * HEIGHT,
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO, 
+                                              pProperties->video.driver == P_VIDEO_DRVDIRECTX_VIDEO);
             }
         }
         break;
@@ -2297,7 +2354,10 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             pProperties->video.windowY = r.top;
         }
         st.enteringFullscreen = 1;
-        DirectXExitFullscreenMode();
+        if (pProperties->video.driver == P_VIDEO_DRVDIRECTX_D3D)
+            D3DExitFullscreenMode();
+        else
+            DirectXExitFullscreenMode();
         PostQuitMessage(0);
         inputDestroy();
         return 0;
@@ -2840,6 +2900,7 @@ WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR szLine, int iShow)
         }
     }
     boardSetFdcTimingEnable(pProperties->emulation.enableFdcTiming);
+    boardSetNoSpriteLimits(pProperties->emulation.noSpriteLimits);
     boardSetY8950Enable(pProperties->sound.chip.enableY8950);
     boardSetYm2413Enable(pProperties->sound.chip.enableYM2413);
     boardSetMoonsoundEnable(pProperties->sound.chip.enableMoonsound);

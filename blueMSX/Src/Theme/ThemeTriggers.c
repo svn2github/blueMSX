@@ -152,6 +152,10 @@ int themeTriggerFdcTiming() {
     return boardGetFdcTimingEnable();
 }
 
+int themeTriggerNoSpriteLimits() {
+    return boardGetNoSpriteLimits();
+}
+
 int themeTriggerLedDiskA() {
     return ledGetFdd1(); 
 }

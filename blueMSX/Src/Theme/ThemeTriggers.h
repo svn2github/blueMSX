@@ -45,6 +45,7 @@ typedef enum {
 	THEME_TRIGGER_IMG_TURBOR,
 	THEME_TRIGGER_IMG_PAUSE,
     THEME_TRIGGER_IMG_FDCTIMING,
+    THEME_TRIGGER_IMG_NOSPRITELIMITS,
     THEME_TRIGGER_IMG_KBD,
     THEME_TRIGGER_IMG_MOON,
     THEME_TRIGGER_IMG_SFG,
@@ -245,6 +246,7 @@ int themeTriggerEmuStopped();
 int themeTriggerEmuPaused();
 int themeTriggerEmuRunning();
 int themeTriggerFdcTiming();
+int themeTriggerNoSpriteLimits();
 int themeTriggerLedDiskA();
 int themeTriggerLedDiskB();
 int themeTriggerLedCas();

@@ -141,7 +141,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/nodefaultlib:"libcmt.lib" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -176,7 +176,7 @@
       <AdditionalIncludeDirectories>..\..\Src\BuildInfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -202,7 +202,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;winmm.lib;ComCtl32.Lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\Unzip\zlibstat.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;winmm.lib;ComCtl32.Lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\Unzip\zlibstat.lib;comsuppwd.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -241,7 +241,7 @@
       <AdditionalIncludeDirectories>..\..\Src\BuildInfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -278,7 +278,7 @@
       <AdditionalIncludeDirectories>..\..\Src\BuildInfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppw.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -312,7 +312,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/nodefaultlib:"libcmt.lib" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;dxguid.lib;Vfw32.lib;winmm.lib;ComCtl32.Lib;shlwapi.lib;ddraw.lib;dsound.lib;dinput.lib;..\..\Src\ThirdParty\DirectShowSamples\STRMBASE.lib;comsuppwd.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)blueMSX.exe</OutputFile>
       <AdditionalLibraryDirectories>C:\Program Files\Microsoft DirectX SDK (August 2007)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libc.lib;atlthunk.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -346,6 +346,7 @@
     <ClCompile Include="..\..\Src\Win32\Win32Avi.c" />
     <ClCompile Include="..\..\Src\Win32\Win32Bitmap.c" />
     <ClCompile Include="..\..\Src\Win32\Win32Cdrom.c" />
+    <ClCompile Include="..\..\Src\Win32\Win32D3D.cpp" />
     <ClCompile Include="..\..\Src\Win32\Win32Dir.cpp" />
     <ClCompile Include="..\..\Src\Win32\Win32DirectShow.cpp" />
     <ClCompile Include="..\..\Src\Win32\Win32directX.c" />
@@ -639,6 +640,7 @@
     <ClInclude Include="..\..\Src\Memory\romMapperSg1000RamExpander.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperSvi328RsIDE.h" />
     <ClInclude Include="..\..\Src\Utils\ZipFromMem.h" />
+    <ClInclude Include="..\..\Src\Win32\Win32D3D.h" />
     <ClInclude Include="..\..\Src\Win32\Win32Printer.h" />
     <ClInclude Include="..\..\Src\Win32\BlueMSXToolInterface.h" />
     <ClInclude Include="..\..\Src\Win32\Win32Avi.h" />

@@ -250,6 +250,10 @@ void actionToggleSpriteEnable() {
     vdpSetSpritesEnable(!vdpGetSpritesEnable());
 }
 
+void actionToggleNoSpriteLimits() {
+    vdpSetNoSpriteLimits(!vdpGetNoSpritesLimit());
+}
+
 void actionToggleMsxAudioSwitch() {
     state.properties->emulation.audioSwitch = !state.properties->emulation.audioSwitch;
     switchSetAudio(state.properties->emulation.audioSwitch);
@@ -844,6 +848,10 @@ void actionPropShowPorts() {
     archShowPropertiesDialog(PROP_PORTS);
 }
 
+void actionPropShowD3D() {
+    archShowPropertiesDialog(PROP_D3D);
+}
+
 void actionPropShowApearance() {
     archShowPropertiesDialog(PROP_APEARANCE);
 }
@@ -1258,6 +1266,10 @@ void actionRenshaSetLevel(int value) {
 
 void actionSetSpriteEnable(int value) {
     vdpSetSpritesEnable(value);
+}
+
+void actionSetNoSpriteLimits(int value) {
+	vdpSetNoSpriteLimits(value);
 }
 
 void actionSetMsxAudioSwitch(int value) {

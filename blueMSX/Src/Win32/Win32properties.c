@@ -148,6 +148,7 @@ static char* pVideoDriver[] = {
     pVideoDriverData[0],
     pVideoDriverData[1],
     pVideoDriverData[2],
+    pVideoDriverData[3],
     NULL
 };
 
@@ -273,12 +274,14 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         SendMessage(GetDlgItem(hDlg, IDC_EMUFRONTSWITCHGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropEmuFrontSwitchGB());
         
         SetWindowText(GetDlgItem(hDlg, IDC_EMUFDCTIMING),   langPropEmuFdcTiming());
+        SetWindowText(GetDlgItem(hDlg, IDC_NOSPRITELIMITS), langPropEmuNoSpriteLimits());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUFRONTSWITCH), langPropEmuFrontSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUPAUSESWITCH), langPropEmuPauseSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUAUDIOSWITCH), langPropEmuAudioSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUREVERSEPLAY), langPropEmuReversePlay());
         
         setButtonCheck(hDlg, IDC_EMUFDCTIMING,   !pProperties->emulation.enableFdcTiming, 1);
+        setButtonCheck(hDlg, IDC_NOSPRITELIMITS, pProperties->emulation.noSpriteLimits, 1);
         setButtonCheck(hDlg, IDC_EMUFRONTSWITCH, pProperties->emulation.frontSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUPAUSESWITCH, pProperties->emulation.pauseSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUAUDIOSWITCH, pProperties->emulation.audioSwitch, 1);
@@ -358,6 +361,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
             char buffer[64];
 
             pProperties->emulation.enableFdcTiming = !getButtonCheck(hDlg, IDC_EMUFDCTIMING);
+            pProperties->emulation.noSpriteLimits = getButtonCheck(hDlg, IDC_NOSPRITELIMITS);
             pProperties->emulation.frontSwitch = getButtonCheck(hDlg, IDC_EMUFRONTSWITCH);
             pProperties->emulation.pauseSwitch = getButtonCheck(hDlg, IDC_EMUPAUSESWITCH);
             pProperties->emulation.audioSwitch = getButtonCheck(hDlg, IDC_EMUAUDIOSWITCH);
@@ -381,6 +385,144 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
 
         propModified = 1;
         
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void D3DUpdateItems(HWND hDlg, Properties* pProperties)
+{
+    BOOL b = (pProperties->video.d3d.cropType == P_D3D_CROP_SIZE_CUSTOM) ? TRUE : FALSE;
+
+    SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFT), WM_ENABLE, b, 0); 
+    SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHT), WM_ENABLE, b, 0); 
+    SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOP), WM_ENABLE, b, 0); 
+    SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOM), WM_ENABLE, b, 0); 
+
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFTTEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHTTEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOPTEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOMTEXT), b);
+
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFTVALUETEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHTVALUETEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOPVALUETEXT), b);
+    EnableWindow(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOMVALUETEXT), b);
+}
+
+static BOOL CALLBACK D3DDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    static Properties* pProperties;
+
+    const int C_iCropMax = 64;
+
+    switch (iMsg) {
+    case WM_INITDIALOG:    
+        if (!centered) {
+            updateDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES, 0, 1);
+            centered = 1;
+        }
+        pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
+
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_PARAMETERSGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropD3DParametersGB());
+
+		SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_ADDSTRING, 0, (LPARAM)langEnumD3DARAuto());
+        SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_ADDSTRING, 0, (LPARAM)langEnumD3DARStretch());
+        SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_ADDSTRING, 0, (LPARAM)langEnumD3DARPAL());
+        SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_ADDSTRING, 0, (LPARAM)langEnumD3DARNTSC());
+		SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_ADDSTRING, 0, (LPARAM)langEnumD3DAR11());
+        SendDlgItemMessage(hDlg, IDC_D3D_ASPECTRATIO, CB_SETCURSEL, pProperties->video.d3d.aspectRatioType, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_ASPECTRATIOTEXT), WM_SETTEXT, 0, (LPARAM)langPropD3DAspectRatioText());
+
+		setButtonCheck(hDlg, IDC_D3D_LINEARFILTERING, pProperties->video.d3d.linearFiltering, 1);
+		setButtonCheck(hDlg, IDC_D3D_EXTENDBORDERCOLOR, pProperties->video.d3d.extendBorderColor, 1);
+		setButtonCheck(hDlg, IDC_D3D_FORCEHIGHRES, pProperties->video.d3d.forceHighRes, 1);
+
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_LINEARFILTERING), WM_SETTEXT, 0, (LPARAM)langPropD3DLinearFilteringText());
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_EXTENDBORDERCOLOR), WM_SETTEXT, 0, (LPARAM)langPropD3DExtendBorderColorText());
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_FORCEHIGHRES), WM_SETTEXT, 0, (LPARAM)langPropD3DForceHighResText());
+
+
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPINGGROUPBOX), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingGB());
+
+		SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropNone());
+		SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropMSX1());
+		SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropMSX1Plus8());
+        SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropMSX2());
+		SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropMSX2Plus8());
+        SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_ADDSTRING, 0, (LPARAM)langEnumD3DCropCustom());
+        SendDlgItemMessage(hDlg, IDC_D3D_CROPPING_TYPE, CB_SETCURSEL, pProperties->video.d3d.cropType, 0);
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TYPETEXT), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingTypeText());
+
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFTTEXT), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingLeftText());
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHTTEXT), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingRightText());
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOPTEXT), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingTopText());
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOMTEXT), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingBottomText());
+
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFT), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, C_iCropMax));
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHT), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, C_iCropMax));
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOP), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, C_iCropMax));
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOM), TBM_SETRANGE, 0, (LPARAM)MAKELONG(0, C_iCropMax));
+
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFT), TBM_SETPOS, 1,  pProperties->video.d3d.cropLeft);
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHT), TBM_SETPOS, 1, pProperties->video.d3d.cropRight);
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOP), TBM_SETPOS, 1, pProperties->video.d3d.cropTop);
+        SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOM), TBM_SETPOS, 1, pProperties->video.d3d.cropBottom);
+
+        D3DUpdateItems(hDlg, pProperties);
+        return FALSE;
+
+    case WM_NOTIFY:
+        if (((NMHDR FAR*)lParam)->code == PSN_APPLY || ((NMHDR FAR*)lParam)->code == PSN_QUERYCANCEL) {
+            saveDialogPos(GetParent(hDlg), DLG_ID_PROPERTIES);
+        }
+
+        {
+            char acBuffer[32];
+
+            if (wParam == IDC_D3D_CROPPING_LEFT) {
+                pProperties->video.d3d.cropLeft = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFT), TBM_GETPOS, 0, 0);
+                sprintf(acBuffer, "%d", pProperties->video.d3d.cropLeft);
+                SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFTVALUETEXT), WM_SETTEXT, 0, (LPARAM)acBuffer);
+            }
+            if (wParam == IDC_D3D_CROPPING_RIGHT) {
+                pProperties->video.d3d.cropRight = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHT), TBM_GETPOS, 0, 0);
+                sprintf(acBuffer, "%d", pProperties->video.d3d.cropRight);
+                SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHTVALUETEXT), WM_SETTEXT, 0, (LPARAM)acBuffer);
+            }
+            if (wParam == IDC_D3D_CROPPING_TOP) {
+                pProperties->video.d3d.cropTop = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOP), TBM_GETPOS, 0, 0);
+                sprintf(acBuffer, "%d", pProperties->video.d3d.cropTop);
+                SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOPVALUETEXT), WM_SETTEXT, 0, (LPARAM)acBuffer);
+            }
+            if (wParam == IDC_D3D_CROPPING_BOTTOM) {
+                pProperties->video.d3d.cropBottom = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOM), TBM_GETPOS, 0, 0);
+                sprintf(acBuffer, "%d", pProperties->video.d3d.cropBottom);
+                SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOMVALUETEXT), WM_SETTEXT, 0, (LPARAM)acBuffer);
+            }
+        }
+
+        if ((((NMHDR FAR *)lParam)->code) != PSN_APPLY) {
+            return FALSE;
+        }
+
+        return TRUE;
+
+    case WM_COMMAND:
+        pProperties->video.d3d.linearFiltering = getButtonCheck(hDlg, IDC_D3D_LINEARFILTERING);
+        pProperties->video.d3d.extendBorderColor = getButtonCheck(hDlg, IDC_D3D_EXTENDBORDERCOLOR);
+        pProperties->video.d3d.forceHighRes = getButtonCheck(hDlg, IDC_D3D_FORCEHIGHRES);
+
+        pProperties->video.d3d.aspectRatioType = SendMessage(GetDlgItem(hDlg, IDC_D3D_ASPECTRATIO), CB_GETCURSEL, 0, 0);
+        pProperties->video.d3d.cropType = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TYPE), CB_GETCURSEL, 0, 0);
+
+        pProperties->video.d3d.cropBottom = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_BOTTOM), TBM_GETPOS, 0, 0);
+        pProperties->video.d3d.cropTop = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_TOP), TBM_GETPOS, 0, 0);
+        pProperties->video.d3d.cropRight = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_RIGHT), TBM_GETPOS, 0, 0);
+        pProperties->video.d3d.cropLeft = SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPING_LEFT), TBM_GETPOS, 0, 0);
+
+        D3DUpdateItems(hDlg, pProperties);
+        propModified = 1;
         return TRUE;
     }
 
@@ -686,6 +828,7 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
         sprintf(pVideoDriver[0], "%s", langEnumVideoDrvDirectDrawHW());
         sprintf(pVideoDriver[1], "%s", langEnumVideoDrvDirectDraw());
         sprintf(pVideoDriver[2], "%s", langEnumVideoDrvGDI());
+        sprintf(pVideoDriver[3], "%s", langEnumVideoDrvD3D());
 
         sprintf(pVideoFrameSkip[0], "%s", langEnumVideoFrameskip0());
         sprintf(pVideoFrameSkip[1], "%s", langEnumVideoFrameskip1());
@@ -1916,7 +2059,7 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
 int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStartPage, Mixer* mixer, Video* video) {
 	HINSTANCE       hInst = (HINSTANCE)GetModuleHandle(NULL);
-    PROPSHEETPAGE   psp[8];
+    PROPSHEETPAGE   psp[9];
     PROPSHEETHEADER psh;
     Properties oldProp = *pProperties;
     UINT startPage = -1;
@@ -1938,6 +2081,22 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStar
         psp[curPage].lParam = (LPARAM)pProperties;
         psp[curPage].pfnCallback = NULL;
         if (desiredStartPage == PROP_EMULATION || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
+
+    if (appConfigGetInt("properties.d3d", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_D3D);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = D3DDlgProc;
+        psp[curPage].pszTitle = langPropD3D();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_D3D || startPage == -1) {
             startPage = curPage;
         }
         curPage++;

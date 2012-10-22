@@ -47,6 +47,7 @@ typedef struct {
 typedef struct {
     ShotcutHotkey spritesEnable;
     ShotcutHotkey fdcTiming;
+    ShotcutHotkey noSpriteLimits;
     ShotcutHotkey msxAudioSwitch;
     ShotcutHotkey frontSwitch;
     ShotcutHotkey pauseSwitch;
@@ -114,6 +115,7 @@ typedef struct {
     ShotcutHotkey propShowSettings;
     ShotcutHotkey propShowApearance;
     ShotcutHotkey propShowPorts;
+    ShotcutHotkey propShowD3D;
     ShotcutHotkey optionsShowLanguage;
     ShotcutHotkey toolsShowMachineEditor;
     ShotcutHotkey toolsShowShorcutEditor;
