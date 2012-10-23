@@ -28,6 +28,7 @@ LPDIRECT3DDEVICE9       g_pd3dDevice = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVB        = NULL;
 LPDIRECT3DTEXTURE9      g_pTextures[2][2]   = {{NULL, NULL}, {NULL, NULL}};
 bool					g_bCleanUpAsked = false;
+int						g_iCurrentSyncVBlank = -1;
 
 struct CUSTOMVERTEX
 {
@@ -85,7 +86,7 @@ VOID vCleanup()
 }
 
 
-HRESULT iInitResources(HWND hWnd, int iWidth, int iHeight)
+bool bInitResources(HWND hWnd, int iWidth, int iHeight, int iSyncVBlank)
 {
 	D3DPRESENT_PARAMETERS d3dpp;
 	D3DXMATRIX oTranslation;
@@ -96,18 +97,19 @@ HRESULT iInitResources(HWND hWnd, int iWidth, int iHeight)
 	g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 
 	if(!g_pD3D)
-		return E_FAIL;
+		return false;
 
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 
-	d3dpp.Windowed			= true;
-	d3dpp.SwapEffect       = D3DSWAPEFFECT_FLIP;
-	d3dpp.hDeviceWindow    = hWnd;
+	d3dpp.Windowed			   = true;
+	d3dpp.hDeviceWindow        = hWnd;
 
-	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-	d3dpp.BackBufferWidth  = iWidth;
-	d3dpp.BackBufferHeight = iHeight;
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dpp.SwapEffect           = D3DSWAPEFFECT_DISCARD;
+	d3dpp.PresentationInterval = iSyncVBlank ? D3DPRESENT_INTERVAL_IMMEDIATE : D3DPRESENT_INTERVAL_ONE;
+
+	d3dpp.BackBufferFormat     = D3DFMT_UNKNOWN;
+	d3dpp.BackBufferWidth      = iWidth;
+	d3dpp.BackBufferHeight     = iHeight;
 
 	if(FAILED(h = g_pD3D->CreateDevice(
 		D3DADAPTER_DEFAULT,
@@ -116,7 +118,7 @@ HRESULT iInitResources(HWND hWnd, int iWidth, int iHeight)
 		D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 		&d3dpp,
 		&g_pd3dDevice)))
-		return E_FAIL;
+		return false;
 
 	g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
@@ -143,7 +145,7 @@ HRESULT iInitResources(HWND hWnd, int iWidth, int iHeight)
 		D3DFVF_CUSTOMVERTEX,
 		D3DPOOL_DEFAULT,
 		&g_pVB, NULL)))
-		return E_FAIL;
+		return false;
 
 	for(int iZoomX = 0; iZoomX < 2; iZoomX++)
 	{
@@ -158,11 +160,12 @@ HRESULT iInitResources(HWND hWnd, int iWidth, int iHeight)
 				C_iTextureFormat,
 				D3DPOOL_DEFAULT,
 				&g_pTextures[iZoomX][iZoomY])))
-				return E_FAIL;
+				return false;
 		}
 	}
 
-	return S_OK;
+	g_iCurrentSyncVBlank = iSyncVBlank;
+	return true;
 }
 
 
@@ -340,15 +343,23 @@ int D3DUpdateSurface(HWND hWnd, Video* pVideo, int syncVblank, D3DProperties * d
 	RECT sr;
 	float fWs, fHs;
 
-	if (g_bCleanUpAsked)
+	if (g_bCleanUpAsked || (g_iCurrentSyncVBlank != syncVblank))
+	{
 		vCleanup();
+	}
 
 	GetWindowRect(hWnd, &sr);
 	fWs = (float)RECT_WIDTH(sr);
 	fHs = (float)RECT_HEIGHT(sr);
 
 	if (!g_pD3D)
-		iInitResources(hWnd, (int)fWs, (int)fHs);
+	{
+		if (!bInitResources(hWnd, (int)fWs, (int)fHs, syncVblank))
+		{
+			g_bCleanUpAsked = true;
+			return 0;
+		}
+	}
 
 	HRESULT r;
 	r = g_pd3dDevice->TestCooperativeLevel();
@@ -554,6 +565,9 @@ int D3DUpdateSurface(HWND hWnd, Video* pVideo, int syncVblank, D3DProperties * d
 
 			g_pd3dDevice->EndScene();
 			g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+
+			if (!syncVblank)
+				archPollInput();
 		}
 	}
 	else
@@ -564,7 +578,6 @@ int D3DUpdateSurface(HWND hWnd, Video* pVideo, int syncVblank, D3DProperties * d
 			return 0;
 		}
 	}
-
 
 	return 1;
 }
