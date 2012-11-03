@@ -154,7 +154,7 @@ int romMapperKonamiKeyboardMasterCreate(const char* filename, UInt8* romData,
         memcpy(rm->voiceData, voiceData, 0x4000);
     }
 
-    rm->vlm5030 = vlm5030Create(boardGetMixer(), voiceData, 0x4000);
+    rm->vlm5030 = vlm5030Create(boardGetMixer(), rm->voiceData, 0x4000);
     rm->slot  = slot;
     rm->sslot = sslot;
     rm->startPage  = startPage;

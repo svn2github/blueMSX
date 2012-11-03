@@ -196,9 +196,19 @@ void __stdcall toolStep()
     dbgStep();
 }
 
+void __stdcall toolStepBack()
+{
+    dbgStepBack();
+}
+
 void __stdcall toolSetBreakpoint(UInt16 address)
 {
     dbgSetBreakpoint(address);
+}
+
+void __stdcall toolClearBreakpoint(UInt16 address)
+{
+    dbgClearBreakpoint(address);
 }
 
 void __stdcall toolEnableVramAccessCheck(int enable)
@@ -206,9 +216,14 @@ void __stdcall toolEnableVramAccessCheck(int enable)
     dbgEnableVramAccessCheck(enable);
 }
 
-void __stdcall toolClearBreakpoint(UInt16 address)
+void __stdcall toolSetWatchpoint(DeviceType devType, int address, DbgWatchpointCondition condition, UInt32 referenceValue, int size)
 {
-    dbgClearBreakpoint(address);
+    dbgSetWatchpoint((DbgDeviceType)devType, address, condition, referenceValue, size);
+}
+
+void __stdcall toolClearWatchpoint(DeviceType devType, int address)
+{
+    dbgClearWatchpoint((DbgDeviceType)devType, address);
 }
 
 int __stdcall toolWriteMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size)
@@ -264,6 +279,9 @@ static Interface toolInterface = {
     toolGetPath,
     toolGetEmulatorVersion,
     toolEnableVramAccessCheck,
+    toolSetWatchpoint,
+    toolClearWatchpoint,
+    toolStepBack,
 };
 
 void toolLoadAll(const char* path, int languageId)

@@ -41,6 +41,8 @@ public:
     virtual void enableEdit();
     virtual void disableEdit();
 
+    HWND getOwner() { return owner; }
+
     virtual LRESULT wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam) = 0;
 
     void updateWindowPos(WINDOWPOS* windowPos);

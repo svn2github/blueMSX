@@ -353,6 +353,13 @@ void dbgStep()
     }
 }
 
+void dbgStepBack()
+{
+    if (emulatorGetState() == EMU_PAUSED) {
+        actionEmuStepBack();
+    }
+}
+
 void dbgSetBreakpoint(UInt16 address)
 {
     boardSetBreakpoint(address);
@@ -373,3 +380,12 @@ void dbgEnableVramAccessCheck(int enable)
     }
 }    
 
+void dbgSetWatchpoint(DbgDeviceType devType, int address, DbgWatchpointCondition condition, UInt32 referenceValue, int size)
+{
+    debugDeviceSetMemoryWatchpoint(devType, address, condition, referenceValue, size);
+}
+
+void dbgClearWatchpoint(DbgDeviceType devType, int address)
+{
+    debugDeviceClearMemoryWatchpoint(devType, address);
+}

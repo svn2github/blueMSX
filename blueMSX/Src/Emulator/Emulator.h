@@ -32,7 +32,7 @@
 #include "Properties.h"
 #include "AudioMixer.h"
 
-typedef enum { EMU_RUNNING, EMU_PAUSED, EMU_STOPPED, EMU_SUSPENDED, EMU_STEP } EmuState;
+typedef enum { EMU_RUNNING, EMU_PAUSED, EMU_STOPPED, EMU_SUSPENDED, EMU_STEP, EMU_STEP_BACK } EmuState;
 
 void emulatorInit(Properties* properties, Mixer* mixer);
 void emulatorExit();

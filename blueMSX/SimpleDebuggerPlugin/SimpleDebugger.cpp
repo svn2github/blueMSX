@@ -5,6 +5,7 @@
 #include "Toolbar.h"
 #include "Disassembly.h"
 #include "Callstack.h"
+#include "Breakpoints.h"
 #include "Stack.h"
 #include "CpuRegisters.h"
 #include "SymbolInfo.h"
@@ -13,6 +14,7 @@
 #include "IoPorts.h"
 #include "Language.h"
 #include "IniFileParser.h"
+#include "InputDialogs.h"
 #include "resrc1.h"
 #include <string>
 #include <commctrl.h>
@@ -32,7 +34,9 @@ static Toolbar* toolBar = NULL;
 static Disassembly* disassembly = NULL;
 static StackWindow* stack = NULL;
 static CallstackWindow* callstack = NULL;
+static Breakpoints* breakpoints = NULL;
 static CpuRegisters* cpuRegisters = NULL;
+static InputDialogs* inputDialogs = NULL;
 static PeripheralRegs* periRegisters = NULL;
 static IoPortWindow* ioPorts = NULL;
 static SymbolInfo* symbolInfo = NULL;
@@ -56,6 +60,11 @@ static int vramCheckAccess = 0;
 #define TB_BPENALL   37011
 #define TB_BPDISALL  37012
 #define TB_BPREMALL  37013
+#define TB_STEPBACK  37014
+
+HWND getRootHwnd() {
+    return dbgHwnd;
+}
 
 void handleKeyboardInput(WPARAM wParam)
 {
@@ -87,6 +96,8 @@ void handleKeyboardInput(WPARAM wParam)
     if ( mod ==  0                        && key == VK_F3)     SendMessage(hwnd, WM_HOTKEY, 17, 0);
     if ( mod ==  0                        && key == VK_HOME)   SendMessage(hwnd, WM_HOTKEY, 18, 0);
     if ( mod ==  MOD_CONTROL              && key == 'V')       SendMessage(hwnd, WM_HOTKEY, 19, 0);
+    if ( mod ==  MOD_CONTROL              && key == VK_F11)    SendMessage(hwnd, WM_HOTKEY, 20, 0);
+    if ( mod ==  MOD_CONTROL              && key == 'W')       SendMessage(hwnd, WM_HOTKEY, 21, 0);
 }
 
 static void updateTooltip(int id, char* str)
@@ -98,6 +109,7 @@ static void updateTooltip(int id, char* str)
     case TB_RUN:      sprintf(str, Language::toolbarRun);           break;
     case TB_SHOWNEXT: sprintf(str, Language::toolbarShowNext);      break;
     case TB_STEPIN:   sprintf(str, Language::toolbarStepIn);        break;
+    case TB_STEPBACK: sprintf(str, Language::toolbarStepBack);      break;
     case TB_STEPOVER: sprintf(str, Language::toolbarStepOver);      break;
     case TB_STEPOUT:  sprintf(str, Language::toolbarStepOut);       break;
     case TB_RUNTO:    sprintf(str, Language::toolbarRunTo);         break;
@@ -120,6 +132,7 @@ static Toolbar* initializeToolbar(HWND owner)
     toolBar->addButton(3,  TB_RUN);
     toolBar->addSeparator();
     toolBar->addButton(4,  TB_SHOWNEXT);
+    toolBar->addButton(15, TB_STEPBACK);
     toolBar->addButton(5,  TB_STEPIN);
     toolBar->addButton(6,  TB_STEPOVER);
     toolBar->addButton(8,  TB_STEPOUT);
@@ -155,9 +168,9 @@ static void updateToolBar()
 
     toolBar->enableItem(12, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
     toolBar->enableItem(13, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());
-    toolBar->enableItem(14, disassembly->getDisabledBpCount() > 0);
-    toolBar->enableItem(15, disassembly->getEnabledBpCount() > 0);
-    toolBar->enableItem(16, disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount());
+    toolBar->enableItem(14, breakpoints->getDisabledBpCount() > 0);
+    toolBar->enableItem(15, breakpoints->getEnabledBpCount() > 0);
+    toolBar->enableItem(16, breakpoints->getEnabledBpCount() || breakpoints->getDisabledBpCount());
 }
 
 static void updateStatusBar()
@@ -204,6 +217,8 @@ static void updateStatusBar()
 #define MENU_DEBUG_FIND             37217
 #define MENU_DEBUG_FINDNEXT         37218
 #define MENU_DEBUG_CHECK_VRAM       37219
+#define MENU_DEBUG_STEP_BACK        37220
+#define MENU_DEBUG_SETWP            37221
 
 #define MENU_WINDOW_DISASSEMBLY     37300
 #define MENU_WINDOW_CPUREGISTERS    37301
@@ -212,6 +227,7 @@ static void updateStatusBar()
 #define MENU_WINDOW_MEMORY          37304
 #define MENU_WINDOW_PERIREGISTERS   37305
 #define MENU_WINDOW_IOPORTS         37306
+#define MENU_WINDOW_BREAKPOINTS     37307
 
 #define MENU_HELP_ABOUT             37400
 
@@ -252,6 +268,8 @@ static void updateWindowMenu()
         sprintf(buf, "%s\tCtrl+Shift+F5", Language::menuDebugRestart);
         AppendMenu(hMenuDebug, MF_STRING                                              , MENU_DEBUG_RESTART,  buf);
     }
+    sprintf(buf, "%s\tCtrl+F11", Language::menuDebugStepBack);
+    AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP_BACK, buf);
     sprintf(buf, "%s\tF11", Language::menuDebugStepIn);
     AppendMenu(hMenuDebug, MF_STRING | (state == EMULATOR_PAUSED                  ? 0 : MF_GRAYED), MENU_DEBUG_STEP, buf);
     sprintf(buf, "%s\tF10", Language::menuDebugStepOver);
@@ -286,13 +304,21 @@ static void updateWindowMenu()
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_BPTOGGLE, buf);
     sprintf(buf, "%s\tShift+F9", Language::menuDebugEnable);
     AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isBpOnCcursor() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLE, buf);
-    sprintf(buf, "%s\tCtrl+Shift+F9", Language::menuDebugRemoveAll);
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, buf);
 
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    sprintf(buf, "%s\tCtrl+W", Language::menuDebugWpAdd);
+    AppendMenu(hMenuDebug, MF_STRING | (state != EMULATOR_STOPPED && disassembly->isCursorPresent() ? 0 : MF_GRAYED), MENU_DEBUG_SETWP, buf);
+
+    AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
+
+    sprintf(buf, "%s\tCtrl+Shift+F9", Language::menuDebugRemoveAll);
+    AppendMenu(hMenuDebug, MF_STRING | (breakpoints->getEnabledBpCount() || breakpoints->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPREMOVEALL, buf);
     sprintf(buf, "%s", Language::menuDebugEnableAll);
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, buf);
+    AppendMenu(hMenuDebug, MF_STRING | (breakpoints->getDisabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPENABLEALL, buf);
     sprintf(buf, "%s", Language::menuDebugDisableAll);
-    AppendMenu(hMenuDebug, MF_STRING | (disassembly->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, buf);
+    AppendMenu(hMenuDebug, MF_STRING | (breakpoints->getEnabledBpCount() ? 0 : MF_GRAYED), MENU_DEBUG_BPDISABLEALL, buf);
+
 
     AppendMenu(hMenuDebug, MF_SEPARATOR, 0, NULL);
 
@@ -315,6 +341,8 @@ static void updateWindowMenu()
     AppendMenu(hMenuWindow, MF_STRING | (stack        && stack->isVisible()        ? MFS_CHECKED : 0), MENU_WINDOW_STACK, buf);
     sprintf(buf, "%s", Language::windowCallstack);
     AppendMenu(hMenuWindow, MF_STRING | (callstack    && callstack->isVisible()    ? MFS_CHECKED : 0), MENU_WINDOW_CALLSTACK, buf);
+    sprintf(buf, "%s", Language::windowBreakpoints);
+    AppendMenu(hMenuWindow, MF_STRING | (breakpoints  && breakpoints->isVisible()  ? MFS_CHECKED : 0), MENU_WINDOW_BREAKPOINTS, buf);
     sprintf(buf, "%s", Language::windowMemory);
     AppendMenu(hMenuWindow, MF_STRING | (memory       && memory->isVisible()       ? MFS_CHECKED : 0), MENU_WINDOW_MEMORY, buf);
     sprintf(buf, "%s", Language::windowPeripheralRegisters);
@@ -562,10 +590,20 @@ void saveMemory(HWND hwndOwner)
     memory->writeToFile(pFileName);
 }
 
+static bool inUpdate = false;
 void DebuggerUpdate()
 {
+    if (inUpdate) return;
+    inUpdate = true;
     updateToolBar();
     updateWindowMenu();
+    if (disassembly != NULL) {
+        disassembly->refresh();
+    }
+    if (breakpoints != NULL) {
+        breakpoints->updateContent();
+    }
+    inUpdate = false;
 }
 
 
@@ -701,112 +739,8 @@ static void updateWindowPositions()
     }
 }
 
-
-struct AddrProcData {
-    AddrProcData(const char* c) : caption(c), address(0) {}
-    const char* caption;
-    WORD address;
-};
-
-static BOOL CALLBACK addrProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    static HexInputDialog* addressInput = NULL;
-    static AddrProcData * procData = NULL;
-
-    switch (iMsg) {  
-    case WM_INITDIALOG:
-        procData = (AddrProcData*)lParam;
-        SetWindowText(hDlg, procData->caption);
-        SendDlgItemMessage(hDlg, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::gotoWindowText);
-        SetWindowText(GetDlgItem(hDlg, IDOK), Language::genericOk);
-        SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::genericCancel);
-        if (addressInput) {
-            delete addressInput;
-        }
-        addressInput = new HexInputDialog(hDlg, 10,30,249,22,6, true, symbolInfo, cpuRegisters);
-        addressInput->setFocus();
-        
-        return FALSE;
-
-    case WM_COMMAND:
-        switch (wParam) {
-        case IDOK:
-            procData->address = (WORD)addressInput->getValue();
-            EndDialog(hDlg, TRUE);
-            return TRUE;
-        case IDCANCEL:
-            EndDialog(hDlg, FALSE);
-            return TRUE;
-        }
-        break;
-        
-    case HexInputDialog::EC_NEWVALUE:
-        procData->address = (WORD)addressInput->getValue();
-        EndDialog(hDlg, TRUE);
-        return FALSE;
-
-    case WM_CLOSE:
-        EndDialog(hDlg, FALSE);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-struct FindProcData {
-    FindProcData(const char* c) : caption(c) { value[0] = 0; }
-    const char* caption;
-    char        value[128];
-};
-
-static BOOL CALLBACK findProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
-{
-    static TextInputDialog* dataInput = NULL;
-    static FindProcData * procData = NULL;
-
-    switch (iMsg) {  
-    case WM_INITDIALOG:
-        procData = (FindProcData*)lParam;
-        SetWindowText(hDlg, procData->caption);
-        SendDlgItemMessage(hDlg, IDC_TEXT_ADDRESS, WM_SETTEXT, 0, (LPARAM)Language::findWindowText);
-        SetWindowText(GetDlgItem(hDlg, IDOK), Language::genericOk);
-        SetWindowText(GetDlgItem(hDlg, IDCANCEL), Language::genericCancel);
-        if (dataInput) {
-            delete dataInput;
-        }
-        dataInput = new TextInputDialog(hDlg, 10, 30, 249, 22, 128, true);
-        dataInput->setFocus();
-        
-        return FALSE;
-
-    case WM_COMMAND:
-        switch (wParam) {
-        case IDOK:
-            strcpy(procData->value, dataInput->getValue());
-            EndDialog(hDlg, TRUE);
-            return TRUE;
-        case IDCANCEL:
-            EndDialog(hDlg, FALSE);
-            return TRUE;
-        }
-        break;
-        
-    case TextInputDialog::EC_NEWVALUE:
-        strcpy(procData->value, dataInput->getValue());
-        EndDialog(hDlg, TRUE);
-        return FALSE;
-
-    case WM_CLOSE:
-        EndDialog(hDlg, FALSE);
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
 static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    static char findData[512];
     static BOOL isActive = FALSE;
 
     switch (iMsg) {
@@ -826,7 +760,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             minimizedState = HIWORD(wParam);
         }
 
-#ifndef _DEBUG
+#ifndef _DEBUGx
         if (isActive) {
             RegisterHotKey(hwnd, 1,  0, VK_F5);
             RegisterHotKey(hwnd, 2,  MOD_CONTROL | MOD_ALT, VK_CANCEL);
@@ -847,10 +781,12 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             RegisterHotKey(hwnd, 17, 0, VK_F3);
             RegisterHotKey(hwnd, 18, 0, VK_HOME);
             RegisterHotKey(hwnd, 19, MOD_CONTROL, 'V');
+            RegisterHotKey(hwnd, 20, MOD_CONTROL, VK_F11);
+            RegisterHotKey(hwnd, 21, MOD_CONTROL, 'W');
         }
         else {
             int i;
-            for (i = 1; i <= 19; i++) {
+            for (i = 1; i <= 20; i++) {
                 UnregisterHotKey(hwnd, i);
             }
         }
@@ -900,7 +836,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPENABLE, 0);
                 break;
             case 11:
-                if (disassembly->getEnabledBpCount() || disassembly->getDisabledBpCount())
+                if (breakpoints->getEnabledBpCount() || breakpoints->getDisabledBpCount())
                     SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_BPREMOVEALL, 0);
                 break;
             case 12:
@@ -930,6 +866,14 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
                 break;
             case 19:
                 SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_CHECK_VRAM, 0);
+                break;
+            case 20:
+                if (GetEmulatorState() == EMULATOR_PAUSED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_STEP_BACK, 0);
+                break;
+            case 21:
+                if (GetEmulatorState() != EMULATOR_STOPPED)
+                    SendMessage(hwnd, WM_COMMAND, MENU_DEBUG_SETWP, 0);
                 break;
             }
         }
@@ -1022,6 +966,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             updateWindowMenu();
             return 0;
 
+        case MENU_WINDOW_BREAKPOINTS:
+            if (breakpoints->isVisible()) {
+                breakpoints->hide(); 
+            }
+            else {
+                breakpoints->show();
+            }
+            updateWindowMenu();
+            return 0;
+
         case MENU_WINDOW_MEMORY:
             if (memory->isVisible()) {
                 memory->hide(); 
@@ -1061,11 +1015,16 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         case TB_STEPIN:
             EmulatorStep();
             return 0;
+            
+        case MENU_DEBUG_STEP_BACK:
+        case TB_STEPBACK:
+            EmulatorStepBack();
+            return 0;
 
         case MENU_DEBUG_STEP_OVER:
         case TB_STEPOVER:
             {
-                bool step = disassembly->setStepOverBreakpoint();
+                bool step = breakpoints->setStepOverBreakpoint(disassembly->getMemory(), disassembly->getPc());
                 if (step) {
                     EmulatorStep();
                 }
@@ -1077,34 +1036,26 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
 
         case MENU_DEBUG_STEP_OUT:
         case TB_STEPOUT:
-            disassembly->setStepOutBreakpoint((WORD)callstack->getMostRecent());
+            breakpoints->setStepOutBreakpoint(disassembly->getMemory(), (UInt16)callstack->getMostRecent());
             EmulatorRun();
             return 0;
             
         case MENU_DEBUG_RUNTO:
         case TB_RUNTO:
-            disassembly->setRuntoBreakpoint();
+            breakpoints->setRuntoBreakpoint(disassembly->getCurrentAddress());
             EmulatorRun();
             return 0;
 
         case MENU_DEBUG_SETBP:
-            {
-                AddrProcData procData(Language::setBpWindowCaption);
-                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_SETBP), hwnd, addrProc, (LPARAM)&procData);
-                if (rv) {
-                    disassembly->toggleBreakpoint(procData.address, true);
-                }
-            }
+            InputDialogs::NewBreakpoint();
+            return 0;
+
+        case MENU_DEBUG_SETWP:
+            InputDialogs::NewWatchpoint();
             return 0;
 
         case MENU_DEBUG_GOTO:
-             {
-                AddrProcData procData(Language::gotoWindowCaption);
-                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_GOTO), hwnd, addrProc, (LPARAM)&procData);
-                if (rv) {
-                    disassembly->setCursor(procData.address);
-                }
-            }
+            InputDialogs::GotoAddress();
             return 0;
 
         case MENU_DEBUG_CHECK_VRAM:
@@ -1114,18 +1065,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             return 0;
 
         case MENU_DEBUG_FIND:
-             {
-                FindProcData procData(Language::findWindowCaption);
-                BOOL rv = DialogBoxParam(GetDllHinstance(), MAKEINTRESOURCE(IDD_FIND), hwnd, findProc, (LPARAM)&procData);
-                if (rv) {
-                    strcpy(findData, procData.value);
-                    memory->findData(findData);
-                }
-            }
+            InputDialogs::FindText();
             return 0;
 
         case MENU_DEBUG_FINDNEXT:
-            memory->findData(findData);
+            InputDialogs::FindNextText();
             return 0;
 
         case MENU_DEBUG_SHOWSYMBOLS:
@@ -1143,27 +1087,32 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
             
         case MENU_DEBUG_BPTOGGLE:
         case TB_BPTOGGLE:
-            disassembly->toggleBreakpoint();
+            if (Breakpoints::IsBreakpointSet(disassembly->getCurrentAddress())) {
+                Breakpoints::ClearBreakpoint(disassembly->getCurrentAddress());
+            }
+            else {
+                Breakpoints::SetBreakpoint(disassembly->getCurrentAddress());
+            }
             return 0;
             
         case MENU_DEBUG_BPENABLE:
         case TB_BPENABLE:
-            disassembly->toggleBreakpointEnable();
+            Breakpoints::ToggleBreakpointEnable(disassembly->getCurrentAddress());
             return 0;
             
         case MENU_DEBUG_BPREMOVEALL:
         case TB_BPREMALL:
-            disassembly->clearAllBreakpoints();
+            breakpoints->clearAllBreakpoints();
             return 0;
 
         case MENU_DEBUG_BPENABLEALL:
         case TB_BPENALL:
-            disassembly->enableAllBreakpoints();
+            breakpoints->enableAllBreakpoints();
             return 0;
 
         case MENU_DEBUG_BPDISABLEALL:
         case TB_BPDISALL:
-            disassembly->disableAllBreakpoints();
+            breakpoints->disableAllBreakpoints();
             return 0;
 
         case MENU_DEBUG_FLAGMODE:
@@ -1242,7 +1191,7 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         iniFileWriteInt( "Main Window", "height",  height);
         iniFileWriteInt( "Main Window", "check vram access",  vramCheckAccess);
 
-        disassembly->clearAllBreakpoints();
+        breakpoints->clearAllBreakpoints();
         dbgHwnd = NULL;
         delete statusBar;
         statusBar = NULL;
@@ -1252,9 +1201,11 @@ static LRESULT CALLBACK wndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lPar
         
         if (disassembly) { DestroyWindow(disassembly->hwnd); delete disassembly; disassembly = NULL; }
         if (cpuRegisters) {DestroyWindow(cpuRegisters->hwnd); delete cpuRegisters; cpuRegisters = NULL; }
+        if (inputDialogs) {delete inputDialogs; inputDialogs = NULL; }
         if (periRegisters) {DestroyWindow(periRegisters->hwnd); delete periRegisters; periRegisters = NULL; }
         if (ioPorts) {DestroyWindow(ioPorts->hwnd); delete ioPorts; ioPorts = NULL; }
         if (callstack) {DestroyWindow(callstack->hwnd); delete callstack; callstack = NULL; }
+        if (breakpoints) {DestroyWindow(breakpoints->hwnd); delete breakpoints; breakpoints = NULL; }
         if (stack) {DestroyWindow(stack->hwnd); delete stack; stack = NULL; }
         if (memory) {DestroyWindow(memory->hwnd); delete memory; memory = NULL; }
         
@@ -1348,12 +1299,14 @@ void OnShowTool() {
     statusBar->show();
     toolBar = initializeToolbar(dbgHwnd);
     toolBar->show();
-
-    disassembly   = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo);
+    
+    breakpoints   = new Breakpoints(GetDllHinstance(), viewHwnd, symbolInfo);
+    disassembly   = new Disassembly(GetDllHinstance(), viewHwnd, symbolInfo, breakpoints);
     cpuRegisters  = new CpuRegisters(GetDllHinstance(), viewHwnd);
     callstack     = new CallstackWindow(GetDllHinstance(), viewHwnd, disassembly);
     stack         = new StackWindow(GetDllHinstance(), viewHwnd);
     memory        = new Memory(GetDllHinstance(), viewHwnd, symbolInfo, cpuRegisters);
+    inputDialogs  = new InputDialogs(GetDllHinstance(), viewHwnd, disassembly, symbolInfo, cpuRegisters, memory, breakpoints);
     periRegisters = new PeripheralRegs(GetDllHinstance(), viewHwnd);
     ioPorts       = new IoPortWindow(GetDllHinstance(), viewHwnd);
     
@@ -1377,12 +1330,13 @@ void OnEmulatorStart() {
         memory->invalidateContent();
         ioPorts->invalidateContent();
 
-        disassembly->updateBreakpoints();
+        breakpoints->updateBreakpoints();
         disassembly->disableEdit();
         cpuRegisters->disableEdit();
         periRegisters->disableEdit();
         ioPorts->disableEdit();
         callstack->disableEdit();
+        breakpoints->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
@@ -1404,6 +1358,7 @@ void OnEmulatorStop() {
         periRegisters->disableEdit();
         ioPorts->disableEdit();
         callstack->disableEdit();
+        breakpoints->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
@@ -1417,6 +1372,7 @@ void OnEmulatorPause() {
         periRegisters->enableEdit();
         ioPorts->enableEdit();
         callstack->enableEdit();
+        breakpoints->enableEdit();
         stack->enableEdit();
         memory->enableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
@@ -1430,6 +1386,7 @@ void OnEmulatorResume() {
         periRegisters->disableEdit();
         ioPorts->enableEdit();
         callstack->disableEdit();
+        breakpoints->disableEdit();
         stack->disableEdit();
         memory->disableEdit();
         SendMessage(dbgHwnd, WM_STATUS, 0, 0);
@@ -1445,9 +1402,7 @@ void OnEmulatorTrace(const char* message)
 
 void OnEmulatorSetBreakpoint(UInt16 address)
 {
-    if (disassembly != NULL) {
-        disassembly->toggleBreakpoint(address, true);
-    }
+    Breakpoints::SetBreakpoint(address);
 }
 
 void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address) {

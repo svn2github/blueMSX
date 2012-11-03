@@ -605,6 +605,9 @@ int boardRemoveExternalDevices()
      return 1;
 }
 
+void boardRewindOne() {
+}
+
 void boardRewind()
 {
     char stateFile[8];

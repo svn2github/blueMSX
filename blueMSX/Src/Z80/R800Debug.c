@@ -161,6 +161,23 @@ static void breakpointCb(R800Debug* dbg, UInt16 pc)
 {
     boardOnBreakpoint(pc);
 }
+  
+UInt8 readMem(void* ref, int address) {
+    if (address < 0x10000) {
+        return slotPeek(NULL, (UInt16)address);
+    }
+    return 0xff;
+}
+
+static void watchpointMemCb(R800Debug* dbg, UInt16 address, UInt8 value) 
+{
+    tryWatchpoint(DBGTYPE_CPU, address, value, dbg, readMem); 
+}
+
+static void watchpointIoCb(R800Debug* dbg, UInt16 port, UInt8 value) 
+{
+    tryWatchpoint(DBGTYPE_PORT, port, value, dbg, NULL); 
+}
 
 static void debugCb(R800Debug* dbg, int command, const char* data) 
 {
@@ -191,9 +208,11 @@ void r800DebugCreate(R800* r800)
     dbg->r800 = r800;
     dbg->debugHandle = debugDeviceRegister(DBGTYPE_CPU, langDbgDevZ80(), &dbgCallbacks, dbg);
 
-    r800->debugCb      = debugCb;
-    r800->breakpointCb = breakpointCb;
-    r800->trapCb       = trapCb;
+    r800->debugCb           = debugCb;
+    r800->breakpointCb      = breakpointCb;
+    r800->trapCb            = trapCb;
+    r800->watchpointMemCb   = watchpointMemCb;
+    r800->watchpointIoCb    = watchpointIoCb;
 }
 
 void r800DebugDestroy()

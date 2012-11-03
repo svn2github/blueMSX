@@ -1121,6 +1121,10 @@ static UInt8 readStatus(VDP* vdp, UInt16 ioPort)
 
     return vdpStatus;
 }
+
+static UInt8 peekVram(VDP* vdp, int address) {
+    return vdp->vram[address];
+}
                   
 static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
 {
@@ -1134,6 +1138,8 @@ static void write(VDP* vdp, UInt16 ioPort, UInt8 value)
         int index = MAP_VRAMINDEX(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress);
         if (!(index & ~vdp->vramAccMask)) {
             vdp->vram[index] = value;
+
+            tryWatchpoint(DBGTYPE_VIDEO, index, value, vdp, peekVram);
 //        printf("W(0x%.4x): %.2x\n", (vdp->vdpRegs[14] << 14) | vdp->vramAddress, value);
 //            *MAP_VRAM(vdp, (vdp->vdpRegs[14] << 14) | vdp->vramAddress) = value;
         }

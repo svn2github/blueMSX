@@ -27,15 +27,20 @@
 
 #include "DbgWindow.h"
 #include "SymbolInfo.h"
+#include "Breakpoints.h"
 #include <windows.h>
 #include <map>
+#include <vector>
 
 class Disassembly : public DbgWindow {
 public:
-    Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo);
+    Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo, Breakpoints* breakpoints);
     ~Disassembly();
 
     void refresh();
+    
+    static int dasm(SymbolInfo* symbolInfo, const UInt8* memory, WORD PC, char* dest);
+    static UInt16 GetPc();
 
     WORD dasm(WORD PC, char* dest);
     
@@ -44,23 +49,14 @@ public:
     void updateContent(BYTE* memory, WORD pc);
     void invalidateContent();
     void updateScroll(int address = -1);
-    void updateBreakpoints();
-    bool setStepOverBreakpoint();
-    void setStepOutBreakpoint(WORD address);
-    void setRuntoBreakpoint();
-    void clearRuntoBreakpoint();
     void setCursor(WORD address);
-    int  getEnabledBpCount()  { return bpEnabledCount; }
-    int  getDisabledBpCount() { return bpDisabledCount; }
+    UInt16 getPc() { return backupPc; }
+    const BYTE* getMemory() { return backupMemory; }
+    int getCurrentAddress() { return currentLine < 0 ? -1 : lineInfo[currentLine].address; }
 
-    bool isBpOnCcursor() { return currentLine >= 0 && breakpoint[lineInfo[currentLine].address] != BP_NONE; }
+
+    bool isBpOnCcursor() { return currentLine >= 0 && Breakpoints::IsBreakpointUnset(lineInfo[currentLine].address); }
     bool isCursorPresent()    { return currentLine >= 0; }
-
-    void toggleBreakpoint(int address = -1, bool setAlways = false);
-    void toggleBreakpointEnable();
-    void enableAllBreakpoints();
-    void disableAllBreakpoints();
-    void clearAllBreakpoints();
 
     bool writeToFile(const char* fileName);
 
@@ -68,7 +64,6 @@ public:
 
 private:
 
-    int dasm(BYTE* memory, WORD PC, char* dest);
     void scrollWindow(int sbAction);
     void drawText(int top, int bottom);
 
@@ -85,8 +80,6 @@ private:
 
     int    textHeight;
     int    textWidth;
-
-    enum BpState { BP_NONE = 0, BP_SET = 1, BP_DISABLED = 2 };
     
     struct LineInfo {
         WORD address;
@@ -100,15 +93,11 @@ private:
         int  dataTextLength;
     };
 
-    int      runtoBreakpoint;
     int      programCounter;
     int      firstVisibleLine;
     int      lineCount;
     int      currentLine;
     LineInfo lineInfo[0x20000];
-    int      bpEnabledCount;
-    int      bpDisabledCount;
-    BpState  breakpoint[0x10000];
     int      linePos;
     bool     hasKeyboardFocus;
 
@@ -116,6 +105,7 @@ private:
     WORD backupPc;
 
     SymbolInfo* symbolInfo;
+    Breakpoints* breakpoints;
 };
 
 

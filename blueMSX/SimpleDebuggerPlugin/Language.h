@@ -42,6 +42,7 @@ public:
     static const char* toolbarRun;
     static const char* toolbarShowNext;
     static const char* toolbarStepIn;
+    static const char* toolbarStepBack;
     static const char* toolbarStepOver;
     static const char* toolbarStepOut;
     static const char* toolbarRunTo;
@@ -64,6 +65,7 @@ public:
     static const char* menuDebugStop;
     static const char* menuDebugRestart;
     static const char* menuDebugStepIn;
+    static const char* menuDebugStepBack;
     static const char* menuDebugStepOver;
     static const char* menuDebugStepOut;
     static const char* menuDebugRunTo;
@@ -71,6 +73,7 @@ public:
     static const char* menuDebugGoto;
     static const char* menuDebugFind;
     static const char* menuDebugBpAdd;
+    static const char* menuDebugWpAdd;
     static const char* menuDebugBpToggle;
     static const char* menuDebugEnable;
     static const char* menuDebugRemoveAll;
@@ -92,6 +95,7 @@ public:
     static const char* windowStack;
     static const char* windowStackUnavail;
     static const char* windowCallstack;
+    static const char* windowBreakpoints;
     static const char* windowCallstackUnavail;
     static const char* windowMemory;
     static const char* windowPeripheralRegisters;
@@ -101,8 +105,9 @@ public:
     static const char* memWindowAddress;
 
     static const char* memWindowRegisters;
-
+    
     static const char* setBpWindowCaption;
+    static const char* setWpWindowCaption;
     static const char* gotoWindowCaption;
     static const char* gotoWindowText;
     static const char* findWindowCaption;

@@ -69,6 +69,19 @@ struct YM2151 {
 
 void ym2151TimerStart(void* ptr, int timer, int start);
 
+
+void ym2151TimerSet(void* ref, int timer, int count)
+{
+    YM2151* ym2151 = (YM2151*)ref;
+
+    if (timer == 0) {
+        ym2151->timerValue1 = count;
+    }
+    else {
+        ym2151->timerValue2 = count;
+    }
+}
+
 void ym2151SetIrq(void* ptr, int timer)
 {
     YM2151* ym2151 = (YM2151*)ptr;
@@ -270,8 +283,14 @@ void ym2151Destroy(YM2151* ym2151)
 
 void ym2151Reset(YM2151* ym2151)
 {
-    ym2151TimerStart(ym2151, 0, ym2151->timerValue1);
-    ym2151TimerStart(ym2151, 1, ym2151->timerValue2);
+    ym2151->timerRunning1 = 0;
+    ym2151->timerRunning2 = 0;
+    ym2151TimerSet(ym2151, 0, 1024);
+    ym2151TimerSet(ym2151, 1, 16 * 256);
+    ym2151TimerStart(ym2151, 0, 0);
+    ym2151TimerStart(ym2151, 1, 0);
+//    ym2151TimerStart(ym2151, 0, ym2151->timerValue1);
+//    ym2151TimerStart(ym2151, 1, ym2151->timerValue2);
     YM2151ResetChip(ym2151->opl);
     ym2151->off = 0;
     ym2151->s1l = 0;
@@ -295,8 +314,6 @@ YM2151* ym2151Create(Mixer* mixer)
     ym2151 = (YM2151*)calloc(1, sizeof(YM2151));
 
     ym2151->mixer = mixer;
-    ym2151->timerRunning1 = 0;
-    ym2151->timerRunning2 = 0;
 
     ym2151->timer1 = boardTimerCreate(onTimeout1, ym2151);
     ym2151->timer2 = boardTimerCreate(onTimeout2, ym2151);
@@ -307,17 +324,8 @@ YM2151* ym2151Create(Mixer* mixer)
     
     ym2151->rate = mixerGetSampleRate(mixer);
 
+    ym2151Reset(ym2151);
+
     return ym2151;
 }
 
-void ym2151TimerSet(void* ref, int timer, int count)
-{
-    YM2151* ym2151 = (YM2151*)ref;
-
-    if (timer == 0) {
-        ym2151->timerValue1 = count;
-    }
-    else {
-        ym2151->timerValue2 = count;
-    }
-}

@@ -60,6 +60,7 @@ void actionCartInsert1();
 void actionCartInsert2();
 void actionEmuTogglePause();
 void actionEmuStep();
+void actionEmuStepBack();
 void actionEmuStop();
 void actionDiskInsertA();
 void actionDiskInsertB();

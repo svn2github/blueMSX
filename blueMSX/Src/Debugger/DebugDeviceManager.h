@@ -38,6 +38,9 @@ typedef struct {
     int (*writeIoPort)(void* ref, char* name, UInt16 port, UInt32 value);
 } DebugCallbacks;
 
+typedef UInt8 (*WatchpointReadMemCallback)(void*, int);
+
+
 void debugDeviceManagerReset();
 
 int debugDeviceRegister(DbgDeviceType type, const char* name, DebugCallbacks* callbacks, void* ref);
@@ -85,5 +88,9 @@ void debugDeviceGetSnapshot(DbgDevice** dbgDeviceList, int* count);
 int debugDeviceWriteMemory(DbgMemoryBlock* memoryBlock, void* data, int startAddr, int size);
 int debugDeviceWriteRegister(DbgRegisterBank* regBank, int regIndex, UInt32 value);
 int debugDeviceWriteIoPort(DbgIoPorts* ioPorts, int portIndex, UInt32 value);
+
+void debugDeviceSetMemoryWatchpoint(DbgDeviceType devType, int address, DbgWatchpointCondition condition, UInt32 refValue, int size);
+void debugDeviceClearMemoryWatchpoint(DbgDeviceType devType, int address);
+void tryWatchpoint(DbgDeviceType devType, int address, UInt8 value, void* ref, WatchpointReadMemCallback callback);
 
 #endif /*DEBUG_DEVICE_MANAGER_H*/

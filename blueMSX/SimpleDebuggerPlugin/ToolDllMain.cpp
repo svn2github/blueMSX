@@ -30,6 +30,9 @@ static ToolBreakpoint                  toolClearBreakpoint;
 static ToolPath                        toolGetToolDirectory;
 static ToolEmulatorVersion             toolGetEmulatorVersion;
 static ToolEnableVramAccessCheck       toolEnableVramAccessCheck;
+static ToolSetWatchpoint               toolSetWatchpoint;
+static ToolClearWatchpoint             toolClearWatchpoint;
+static ToolAction                      toolDeviceStepBack;
 
 static HINSTANCE hInstance;
 
@@ -127,6 +130,18 @@ void EnableVramAccessCheck(int enable) {
     toolEnableVramAccessCheck(enable);
 }
 
+void SetWatchpoint(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size) {
+    toolSetWatchpoint(devType, address, condition, referenceValue, size);
+}
+
+void ClearWatchpoint(DeviceType devType, int address) {
+    toolClearWatchpoint(devType, address);
+}
+
+void EmulatorStepBack() {
+    toolDeviceStepBack();
+}
+
 char* GetToolPath() {
     return toolGetToolDirectory();
 }
@@ -184,6 +199,9 @@ extern "C" __declspec(dllexport) int __stdcall Create12(Interface* toolInterface
     toolGetToolDirectory            = toolInterface->getToolDirectory;
     toolGetEmulatorVersion          = toolInterface->getEmulatorVersion;
     toolEnableVramAccessCheck       = toolInterface->enableVramAccessCheck;
+    toolSetWatchpoint               = toolInterface->setWatchpoint;
+    toolClearWatchpoint             = toolInterface->clearWatchpoint;
+    toolDeviceStepBack              = toolInterface->stepBack;
 
     OnCreateTool();
 

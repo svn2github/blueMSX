@@ -144,6 +144,13 @@ typedef struct {
     } port[1];
 } IoPorts;
 
+typedef enum {
+    WATCHPOINT_ANY,
+    WATCHPOINT_EQUALS,
+    WATCHPOINT_NOT_EQUALS,
+    WATCHPOINT_LESS_THAN,
+    WATCHPOINT_GREATER_THAN
+} WatchpointCondition;
 
 
 
@@ -173,6 +180,8 @@ typedef void          (__stdcall *ToolBreakpoint)(UInt16);
 typedef char*         (__stdcall *ToolPath)();
 typedef void          (__stdcall *ToolEmulatorVersion)(int* major, int* minor, int* buildNumber);
 typedef void          (__stdcall *ToolEnableVramAccessCheck)(int enable);
+typedef void          (__stdcall *ToolSetWatchpoint)(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size);
+typedef void          (__stdcall *ToolClearWatchpoint)(DeviceType devType, int address);
 typedef struct {
     ToolSnapshotCreate              create;
     ToolSnapshotDestroy             destroy;
@@ -204,6 +213,11 @@ typedef struct {
     ToolEmulatorVersion             getEmulatorVersion;
 
     ToolEnableVramAccessCheck       enableVramAccessCheck;
+
+    ToolSetWatchpoint               setWatchpoint;
+    ToolClearWatchpoint             clearWatchpoint;
+
+    ToolAction                      stepBack;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);

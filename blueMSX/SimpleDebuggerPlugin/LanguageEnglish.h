@@ -40,6 +40,7 @@ public:
         toolbarRun                  = "Restart";
         toolbarShowNext             = "Show Next Statement";
         toolbarStepIn               = "Step Into";
+        toolbarStepBack             = "Step Back";
         toolbarStepOver             = "Step Over";
         toolbarStepOut              = "Step Out";
         toolbarRunTo                = "Run To Cursor";
@@ -62,6 +63,7 @@ public:
         menuDebugStop               = "Stop Debugging";
         menuDebugRestart            = "Restart";
         menuDebugStepIn             = "Step Into";
+        menuDebugStepBack           = "Step Back";
         menuDebugStepOver           = "Step Over";
         menuDebugStepOut            = "Step Out";
         menuDebugRunTo              = "Run To Cursor";
@@ -69,6 +71,7 @@ public:
         menuDebugGoto               = "Go To";
         menuDebugFind               = "Find";
         menuDebugBpAdd              = "Add New Breakpoint";
+        menuDebugWpAdd              = "Add New Watchpoint";
         menuDebugBpToggle           = "Set/Remove Breakpoint";
         menuDebugEnable             = "Enable/Disable Breakpoint";
         menuDebugRemoveAll          = "Remove All Breakpoints";
@@ -90,6 +93,7 @@ public:
         windowStack                 = "Stack";
         windowStackUnavail          = "Stack unavailable.";
         windowCallstack             = "Callstack";
+        windowBreakpoints           = "Breakpoints";
         windowCallstackUnavail      = "Callstack unavailable.";
         windowMemory                = "Memory";
         windowPeripheralRegisters   = "Peripheral Registers";
@@ -99,8 +103,9 @@ public:
 
         memWindowMemory             = "Memory:";
         memWindowAddress            = "Address:";
-
+        
         setBpWindowCaption          = "Add New Breakpoint";
+        setWpWindowCaption          = "Add New Watchpoint";
         gotoWindowCaption           = "Go To Address";
         gotoWindowText              = "Address or Label:";
         findWindowCaption           = "Find";

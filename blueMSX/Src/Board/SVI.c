@@ -294,7 +294,7 @@ int sviCreate(Machine* machine,
     int success;
     int i;
 
-    r800 = r800Create(CPU_ENABLE_M1, sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL, NULL);
+    r800 = r800Create(CPU_ENABLE_M1, sviMemRead, sviMemWrite, ioPortRead, ioPortWrite, PatchZ80, boardTimerCheckTimeout, NULL, NULL, NULL, NULL, NULL, NULL);
 
     boardInfo->cartridgeCount   = 1;
     boardInfo->diskdriveCount   = 2;

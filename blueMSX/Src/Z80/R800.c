@@ -169,6 +169,12 @@ static void writePort(R800* r800, UInt16 port, UInt8 value) {
     delayVdpIO(r800, port);
     r800->writeIoPort(r800->ref, port, value);
     delayPostIo(r800);
+    
+#ifdef ENABLE_WATCHPOINTS
+    if (r800->watchpointIoCb != NULL) {
+        r800->watchpointIoCb(r800->ref, port, value);
+    }
+#endif
 
 }
 
@@ -191,6 +197,12 @@ static void writeMem(R800* r800, UInt16 address, UInt8 value) {
     delayMem(r800);
     r800->cachePage = 0xffff;
     r800->writeMemory(r800->ref, address, value);
+
+#ifdef ENABLE_WATCHPOINTS
+    if (r800->watchpointMemCb != NULL) {
+        r800->watchpointMemCb(r800->ref, address, value);
+    }
+#endif
 }
 
 static void INC(R800* r800, UInt8* reg) {
@@ -5810,7 +5822,8 @@ R800* r800Create(UInt32 cpuFlags,
                  R800ReadCb readIoPort, R800WriteCb writeIoPort, 
                  R800PatchCb patch,     R800TimerCb timerCb,
                  R800BreakptCb bpCb,    R800DebugCb debugCb,
-                 R800TrapCb trapCb,
+                 R800TrapCb trapCb,     R800WriteCb watchpointMemCb,
+                 R800WriteCb watchpointIoCb,
                  void* ref)
 {
     R800* r800 = calloc(1, sizeof(R800));
@@ -5826,6 +5839,8 @@ R800* r800Create(UInt32 cpuFlags,
     r800->breakpointCb= bpCb        ? bpCb        : breakpointCbDummy;
     r800->debugCb     = debugCb     ? debugCb     : debugCbDummy;
     r800->trapCb      = trapCb      ? trapCb      : trapCbDummy;
+    r800->watchpointMemCb  = watchpointMemCb  ? watchpointMemCb  : writeMemoryDummy;
+    r800->watchpointIoCb   = watchpointIoCb   ? watchpointIoCb   : writeIoPortDummy;
     r800->ref         = ref;
 
     r800->frequencyZ80  = 3579545;

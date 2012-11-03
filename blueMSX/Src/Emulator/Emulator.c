@@ -244,6 +244,12 @@ void emulatorSetState(EmuState state) {
         state = EMU_RUNNING;
         emuSingleStep = 1;
     }
+    if (state == EMU_STEP_BACK) {
+        state = EMU_RUNNING;
+        boardRewindOne();
+        debuggerNotifyEmulatorPause();
+        state = EMU_PAUSED;
+    }
     emuState = state;
 }
 

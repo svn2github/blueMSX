@@ -95,6 +95,7 @@ int boardRun(Machine* machine,
              int (*syncCallback)(int, int));
 
 void boardRewind();
+void boardRewindOne();
 void boardEnableSnapshots(int enable);
 
 BoardType boardGetType();

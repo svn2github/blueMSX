@@ -43,8 +43,16 @@ typedef enum {
     DBGTYPE_RAM, 
     DBGTYPE_AUDIO,
     DBGTYPE_VIDEO,
-    DBGTYPE_PORT
+    DBGTYPE_PORT,
 } DbgDeviceType;
+
+typedef enum {
+    DBGWP_ANY,
+    DBGWP_EQUALS,
+    DBGWP_NOT_EQUALS,
+    DBGWP_LESS_THAN,
+    DBGWP_GREATER_THAN
+} DbgWatchpointCondition;
 
 
 typedef void (*DebuggerEvent)(void*);
@@ -125,9 +133,13 @@ void dbgRun();
 void dbgStop();
 void dbgPause();
 void dbgStep();
+void dbgStepBack();
 
 void dbgSetBreakpoint(UInt16 address);
 void dbgClearBreakpoint(UInt16 address);
+
+void dbgSetWatchpoint(DbgDeviceType devType, int address, DbgWatchpointCondition condition, UInt32 referenceValue, int size);
+void dbgClearWatchpoint(DbgDeviceType devType, int address);
 
 int debuggerCheckVramAccess(void);
 
@@ -135,7 +147,7 @@ void dbgEnableVramAccessCheck(int enable);
 
 // Internal structure and interface
 
-#define MAX_DBG_COMPONENTS 4
+#define MAX_DBG_COMPONENTS 16
 struct DbgDevice {
     char name[64];
     DbgDeviceType type;

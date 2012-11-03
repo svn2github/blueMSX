@@ -463,6 +463,12 @@ void actionEmuStep() {
     }
 }
 
+void actionEmuStepBack() {
+    if (emulatorGetState() == EMU_PAUSED) {
+        emulatorSetState(EMU_STEP_BACK);
+    }
+}
+
 void actionEmuTogglePause() {
     if (emulatorGetState() == EMU_STOPPED) {
         emulatorStart(NULL);

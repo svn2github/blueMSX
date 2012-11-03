@@ -78,6 +78,7 @@ public:
 
     void setValue(int value, bool setFocus = true);
     int  getValue();
+    bool hasValue();
 
 protected:
     virtual BOOL dlgProc(UINT iMsg, WPARAM wParam, LPARAM lParam);

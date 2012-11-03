@@ -182,6 +182,13 @@ void HexInputDialog::setValue(int value, bool setFocus)
     fastValue = value;
 }
 
+bool HexInputDialog::hasValue() 
+{
+    GETTEXTEX t = {63, GT_DEFAULT, CP_ACP, NULL, NULL};
+    char text[64];
+    return SendDlgItemMessage(hwnd, IDC_ADDRESS, EM_GETTEXTEX, (WPARAM)&t, (LPARAM)text) > 0;
+}
+
 int HexInputDialog::getValue() 
 {
     GETTEXTEX t = {63, GT_DEFAULT, CP_ACP, NULL, NULL};

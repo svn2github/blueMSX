@@ -259,7 +259,7 @@ static const char* mnemonicMain[256] =
 #define ABS(val)  (((val) & 128) ? 256 - (val) : val)
 
 
-int Disassembly::dasm(BYTE* memory, WORD PC, char* dest)
+int Disassembly::dasm(SymbolInfo* symbolInfo, const UInt8* memory, UInt16 PC, char* dest)
 {
 	const char* r = "INTERNAL PROGRAM ERROR";
 	char offset = 0;
@@ -483,7 +483,12 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
             GetScrollInfo (hwnd, SB_VERT, &si);
             int row = si.nPos + HIWORD(lParam) / textHeight;
             if (LOWORD(lParam) < 25) {
-                toggleBreakpoint(lineInfo[row].address);
+                if (Breakpoints::IsBreakpointSet(lineInfo[row].address)) {
+                    Breakpoints::ClearBreakpoint(lineInfo[row].address);
+                }
+                else {
+                    Breakpoints::SetBreakpoint(lineInfo[row].address);
+                }
             }
             else {
                 currentLine = row;
@@ -492,7 +497,6 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
                 }
             }
             DebuggerUpdate();
-            InvalidateRect(hwnd, NULL, TRUE);
         }
         return 0;
 
@@ -540,13 +544,21 @@ LRESULT Disassembly::wndProc(UINT iMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) : 
+static Disassembly* disassemblyInstance = NULL;
+
+UInt16 Disassembly::GetPc() {
+    if (disassemblyInstance == NULL) {
+        return 0;
+    }
+    return disassemblyInstance->backupPc;
+}
+
+Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo, Breakpoints* breakpts) : 
     DbgWindow( hInstance, owner, 
                Language::windowDisassembly, "Disassembly Window", 3, 2, 432, 418, 1),
     linePos(0), lineCount(0), currentLine(-1), programCounter(0), 
-    firstVisibleLine(0), runtoBreakpoint(-1), 
-    bpEnabledCount(0), bpDisabledCount(0),
-    hasKeyboardFocus(false), symbolInfo(symInfo)
+    firstVisibleLine(0), 
+    hasKeyboardFocus(false), symbolInfo(symInfo), breakpoints(breakpts)
 {
     memset(backupMemory, 0, 0x10000);
     backupPc = 0;
@@ -555,9 +567,7 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
         bitmapIcons = new BitmapIcons(hInstance, IDB_DASMICONS, 5);
     }
 
-    for (int i = 0; i < 0x10000; i++) {
-        breakpoint[i] = BP_NONE;
-    }
+    disassemblyInstance = this;
 
     init();
     invalidateContent();
@@ -565,154 +575,7 @@ Disassembly::Disassembly(HINSTANCE hInstance, HWND owner, SymbolInfo* symInfo) :
 
 Disassembly::~Disassembly()
 {
-}
-
-void Disassembly::toggleBreakpoint(int address, bool setAlways) 
-{
-    if (address == -1) {
-        if (currentLine == -1) {
-            return;
-        }
-        address = lineInfo[currentLine].address;
-    }
-    if (breakpoint[address] == BP_NONE) {
-        bpEnabledCount++;
-        breakpoint[address] = BP_SET;
-        SetBreakpoint(address);
-    }
-    else if (!setAlways) {
-        if (breakpoint[address] == BP_DISABLED) {
-            bpDisabledCount--;
-        }
-        if (breakpoint[address] == BP_SET) {
-            bpEnabledCount--;
-        }
-        breakpoint[address] = BP_NONE;
-        ClearBreakpoint(address);
-    }
-
-    DebuggerUpdate();
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::toggleBreakpointEnable()
-{
-    if (currentLine == -1) {
-        return;
-    }
-    int address = lineInfo[currentLine].address;
-
-    if (breakpoint[address] == BP_DISABLED) {
-        bpEnabledCount++;
-        bpDisabledCount--;
-        breakpoint[address] = BP_SET;
-        SetBreakpoint(address);
-    }
-    else if (breakpoint[address] == BP_SET) {
-        bpEnabledCount--;
-        bpDisabledCount++;
-        breakpoint[address] = BP_DISABLED;
-        ClearBreakpoint(address);
-    }
-    DebuggerUpdate();
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::clearAllBreakpoints()
-{
-    for (int address = 0; address < 0x10000; address++) {
-        if (breakpoint[address] == BP_SET) {
-            ClearBreakpoint(address);
-        }
-        breakpoint[address] = BP_NONE;
-    }
-    bpDisabledCount = 0;
-    bpEnabledCount = 0;
-    DebuggerUpdate();
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::enableAllBreakpoints()
-{
-    for (int address = 0; address < 0x10000; address++) {
-        if (breakpoint[address] == BP_DISABLED) {
-            bpDisabledCount--;
-            bpEnabledCount++;
-            breakpoint[address] = BP_SET;
-            SetBreakpoint(address);
-        }
-    }
-    DebuggerUpdate();
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::disableAllBreakpoints()
-{
-    for (int address = 0; address < 0x10000; address++) {
-        if (breakpoint[address] == BP_SET) {
-            bpDisabledCount++;
-            bpEnabledCount--;
-            breakpoint[address] = BP_DISABLED;
-            ClearBreakpoint(address);
-        }
-    }
-    DebuggerUpdate();
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::updateBreakpoints()
-{
-    for (int addr = 0; addr < 0x10000; addr++) {
-        if (breakpoint[addr] == BP_SET) {
-            SetBreakpoint(addr);
-        }
-    }
-    InvalidateRect(hwnd, NULL, TRUE);
-}
-
-void Disassembly::setStepOutBreakpoint(WORD address)
-{
-    char str[128];
-    runtoBreakpoint = (address + dasm(backupMemory, address, str)) & 0xffff;
-    SetBreakpoint(runtoBreakpoint);
-}
-
-bool Disassembly::setStepOverBreakpoint()
-{
-    char str[128];
-    runtoBreakpoint = (backupPc + dasm(backupMemory, backupPc, str)) & 0xffff;
-    // If call or rst instruction we need to set a runto breakpoint
-    // otherwise its just a regular single step
-    bool step = strncmp(str, "call", 4) != 0 && 
-                strncmp(str, "ldir", 4) != 0 && 
-                strncmp(str, "lddr", 4) != 0 && 
-                strncmp(str, "cpir", 4) != 0 && 
-                strncmp(str, "inir", 4) != 0 && 
-                strncmp(str, "indr", 4) != 0 && 
-                strncmp(str, "otir", 4) != 0 && 
-                strncmp(str, "otdr", 4) != 0 && 
-                strncmp(str, "rst",  3) != 0;
-    if (!step) {
-        SetBreakpoint(runtoBreakpoint);
-    }
-    return step;
-}
-
-void Disassembly::setRuntoBreakpoint()
-{
-    if (currentLine >= 0) {
-        runtoBreakpoint = lineInfo[currentLine].address;
-        SetBreakpoint(runtoBreakpoint);
-    }
-}
-
-void Disassembly::clearRuntoBreakpoint()
-{
-    if (runtoBreakpoint >= 0) {
-        if (breakpoint[runtoBreakpoint] != BP_SET) {
-            ClearBreakpoint(runtoBreakpoint);
-        }
-    }
+    disassemblyInstance = NULL;
 }
 
 void Disassembly::setCursor(WORD address)
@@ -740,7 +603,7 @@ WORD Disassembly::dasm(WORD pc, char* dest)
 
 void Disassembly::invalidateContent()
 {
-    clearRuntoBreakpoint();
+    breakpoints->clearRuntoBreakpoint();
     currentLine = -1;
     lineCount = 0;
     updateScroll();
@@ -793,7 +656,7 @@ bool Disassembly::writeToFile(const char* fileName)
 void Disassembly::updateContent(BYTE* memory, WORD pc)
 {
     int addr = 0;
-    clearRuntoBreakpoint();
+    breakpoints->clearRuntoBreakpoint();
 
     lineCount = 0;
     programCounter = 0;
@@ -819,7 +682,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
 
         sprintf(lineInfo[lineCount].addr, "%.4X:", addr);
         lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
-        int len = dasm(memory, addr, lineInfo[lineCount].text);
+        int len = dasm(symbolInfo, memory, addr, lineInfo[lineCount].text);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
         lineInfo[lineCount].address = addr;
         lineInfo[lineCount].haspc = addr == pc;
@@ -888,7 +751,7 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
 
         sprintf(lineInfo[lineCount].addr, "%.4X:", addr);
         lineInfo[lineCount].addrLength = strlen(lineInfo[lineCount].addr);
-        int len = dasm(memory, addr, lineInfo[lineCount].text);
+        int len = dasm(symbolInfo, memory, addr, lineInfo[lineCount].text);
         lineInfo[lineCount].textLength = strlen(lineInfo[lineCount].text);
         lineInfo[lineCount].address = addr;
         lineInfo[lineCount].haspc = addr == pc;
@@ -921,7 +784,6 @@ void Disassembly::updateContent(BYTE* memory, WORD pc)
     DebuggerUpdate();
 
     SetFocus(hwnd);
-    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void Disassembly::onWmKeyUp(int keyCode)
@@ -1096,10 +958,10 @@ void Disassembly::drawText(int top, int bottom)
         }
         else {
             if (lineInfo[i].haspc) {
-                if (breakpoint[address] == BP_SET) {
+                if (Breakpoints::IsBreakpointSet(address)) {
                     bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
                 }
-                else if (breakpoint[address] == BP_DISABLED) {
+                else if (Breakpoints::IsBreakpointDisabled(address)) {
                     bitmapIcons->drawIcon(hMemdc, 4, r.top, 3);
                 }
                 else {
@@ -1107,10 +969,10 @@ void Disassembly::drawText(int top, int bottom)
                 }
             }
             else {
-                if (breakpoint[address] == BP_SET) {
+                if (Breakpoints::IsBreakpointSet(address)) {
                     bitmapIcons->drawIcon(hMemdc, 4, r.top, 1);
                 }
-                else if (breakpoint[address] == BP_DISABLED) {
+                else if (Breakpoints::IsBreakpointDisabled(address)) {
                     bitmapIcons->drawIcon(hMemdc, 4, r.top, 2);
                 }
             }

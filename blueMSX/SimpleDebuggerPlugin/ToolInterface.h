@@ -58,6 +58,7 @@ void EmulatorRun();
 void EmulatorStop();
 void EmulatorPause();
 void EmulatorStep();
+void EmulatorStepBack();
 
 void SetBreakpoint(UInt16 address);
 void ClearBreakpoint(UInt16 address);
@@ -68,6 +69,9 @@ int GetEmulatorMinorVersion();
 int GetEmulatorBuildNumber();
 
 void EnableVramAccessCheck(int enable);
+
+void SetWatchpoint(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size);
+void ClearWatchpoint(DeviceType devType, int address);
 
 HINSTANCE GetDllHinstance();
 

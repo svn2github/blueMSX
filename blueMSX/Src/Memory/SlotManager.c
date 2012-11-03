@@ -111,12 +111,17 @@ void slotMapPage(int slot, int sslot, int page, UInt8* pageData,
     if (pageData != NULL) {
         slotTable[slot][sslot][page].pageData = pageData;
     }
-
+#if 0
+    if (pslot[page >> 1].state == slot && (!pslot[slot].subslotted || sslot == 2 || pslot[page >> 1].substate == sslot)) {
+        slotMapRamPage(slot, sslot, page);
+    }
+#else
     if (pslot[page >> 1].state == slot && 
         (!pslot[slot].subslotted || pslot[page >> 1].substate == sslot)) 
     {
         slotMapRamPage(slot, sslot, page);
     }
+#endif
 }
 
 void slotUpdatePage(int slot, int sslot, int page, UInt8* pageData, 
@@ -370,6 +375,7 @@ void slotWrite(void* ref, UInt16 address, UInt8 value)
         UInt8 pslReg = pslot[3].state;
 
         if (pslot[pslReg].subslotted) {
+//            printf("SW: %d %d %d %d\n", (value>>0)&3, (value>>2)&3, (value>>4)&3, (value>>6)&3);
             pslot[pslReg].sslReg = value;
 
             for (page = 0; page < 4; page++) {
@@ -378,7 +384,6 @@ void slotWrite(void* ref, UInt16 address, UInt8 value)
                     slotMapRamPage(pslReg, value & 3, 2 * page);
                     slotMapRamPage(pslReg, value & 3, 2 * page + 1);
                 }
-
                 value >>= 2;
             }
 

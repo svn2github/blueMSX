@@ -639,6 +639,7 @@
     <ClInclude Include="..\..\Src\Memory\romMapperOpcodeSlotManager.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperSg1000RamExpander.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperSvi328RsIDE.h" />
+    <ClInclude Include="..\..\Src\SoundChips\VLM5030VoiceData.h" />
     <ClInclude Include="..\..\Src\Utils\ZipFromMem.h" />
     <ClInclude Include="..\..\Src\Win32\Win32D3D.h" />
     <ClInclude Include="..\..\Src\Win32\Win32Printer.h" />
