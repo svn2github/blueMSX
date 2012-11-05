@@ -340,6 +340,10 @@ static void loadState()
     sn76489LoadState(sn76489);
 }
 
+static UInt32 getTimeTrace(int offset) {
+    return r800GetTimeTrace(r800, offset);
+}
+
 int colecoCreate(Machine* machine, 
                  VdpSyncMode vdpSyncMode,
                  BoardInfo* boardInfo)
@@ -369,6 +373,8 @@ int colecoCreate(Machine* machine,
     boardInfo->setBreakpoint    = r800SetBreakpoint;
     boardInfo->clearBreakpoint  = r800ClearBreakpoint;
     boardInfo->setDataBus       = r800SetDataBus;
+    
+    boardInfo->getTimeTrace     = getTimeTrace;
 
     deviceManagerCreate();
 

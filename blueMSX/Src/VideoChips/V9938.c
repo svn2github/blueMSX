@@ -1309,6 +1309,7 @@ void vdpCmdLoadState(VdpCmdState* vdpCmd)
     vdpCmd->DX            =         saveStateGet(state, "DX",         0);
     vdpCmd->DY            =         saveStateGet(state, "DY",         0);
     vdpCmd->NX            =         saveStateGet(state, "NX",         0);
+    vdpCmd->kNX            =        saveStateGet(state, "kNX",        0);
     vdpCmd->NY            =         saveStateGet(state, "NY",         0);
     vdpCmd->ASX           =         saveStateGet(state, "ASX",        0);
     vdpCmd->ADX           =         saveStateGet(state, "ADX",        0);
@@ -1353,6 +1354,7 @@ void vdpCmdSaveState(VdpCmdState* vdpCmd)
     saveStateSet(state, "DX",         vdpCmd->DX);
     saveStateSet(state, "DY",         vdpCmd->DY);
     saveStateSet(state, "NX",         vdpCmd->NX);
+    saveStateSet(state, "kNX",        vdpCmd->kNX);
     saveStateSet(state, "NY",         vdpCmd->NY);
     saveStateSet(state, "ASX",        vdpCmd->ASX);
     saveStateSet(state, "ADX",        vdpCmd->ADX);
@@ -1368,10 +1370,9 @@ void vdpCmdSaveState(VdpCmdState* vdpCmd)
     saveStateSet(state, "MX",         vdpCmd->MX);
     saveStateSet(state, "VdpOpsCnt",  vdpCmd->VdpOpsCnt);
     saveStateSet(state, "systemTime", vdpCmd->systemTime);
+    saveStateSet(state, "newScrMode", vdpCmd->newScrMode);
     saveStateSet(state, "screenMode", vdpCmd->screenMode);
     saveStateSet(state, "timingMode", vdpCmd->timingMode);
     
     saveStateClose(state);
 }
-
-

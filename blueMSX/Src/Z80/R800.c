@@ -6018,12 +6018,26 @@ void r800ClearBreakpoint(R800* r800, UInt16 address)
 #endif
 }
 
+SystemTime r800GetTimeTrace(R800* r800, int offset) {
+#if TIME_TRACE_SIZE > 0
+    return r800->timeTraceBuffer[(TIME_TRACE_SIZE + r800->timeTraceIndex - offset) % TIME_TRACE_SIZE];
+#else
+    return r800->systemTime;
+#endif
+}
+
 void r800Execute(R800* r800) {
     static SystemTime lastRefreshTime = 0;
     while (!r800->terminate) {
         UInt16 address;
         int iff1 = 0;
 
+#if TIME_TRACE_SIZE > 0
+        if (r800->regs.PC.W != r800->lastPC) {
+            r800->lastPC = r800->regs.PC.W;
+            r800->timeTraceBuffer[++r800->timeTraceIndex % TIME_TRACE_SIZE] = r800->systemTime;
+        }
+#endif
         if ((Int32)(r800->timeout - r800->systemTime) <= 0) {
             if (r800->timerCb != NULL) {
                 r800->timerCb(r800->ref);

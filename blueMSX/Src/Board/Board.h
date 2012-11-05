@@ -81,6 +81,8 @@ typedef struct {
     void   (*clearBreakpoint)(void*, UInt16);
 
     void   (*changeCartridge)(void*, int, int);
+
+    UInt32   (*getTimeTrace)(int);
 } BoardInfo;
 
 void boardInit(UInt32* systemTime);
@@ -94,8 +96,8 @@ int boardRun(Machine* machine,
              int reverseBufferCnt,
              int (*syncCallback)(int, int));
 
-void boardRewind();
-void boardRewindOne();
+int boardRewind();
+int boardRewindOne();
 void boardEnableSnapshots(int enable);
 
 BoardType boardGetType();

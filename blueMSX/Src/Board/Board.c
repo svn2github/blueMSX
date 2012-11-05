@@ -53,6 +53,7 @@
 
 extern void PatchReset(BoardType boardType);
 
+static int skipSync;
 static int pendingInt;
 static int boardType;
 static Mixer* boardMixer = NULL;
@@ -67,6 +68,7 @@ static BoardTimer* fdcTimer;
 static BoardTimer* syncTimer;
 static BoardTimer* mixerTimer;
 static BoardTimer* stateTimer;
+static BoardTimer* breakpointTimer;
 static BoardDeviceInfo* boardDeviceInfo;
 static Machine* boardMachine;
 static BoardInfo boardInfo;
@@ -516,7 +518,10 @@ static void onFdcDone(void* ref, UInt32 time)
 
 static void doSync(UInt32 time, int breakpointHit)
 {
-    int execTime = syncToRealClock(fdcActive, breakpointHit);
+    int execTime = 10;
+    if (!skipSync) {
+        execTime = syncToRealClock(fdcActive, breakpointHit);
+    }
     if (execTime == -99) {
         boardInfo.stop(boardInfo.cpuRef);
         return;
@@ -553,7 +558,7 @@ static void onStateSync(void* ref, UInt32 time)
         }
 
         sprintf(memFilename, "mem%d", ramStateCur);
-
+        
         boardSaveState(memFilename, 0);
     }
 
@@ -605,15 +610,31 @@ int boardRemoveExternalDevices()
      return 1;
 }
 
-void boardRewindOne() {
+static void onBreakpointSync(void* ref, UInt32 time) {
+    skipSync = 0;
+    doSync(time, 1);
 }
 
-void boardRewind()
+int boardRewindOne() {
+    UInt32 rewindTime;
+    if (stateFrequency <= 0) {
+        return 0;
+    }
+    rewindTime = boardInfo.getTimeTrace(1);
+    if (rewindTime == 0 || !boardRewind()) {
+        return 0;
+    }
+    boardTimerAdd(breakpointTimer, rewindTime);
+    skipSync = 1;
+    return 1;
+}
+
+int boardRewind()
 {
     char stateFile[8];
 
     if (ramStateCount == 0) {
-        return;
+        return 0;
     }
 
     if (ramStateCount > 1) {
@@ -624,8 +645,6 @@ void boardRewind()
     else {
         sprintf(stateFile, "mem%d", ramStateCur);
     }
-
-    //printf("Reverting state %s\n", stateFile);
 
     boardTimerCleanup();
 
@@ -648,6 +667,7 @@ void boardRewind()
         boardTimerAdd(periodicTimer, boardSystemTime() + periodicInterval);
     }
 #endif
+    return 1;
 }
 
 void boardEnableSnapshots(int enable)
@@ -766,6 +786,7 @@ int boardRun(Machine* machine,
             ramMaxStates = reverseBufferCnt;
             memZipFileSystemCreate(ramMaxStates);
             stateTimer = boardTimerCreate(onStateSync, NULL);
+            breakpointTimer = boardTimerCreate(onBreakpointSync, NULL); 
             boardTimerAdd(stateTimer, boardSystemTime() + stateFrequency);
         }
         else {
@@ -780,7 +801,9 @@ int boardRun(Machine* machine,
             boardTimerAdd(periodicTimer, boardSystemTime() + periodicInterval);
         }
 
-        syncToRealClock(0, 0);
+        if (!skipSync) {
+            syncToRealClock(0, 0);
+        }
 
         boardInfo.run(boardInfo.cpuRef);
 
@@ -796,6 +819,9 @@ int boardRun(Machine* machine,
         boardTimerDestroy(fdcTimer);
         boardTimerDestroy(syncTimer);
         boardTimerDestroy(mixerTimer);
+        if (breakpointTimer != NULL) {
+            boardTimerDestroy(breakpointTimer);
+        }
         if (stateTimer != NULL) {
             boardTimerDestroy(stateTimer);
             memZipFileSystemDestroy();

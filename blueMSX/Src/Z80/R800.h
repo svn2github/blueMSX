@@ -91,6 +91,7 @@
 #define ENABLE_WATCHPOINTS
 #define ENABLE_ASMSX_DEBUG_COMMANDS
 #define ENABLE_TRAP_CALLBACK
+#define TIME_TRACE_SIZE 1024
 #endif
 
 /*****************************************************
@@ -284,6 +285,12 @@ typedef struct
 #ifdef ENABLE_BREAKPOINTS
     int           breakpointCount;  /* Number of breakpoints set       */
     char          breakpoints[0x10000];
+#endif
+
+#if TIME_TRACE_SIZE > 0
+    SystemTime    timeTraceBuffer[TIME_TRACE_SIZE];
+    UInt32        timeTraceIndex;
+    UInt16        lastPC;
 #endif
 } R800;
 
@@ -483,6 +490,8 @@ void r800SetTimeoutAt(R800* r800, SystemTime time);
 
 void r800SetBreakpoint(R800* r800, UInt16 address);
 void r800ClearBreakpoint(R800* r800, UInt16 address);
+
+SystemTime r800GetTimeTrace(R800* r800, int offset);
 
 /************************************************************************
 ** r800GetSystemTime
