@@ -633,18 +633,13 @@ int boardRewind()
 {
     char stateFile[8];
 
-    if (ramStateCount == 0) {
+    if (ramStateCount < 2) {
         return 0;
     }
 
-    if (ramStateCount > 1) {
-        ramStateCount--;
-        sprintf(stateFile, "mem%d", ramStateCur);
-        ramStateCur = (ramStateCur + ramMaxStates - 1) % ramMaxStates;
-    }
-    else {
-        sprintf(stateFile, "mem%d", ramStateCur);
-    }
+    ramStateCount--;
+    sprintf(stateFile, "mem%d", ramStateCur);
+    ramStateCur = (ramStateCur + ramMaxStates - 1) % ramMaxStates;
 
     boardTimerCleanup();
 

@@ -463,7 +463,7 @@ static void updateRomTypeList(HWND hDlg, ZipFileDlgInfo* dlgInfo) {
     
     if (isFileExtension(fileName, ".rom") || isFileExtension(fileName, ".ri") ||
         isFileExtension(fileName, ".mx1") || isFileExtension(fileName, ".mx2") || 
-        isFileExtension(fileName, ".col") ||
+        isFileExtension(fileName, ".sms") || isFileExtension(fileName, ".col") ||
         isFileExtension(fileName, ".sg") || isFileExtension(fileName, ".sc")) {
         buf = romLoad(dlgInfo->zipFileName, fileName, &size);
     }
@@ -1039,6 +1039,7 @@ static void registerFileTypes() {
     registerFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     registerFileType(".mx1", "blueMSXrom", "ROM Image", 2);
     registerFileType(".mx2", "blueMSXrom", "ROM Image", 2);
+    registerFileType(".sms", "blueMSXrom", "Sega ROM Image", 2);
     registerFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
     registerFileType(".sg",  "blueMSXrom", "Sega ROM Image", 2);
     registerFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
@@ -1058,6 +1059,7 @@ static void unregisterFileTypes() {
     unregisterFileType(".ri",  "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".mx1", "blueMSXrom", "ROM Image", 2);
     unregisterFileType(".mx2", "blueMSXrom", "ROM Image", 2);
+    unregisterFileType(".sms", "blueMSXrom", "Sega ROM Image", 2);
     unregisterFileType(".col", "blueMSXrom", "Coleco ROM Image", 2);
     unregisterFileType(".sg",  "blueMSXrom", "Sega ROM Image", 2);
     unregisterFileType(".sc",  "blueMSXrom", "Sega ROM Image", 2);
@@ -3305,11 +3307,11 @@ char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romT
     char* defaultDir = properties->cartridge.defDir;
     int* selectedExtension = &properties->media.carts[cartSlot].extensionFilter;
     char* defautExtension = ".rom";
-    char* extensions = ".rom\0.ri\0.mx1\0.mx2\0.col\0.sg\0.sc\0.zip\0.*\0";
+    char* extensions = ".rom\0.ri\0.mx1\0.mx2\0.col\0.sms\0.sg\0.sc\0.zip\0.*\0";
     char* title = cartSlot == 1 ? langDlgInsertRom2() : langDlgInsertRom1();
     char* fileName;
     char extensionList[512];
-    sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
+    sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sms, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
     enterDialogShow();

@@ -258,8 +258,16 @@ static void ym2148WriteData(YM2148* midi, UInt8 value)
 static void ym2148SaveState(YM2148* midi)
 {
     SaveState* state = saveStateOpenForWrite("ym2148");
-    
+
     saveStateSet(state, "command", midi->command);
+    saveStateSet(state, "rxData", midi->rxData);
+    saveStateSet(state, "status", midi->status);
+    saveStateSet(state, "sendByte", midi->sendByte);
+    saveStateSet(state, "sendBuffer", midi->sendBuffer);
+    saveStateSet(state, "sendByte", midi->sendByte);
+    saveStateSet(state, "txPending", midi->txPending);
+    saveStateSetBuffer(state, "rxQueue", midi->rxQueue, sizeof(midi->rxQueue));
+    saveStateSet(state, "rxHead", midi->rxHead);
     saveStateSet(state, "vector", midi->vector);
     
     saveStateClose(state);
@@ -269,8 +277,16 @@ static void ym2148LoadState(YM2148* midi)
 {
     SaveState* state = saveStateOpenForRead("ym2148");
     
-    midi->command = (UInt8)saveStateGet(state, "command", 0);
-    midi->vector  = (UInt8)saveStateGet(state, "vector", 0);
+    midi->command = saveStateGet(state, "command", 0);
+    midi->rxData = saveStateGet(state, "rxData", 0);
+    midi->status = saveStateGet(state, "status", 0);
+    midi->sendByte = saveStateGet(state, "sendByte", 0); 
+    midi->sendBuffer = saveStateGet(state, "sendBuffer", 0);
+    midi->sendByte = saveStateGet(state, "sendByte", 0);
+    midi->txPending = saveStateGet(state, "txPending", 0);
+    saveStateGetBuffer(state, "rxQueue", midi->rxQueue, sizeof(midi->rxQueue));
+    midi->rxHead = saveStateGet(state, "rxHead", 0);
+    midi->vector = saveStateGet(state, "vector", 0);
 
     saveStateClose(state);
 }
@@ -474,49 +490,3 @@ int romMapperSfg05Create(const char* filename, UInt8* romData,
 
     return 1;
 }
-
-#if 0
-// Not used as the UART is buffered, and this is for supporting unbuffered reads
-static void onRecv(YM2148* midi, UInt32 time)
-{
-    midi->timeRecv = 0;
-
-    if (midi->overrun) {
-        if (midi->command & CMD_RSTER) {
-            ym2148Reset(midi);
-            return;
-        }
-    }
-
-    if (midi->rxPending > 0) {
-        if ((midi->status & STAT_RXRBSY) == 0) {
-            midi->status |= STAT_RXRBSY;
-            if (midi->command & CMD_RXINT) {
-                boardSetDataBus(midi->vector, 0, 0);
-                boardSetInt(0x800);
-                midi->status |= ST_INT;
-            }
-        }
-    }
-     
-    midi->timeRecv = boardSystemTime() + midi->charTime;
-    boardTimerAdd(midi->timerRecv, midi->timeRecv);
-}
-
-static UInt8 ym2148ReadData(YM2148* midi)
-{
-    archSemaphoreWait(midi->semaphore, -1);
-    if (midi->rxPending > 0) {
-        midi->rxData = midi->rxQueue[(midi->rxHead - midi->rxPending) & (RX_QUEUE_SIZE - 1)];
-        midi->rxPending--;
-    }
-    archSemaphoreSignal(midi->semaphore);
-
-    midi->status &= ~STAT_OE; // Is Overrun really cleared on read???
-    if (midi->rxPending == 0) {
-        midi->status &= ~STAT_RXRBSY;
-    }
-
-    return midi->rxData;
-}
-#endif

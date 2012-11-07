@@ -1680,7 +1680,7 @@ static BOOL CALLBACK slotEditProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 if (strlen(defDir) == 0) {
                     strcpy(defDir, curDir);
                 }
-                sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sg, *.sc, *.sram, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.sram; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
+                sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sms, *.sg, *.sc, *.sram, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.sram; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
                 replaceCharInString(extensionList, '#', 0);
 
                 fileName = openFile(hDlg, langConfOpenRom(), extensionList, defDir, -1, NULL, NULL);

@@ -95,6 +95,13 @@ static int isRomFileType(char* filename, char* inZip) {
             return 1;
         }
 
+        fileList = zipGetFileList(filename, ".sms", &count);
+        if (fileList) {
+            strcpy(inZip, fileList);
+            free(fileList);
+            return 1;
+        }
+
         fileList = zipGetFileList(filename, ".col", &count);
         if (fileList) {
             strcpy(inZip, fileList);
@@ -123,6 +130,7 @@ static int isRomFileType(char* filename, char* inZip) {
            isFileExtension(filename, ".ri")  ||
            isFileExtension(filename, ".mx1") ||
            isFileExtension(filename, ".mx2") ||
+           isFileExtension(filename, ".sms") ||
            isFileExtension(filename, ".col") ||
            isFileExtension(filename, ".sg") ||
            isFileExtension(filename, ".sc");

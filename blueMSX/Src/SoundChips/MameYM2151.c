@@ -1905,6 +1905,7 @@ void YM2151LoadState(MameYm2151* chip)
     SaveState* state = saveStateOpenForRead("ym2151_core");
     char tag[32];
     int i;
+    int tmp;
     
     chip->eg_cnt            = saveStateGet(state, "eg_cnt",            0);
     chip->eg_timer          = saveStateGet(state, "eg_timer",          0);
@@ -2052,13 +2053,21 @@ void YM2151LoadState(MameYm2151* chip)
         chip->oper[i].rr = saveStateGet(state, tag, 0);
         
         sprintf(tag, "connect%d", i);
-        if (chip->oper[i].connect != NULL) {
-            chip->oper[i].connect += (int*)chip - (int*)0;
+        tmp = saveStateGet(state, tag, -1);
+        if (tmp < 0) {
+            chip->oper[i].connect = NULL;
         }
-        
+        else {
+            chip->oper[i].connect = (int*)chip + tmp;
+        }
+
         sprintf(tag, "mem_connect%d", i);
-        if (chip->oper[i].mem_connect != NULL) {
-            chip->oper[i].mem_connect +=  (int*)chip - (int*)0;
+        tmp = saveStateGet(state, tag, -1);
+        if (tmp < 0) {
+            chip->oper[i].mem_connect = NULL;
+        }
+        else {
+            chip->oper[i].mem_connect = (int*)chip + tmp;
         }
     }
 
@@ -2221,7 +2230,7 @@ void YM2151SaveState(MameYm2151* chip)
             saveStateSet(state, tag, (int*)chip->oper[i].connect - (int*)chip);
         }
         else {
-            saveStateSet(state, tag, 0);
+            saveStateSet(state, tag, -1);
         }
         
         sprintf(tag, "mem_connect%d", i);
@@ -2229,7 +2238,7 @@ void YM2151SaveState(MameYm2151* chip)
             saveStateSet(state, tag, (int*)chip->oper[i].mem_connect - (int*)chip);
         }
         else {
-            saveStateSet(state, tag, 0);
+            saveStateSet(state, tag, -1);
         }
     }
 

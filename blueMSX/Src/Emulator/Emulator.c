@@ -386,7 +386,7 @@ static void emulatorThread() {
     switchSetAudio(properties->emulation.audioSwitch);
 
     if (properties->emulation.reverseEnable && properties->emulation.reverseMaxTime > 0) {
-        reversePeriod = 150;
+        reversePeriod = 50;
         reverseBufferCnt = properties->emulation.reverseMaxTime * 1000 / reversePeriod;
     }
     success = boardRun(machine,

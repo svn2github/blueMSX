@@ -246,6 +246,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         int countRi;
                         int countMx1;
                         int countMx2;
+                        int countSms;
                         int countCol;
                         int countSg;
                         int countSc;
@@ -253,10 +254,11 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         char* fileListRi  = zipGetFileList(fileName, ".ri",  &countRi);
                         char* fileListMx1 = zipGetFileList(fileName, ".mx1", &countMx1);
                         char* fileListMx2 = zipGetFileList(fileName, ".mx2", &countMx2);
+                        char* fileListSms = zipGetFileList(fileName, ".sms", &countSms);
                         char* fileListCol = zipGetFileList(fileName, ".col", &countCol);
                         char* fileListSg  = zipGetFileList(fileName, ".sg", &countSg);
                         char* fileListSc  = zipGetFileList(fileName, ".sc", &countSc);
-                        int count = countRom + countRi + countMx1 + countMx2 + countCol + countSg;
+                        int count = countRom + countRi + countMx1 + countMx2 + countSms + countCol + countSg + countSc;
 
                         if (count == 1) {
                             if (countRom == 1) {
@@ -270,6 +272,9 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                             }
                             if (countMx2 == 1) {
                                 buf = romLoad(fileName, fileListMx2, &size);
+                            }
+                            if (countSms == 1) {
+                                buf = romLoad(fileName, fileListSms, &size);
                             }
                             if (countCol == 1) {
                                 buf = romLoad(fileName, fileListCol, &size);
@@ -286,6 +291,7 @@ UINT_PTR CALLBACK hookRomProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
                         if (fileListRi)  free(fileListRi);
                         if (fileListMx1) free(fileListMx1);
                         if (fileListMx2) free(fileListMx2);
+                        if (fileListSms) free(fileListSms);
                         if (fileListCol) free(fileListCol);
                         if (fileListSg)  free(fileListSg);
                         if (fileListSc)  free(fileListSc);
