@@ -156,7 +156,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->menuPropsVideo          = "Beeld";
     ls->menuPropsSound          = "Geluid";
     ls->menuPropsControls       = "Besturing";
-    ls->menuPropsPerformance    = "Prestatie";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Instellingen";
     ls->menuPropsFile           = "Bestand";
     ls->menuPropsDisk           = "Diskettes";
@@ -296,6 +296,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->propSound               = "Geluid";
     ls->propControls            = "Besturing";
     ls->propPerformance         = "Prestaties";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "Instellingen";
     ls->propFile                = "Bestand";
     ls->propDisk                = "Diskettes";
@@ -427,6 +428,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW accel.";
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Geen";
     ls->enumVideoFrameskip1     = "1 frame";
@@ -607,7 +609,7 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Toon Beeldeigenschappen";
     ls->shortcutShowAudioProp   = "Toon Geluidseigenschappen";
     ls->shortcutShowCtrlProp    = "Toon Besturingseigenschappen";
-    ls->shortcutShowPerfProp    = "Toon Prestatie-eigenschappen";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Toon Instellingen eigenschappen";
     ls->shortcutShowPorts       = "Toon Poorteigenschappen";
     ls->shortcutShowLanguage    = "Taalconfiguratie weergeven";

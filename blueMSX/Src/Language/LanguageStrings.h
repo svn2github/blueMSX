@@ -153,13 +153,12 @@ typedef struct {
     char* menuPropsVideo;
     char* menuPropsSound;
     char* menuPropsControls;
-    char* menuPropsPerformance;
+    char* menuPropsEffects;
     char* menuPropsSettings;
     char* menuPropsFile;
     char* menuPropsDisk;
     char* menuPropsLanguage;
     char* menuPropsPorts;
-    char* menuPropsD3D;
 
     char* menuVideoSource;
     char* menuVideoSourceDefault;
@@ -290,6 +289,7 @@ typedef struct {
     char* propSound;
     char* propControls;
     char* propPerformance;
+    char* propEffects;
     char* propSettings;
     char* propFile;
     char* propDisk;
@@ -629,10 +629,9 @@ typedef struct {
     char* shortcutShowVideoProp;
     char* shortcutShowAudioProp;
     char* shortcutShowCtrlProp;
-    char* shortcutShowPerfProp;
+    char* shortcutShowEffectsProp;
     char* shortcutShowSettProp;
     char* shortcutShowPorts;
-    char* shortcutShowD3D;
     char* shortcutShowLanguage;
     char* shortcutShowMachines;
     char* shortcutShowShortcuts;

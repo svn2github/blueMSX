@@ -156,13 +156,12 @@ void langInitEnglish(LanguageStrings* ls)
     ls->menuPropsVideo          = "Video";
     ls->menuPropsSound          = "Sound";
     ls->menuPropsControls       = "Controls";
-    ls->menuPropsPerformance    = "Performance";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Settings";
     ls->menuPropsFile           = "Files";
     ls->menuPropsDisk           = "Disks";               // New in 2.7
     ls->menuPropsLanguage       = "Language";
     ls->menuPropsPorts          = "Ports";
-    ls->menuPropsD3D            = "Direct3D";
     
     ls->menuVideoSource         = "Video Out Source";
     ls->menuVideoSourceDefault  = "No Video Out Source Connected";
@@ -298,6 +297,7 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propSound               = "Sound";
     ls->propControls            = "Controls";
     ls->propPerformance         = "Performance";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "Settings";
     ls->propFile                = "Files";
     ls->propDisk                = "Disks";              // New in 2.7
@@ -636,10 +636,9 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Show Video Properties";
     ls->shortcutShowAudioProp   = "Show Audio Properties";
     ls->shortcutShowCtrlProp    = "Show Controls Properties";
-    ls->shortcutShowPerfProp    = "Show Performance Properties";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";
     ls->shortcutShowSettProp    = "Show Settings Properties";
     ls->shortcutShowPorts       = "Show Ports Properties";
-    ls->shortcutShowD3D         = "Show Direct3D Properties";
     ls->shortcutShowLanguage    = "Show Language Dialog";
     ls->shortcutShowMachines    = "Show Machine Editor";
     ls->shortcutShowShortcuts   = "Show Shortcuts Editor";

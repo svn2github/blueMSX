@@ -157,7 +157,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->menuPropsVideo                  = "Video...";
     ls->menuPropsSound                  = "Audio...";
     ls->menuPropsControls               = "Controlli...";
-    ls->menuPropsPerformance            = "Prestazioni...";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings               = "Impostazioni...";
     ls->menuPropsFile                   = "File...";
     ls->menuPropsDisk                   = "Dischi...";               // New in 2.7
@@ -297,6 +297,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->propSound                       = "Audio";
     ls->propControls                    = "Controlli";
     ls->propPerformance                 = "Prestazioni";
+    ls->propEffects                     = "Effects";             // New in 2.9
     ls->propSettings                    = "Impostazioni";
     ls->propFile                        = "File";
     ls->propDisk                        = "Dischi";              // New in 2.7
@@ -428,6 +429,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW        = "DirectDraw HW accelerato";
     ls->enumVideoDrvDirectDraw          = "DirectDraw";
     ls->enumVideoDrvGDI                 = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0             = "Nessuno";
     ls->enumVideoFrameskip1             = "1 fotogramma";
@@ -608,7 +610,7 @@ void langInitItalian(LanguageStrings* ls)
     ls->shortcutShowVideoProp           = "Mostra le proprietà del video";
     ls->shortcutShowAudioProp           = "Mostra le proprietà dell'audio";
     ls->shortcutShowCtrlProp            = "Mostra le proprietà dei controlli";
-    ls->shortcutShowPerfProp            = "Mostra le proprietà delle prestazioni";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp            = "Mostra le proprietà delle impostazioni";
     ls->shortcutShowPorts               = "Mostra le proprietà delle porte";
     ls->shortcutShowLanguage            = "Visualizza il menù della lingua";

@@ -134,7 +134,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "dlg-controls"))            return (ButtonEvent)actionPropShowEmulation;
     if (0 == strcmp(action, "dlg-video"))               return (ButtonEvent)actionPropShowVideo;
     if (0 == strcmp(action, "dlg-audio"))               return (ButtonEvent)actionPropShowAudio;
-    if (0 == strcmp(action, "dlg-performance"))         return (ButtonEvent)actionPropShowPerformance;
+    if (0 == strcmp(action, "dlg-effects"))             return (ButtonEvent)actionPropShowEffects;
     if (0 == strcmp(action, "dlg-settings"))            return (ButtonEvent)actionPropShowSettings;
     if (0 == strcmp(action, "dlg-apearance"))           return (ButtonEvent)actionPropShowApearance;
     if (0 == strcmp(action, "dlg-language"))            return (ButtonEvent)actionOptionsShowLanguage;

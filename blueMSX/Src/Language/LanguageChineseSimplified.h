@@ -156,7 +156,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->menuPropsVideo          = "视频";
     ls->menuPropsSound          = "声音";
     ls->menuPropsControls       = "控制器";
-    ls->menuPropsPerformance    = "性能";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings        = "设定";
     ls->menuPropsFile           = "文件";
     ls->menuPropsDisk           = "Disks";               // New in 2.7
@@ -295,6 +295,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propSound               = "声音";
     ls->propControls            = "控制器";
     ls->propPerformance         = "性能";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings             = "其他";
     ls->propFile                = "文件";
     ls->propDisk                = "Disks";              // New in 2.7
@@ -426,6 +427,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW 加速"; 
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "无";
     ls->enumVideoFrameskip1     = "1个帧";
@@ -606,7 +608,7 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "显示视频属性";
     ls->shortcutShowAudioProp   = "显示音频属性";
     ls->shortcutShowCtrlProp    = "显示控制属性";
-    ls->shortcutShowPerfProp    = "显示性能属性";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "显示其他属性";
     ls->shortcutShowPorts       = "显示端口设定";
     ls->shortcutShowLanguage    = "显示语言对话框";

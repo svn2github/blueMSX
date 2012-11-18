@@ -918,11 +918,10 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->propShowEmulation))            actionPropShowEmulation();
     if (hotkeyEq(key, s->propShowVideo))                actionPropShowVideo();
     if (hotkeyEq(key, s->propShowAudio))                actionPropShowAudio();
-    if (hotkeyEq(key, s->propShowPerformance))          actionPropShowPerformance();
     if (hotkeyEq(key, s->propShowSettings))             actionPropShowSettings();
     if (hotkeyEq(key, s->propShowApearance))            actionPropShowApearance();
     if (hotkeyEq(key, s->propShowPorts))                actionPropShowPorts();
-    if (hotkeyEq(key, s->propShowD3D))					actionPropShowD3D();
+    if (hotkeyEq(key, s->propShowEffects))				actionPropShowEffects();
     if (hotkeyEq(key, s->optionsShowLanguage))          actionOptionsShowLanguage();
     if (hotkeyEq(key, s->toolsShowMachineEditor))       actionToolsShowMachineEditor();
     if (hotkeyEq(key, s->toolsShowShorcutEditor))       actionToolsShowShorcutEditor();

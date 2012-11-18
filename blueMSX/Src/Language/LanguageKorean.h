@@ -156,7 +156,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->menuPropsVideo          = "비디오";
     ls->menuPropsSound          = "사운드";
     ls->menuPropsControls       = "컨트롤";
-    ls->menuPropsPerformance    = "성능";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings        = "외부 설정";
     ls->menuPropsFile           = "파일";
     ls->menuPropsDisk           = "디스크";               // New in 2.7
@@ -295,6 +295,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->propSound               = "사운드";
     ls->propControls            = "콘트롤";
     ls->propPerformance         = "성능";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings             = "외부 설정";
     ls->propFile                = "파일";
     ls->propDisk                = "디스크";              // New in 2.7
@@ -426,6 +427,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW = "DirectDraw HW 가속";
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "없음";
     ls->enumVideoFrameskip1     = "1 프레임";
@@ -606,7 +608,7 @@ void langInitKorean(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "비디오 속성 보기";
     ls->shortcutShowAudioProp   = "오디오 속성 보기";
     ls->shortcutShowCtrlProp    = "콘트롤 속성 보기";
-    ls->shortcutShowPerfProp    = "성능 속성 보기";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "외부 설정 속성 보기";
     ls->shortcutShowPorts       = "포트 속성 보기";
     ls->shortcutShowLanguage    = "언어 보기";

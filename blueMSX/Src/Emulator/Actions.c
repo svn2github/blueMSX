@@ -830,15 +830,11 @@ void actionPropShowEmulation() {
     archShowPropertiesDialog(PROP_EMULATION);
 }
 
-void actionPropShowVideo() {
-    archShowPropertiesDialog(PROP_VIDEO);
-}
-
 void actionPropShowAudio() {
     archShowPropertiesDialog(PROP_SOUND);
 }
 
-void actionPropShowPerformance() {
+void actionPropShowVideo() {
     archShowPropertiesDialog(PROP_PERFORMANCE);
 }
 
@@ -854,8 +850,8 @@ void actionPropShowPorts() {
     archShowPropertiesDialog(PROP_PORTS);
 }
 
-void actionPropShowD3D() {
-    archShowPropertiesDialog(PROP_D3D);
+void actionPropShowEffects() {
+    archShowPropertiesDialog(PROP_VIDEO);
 }
 
 void actionPropShowApearance() {

@@ -156,7 +156,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->menuPropsVideo          = "Vídeo";
     ls->menuPropsSound          = "So";
     ls->menuPropsControls       = "Controls";
-    ls->menuPropsPerformance    = "Rendiment";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Paràmetres";
     ls->menuPropsFile           = "Fitxers";
     ls->menuPropsDisk           = "Discs";               // New in 2.7
@@ -296,6 +296,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->propSound               = "So";
     ls->propControls            = "Controls";
     ls->propPerformance         = "Rendiment";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "Paràmetres";
     ls->propFile                = "Fitxers";
     ls->propDisk                = "Discs";              // New in 2.7
@@ -427,6 +428,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "Acceleració DirectDraw de maquinari";  
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Cap";
     ls->enumVideoFrameskip1     = "1 marc";
@@ -607,7 +609,7 @@ void langInitCatalan(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Mostra les propietats de vídeo";
     ls->shortcutShowAudioProp   = "Mostra les propietats d'àudio";
     ls->shortcutShowCtrlProp    = "Mostra les propietats dels controls";
-    ls->shortcutShowPerfProp    = "Mostra les propietats del rendiment";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Mostra les propietats dels paràmetres";
     ls->shortcutShowPorts       = "Mostra les propietats dels ports";
     ls->shortcutShowLanguage    = "Mostra el diàlog de l'idioma";

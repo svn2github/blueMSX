@@ -156,14 +156,13 @@ void langInitFrench(LanguageStrings* ls)
     ls->menuPropsVideo          = "Vidéo";
     ls->menuPropsSound          = "Son";
     ls->menuPropsControls       = "Contrôles";
-    ls->menuPropsPerformance    = "Performances";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Réglages";
     ls->menuPropsFile           = "Fichiers";
     ls->menuPropsDisk           = "Disques";               // New in 2.7
     ls->menuPropsLanguage       = "Langue";
     ls->menuPropsPorts          = "Ports";
-    ls->menuPropsD3D            = "Direct3D";
-
+    
     ls->menuVideoChipAutodetect = "Détection automatique"; 
     ls->menuVideoSource         = "Sortie vidéo";                   
     ls->menuVideoSourceDefault  = "Sortie vidéo non connectée";      
@@ -298,6 +297,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->propSound               = "Son";
     ls->propControls            = "Contrôles";
     ls->propPerformance         = "Performances";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings             = "Réglages";
     ls->propFile                = "Fichiers"; 
     ls->propDisk                = "Disques";              // New in 2.7
@@ -636,10 +636,9 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Accéder au menu Video";
     ls->shortcutShowAudioProp   = "Accéder au menu Son";
     ls->shortcutShowCtrlProp    = "Accéder au menu Contrôles";
-    ls->shortcutShowPerfProp    = "Accéder au menu Performances";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Accéder au menu Réglages";
     ls->shortcutShowPorts       = "Accéder au menu Ports";
-    ls->shortcutShowD3D         = "Accéder au menu Direct3D";
     ls->shortcutShowLanguage    = "Accéder au menu Langue";
     ls->shortcutShowMachines    = "Accéder à l'éditeur de machines";
     ls->shortcutShowShortcuts   = "Accéder à l'éditeur de raccourcis";

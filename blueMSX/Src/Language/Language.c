@@ -373,13 +373,12 @@ char* langMenuPropsEmulation() { return ls->menuPropsEmulation; }
 char* langMenuPropsVideo() { return ls->menuPropsVideo; }
 char* langMenuPropsSound() { return ls->menuPropsSound; }
 char* langMenuPropsControls() { return ls->menuPropsControls; }
-char* langMenuPropsPerformance() { return ls->menuPropsPerformance; }
+char* langMenuPropsEffects() { return ls->menuPropsEffects; }
 char* langMenuPropsSettings() { return ls->menuPropsSettings; }
 char* langMenuPropsFile() { return ls->menuPropsFile; }
 char* langMenuPropsDisk() { return ls->menuPropsDisk; }
 char* langMenuPropsLanguage() { return ls->menuPropsLanguage; }
 char* langMenuPropsPorts() { return ls->menuPropsPorts; }
-char* langMenuPropsD3D() { return ls->menuPropsD3D; }
 
 char* langMenuVideoSource()        { return ls->menuVideoSource; }
 char* langMenuVideoSourceDefault() { return ls->menuVideoSourceDefault; }
@@ -504,6 +503,7 @@ char* langPropVideo() { return ls->propVideo; }
 char* langPropSound() { return ls->propSound; }
 char* langPropControls() { return ls->propControls; }
 char* langPropPerformance() { return ls->propPerformance; }
+char* langPropEffects() { return ls->propEffects; }
 char* langPropSettings() { return ls->propSettings; }
 char* langPropFile()  { return ls->propFile; }
 char* langPropDisk()  { return ls->propDisk; }
@@ -847,10 +847,9 @@ char* langShortcutShowEmuProp() { return ls->shortcutShowEmuProp; }
 char* langShortcutShowVideoProp() { return ls->shortcutShowVideoProp; }
 char* langShortcutShowAudioProp() { return ls->shortcutShowAudioProp; }
 char* langShortcutShowCtrlProp() { return ls->shortcutShowCtrlProp; }
-char* langShortcutShowPerfProp() { return ls->shortcutShowPerfProp; }
+char* langShortcutShowEffectsProp() { return ls->shortcutShowEffectsProp; }
 char* langShortcutShowSettProp() { return ls->shortcutShowSettProp; }
 char* langShortcutShowPorts() { return ls->shortcutShowPorts; }
-char* langShortcutShowD3D() { return ls->shortcutShowD3D; }
 char* langShortcutShowLanguage() { return ls->shortcutShowLanguage; }
 char* langShortcutShowMachines() { return ls->shortcutShowMachines; }
 char* langShortcutShowShortcuts() { return ls->shortcutShowShortcuts; }

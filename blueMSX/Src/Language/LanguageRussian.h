@@ -156,7 +156,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->menuPropsVideo          = "Видео";
     ls->menuPropsSound          = "Звук";
     ls->menuPropsControls       = "Управление";
-    ls->menuPropsPerformance    = "Быстродействие";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Настройка";
     ls->menuPropsFile           = "Файлы";
     ls->menuPropsDisk           = "Дискеты";               // New in 2.7
@@ -295,6 +295,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->propSound               = "Звук";
     ls->propControls            = "Управление";
     ls->propPerformance         = "Быстродействие";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "Опции";
     ls->propFile                = "Файлы";
     ls->propDisk                = "Диски";              // New in 2.7
@@ -426,6 +427,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "DirectDraw аппаратно"; 
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Нет";
     ls->enumVideoFrameskip1     = "1 кадр";
@@ -606,7 +608,7 @@ void langInitRussian(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Показать настройки видео";
     ls->shortcutShowAudioProp   = "Показать настройки аудио";
     ls->shortcutShowCtrlProp    = "Показать настройки управления";
-    ls->shortcutShowPerfProp    = "Показать настройки быстродействия";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Показать настройки";
     ls->shortcutShowPorts       = "Показать настройки портов";
     ls->shortcutShowLanguage    = "Показать выбор языка";

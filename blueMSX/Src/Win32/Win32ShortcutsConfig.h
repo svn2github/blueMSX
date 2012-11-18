@@ -111,11 +111,10 @@ typedef struct {
     ShotcutHotkey propShowEmulation;
     ShotcutHotkey propShowVideo;
     ShotcutHotkey propShowAudio;
-    ShotcutHotkey propShowPerformance;
+    ShotcutHotkey propShowEffects;
     ShotcutHotkey propShowSettings;
     ShotcutHotkey propShowApearance;
     ShotcutHotkey propShowPorts;
-    ShotcutHotkey propShowD3D;
     ShotcutHotkey optionsShowLanguage;
     ShotcutHotkey toolsShowMachineEditor;
     ShotcutHotkey toolsShowShorcutEditor;

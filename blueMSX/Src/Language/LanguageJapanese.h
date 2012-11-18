@@ -158,7 +158,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->menuPropsVideo          = "ビデオ";
     ls->menuPropsSound          = "サウンド";
     ls->menuPropsControls       = "コントロール";
-    ls->menuPropsPerformance    = "パフォーマンス";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "その他";
     ls->menuPropsFile           = "ファイル";
     ls->menuPropsDisk           = "ディスク";            // New in 2.7
@@ -297,6 +297,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propSound               = "サウンド";
     ls->propControls            = "コントロール";
     ls->propPerformance         = "パフォーマンス";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "その他";
     ls->propFile                = "ファイル";
     ls->propDisk                = "ディスク";            // New in 2.7
@@ -427,6 +428,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "DirectDraw ハードウェア";
     ls->enumVideoDrvDirectDraw  = "DirectDraw ソ\フトウェア";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "なし";
     ls->enumVideoFrameskip1     = "1フレーム";
@@ -607,7 +609,7 @@ void langInitJapanese(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "ビデオ設定画面の表\示";
     ls->shortcutShowAudioProp   = "サウンド設定画面の表\示";
     ls->shortcutShowCtrlProp    = "コントロール設定画面の表\示";
-    ls->shortcutShowPerfProp    = "パフォーマンス設定画面の表\示";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "その他設定画面の表\示";
     ls->shortcutShowPorts       = "ポート設定画面の表\示";
     ls->shortcutShowLanguage    = "言語ダイアログの表\示";

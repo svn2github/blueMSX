@@ -793,11 +793,10 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(propShowEmulation);
     LOAD_SHORTCUT(propShowVideo);
     LOAD_SHORTCUT(propShowAudio);
-    LOAD_SHORTCUT(propShowPerformance);
+    LOAD_SHORTCUT(propShowEffects);
     LOAD_SHORTCUT(propShowSettings);
     LOAD_SHORTCUT(propShowApearance);
     LOAD_SHORTCUT(propShowPorts);
-    LOAD_SHORTCUT(propShowD3D);
     LOAD_SHORTCUT(optionsShowLanguage);
     LOAD_SHORTCUT(toolsShowMachineEditor);
     LOAD_SHORTCUT(toolsShowShorcutEditor);
@@ -893,11 +892,10 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(propShowEmulation);
     SAVE_SHORTCUT(propShowVideo);
     SAVE_SHORTCUT(propShowAudio);
-    SAVE_SHORTCUT(propShowPerformance);
+    SAVE_SHORTCUT(propShowEffects);
     SAVE_SHORTCUT(propShowSettings);
     SAVE_SHORTCUT(propShowApearance);
     SAVE_SHORTCUT(propShowPorts);
-    SAVE_SHORTCUT(propShowD3D);
     SAVE_SHORTCUT(optionsShowLanguage);
     SAVE_SHORTCUT(toolsShowMachineEditor);
     SAVE_SHORTCUT(toolsShowShorcutEditor);
@@ -1062,11 +1060,10 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(propShowEmulation, langShortcutShowEmuProp());
     ADD_SHORTCUT(propShowVideo, langShortcutShowVideoProp());
     ADD_SHORTCUT(propShowAudio, langShortcutShowAudioProp());
-    ADD_SHORTCUT(propShowPerformance, langShortcutShowPerfProp());
+    ADD_SHORTCUT(propShowEffects, langShortcutShowEffectsProp());
     ADD_SHORTCUT(propShowSettings, langShortcutShowFiles());
     ADD_SHORTCUT(propShowApearance, langShortcutShowSettProp());
     ADD_SHORTCUT(propShowPorts, langShortcutShowPorts());
-    ADD_SHORTCUT(propShowD3D, langShortcutShowD3D());
     ADD_SHORTCUT(optionsShowLanguage, langShortcutShowLanguage());
     
     ADD_SHORTCUTSEPARATOR();

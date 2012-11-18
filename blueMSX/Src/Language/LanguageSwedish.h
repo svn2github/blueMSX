@@ -156,7 +156,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->menuPropsVideo          = "Video";
     ls->menuPropsSound          = "Ljud";
     ls->menuPropsControls       = "Kontroller";
-    ls->menuPropsPerformance    = "Prestanda";
+    ls->menuPropsEffects        = "Effekter";               // New in 2.9
     ls->menuPropsSettings       = "Inställningar";
     ls->menuPropsFile           = "Filer";
     ls->menuPropsDisk           = "Enheter";               // New in 2.7
@@ -297,6 +297,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSound               = "Ljud";
     ls->propControls            = "Kontroller";
     ls->propPerformance         = "Prestanda";
+    ls->propEffects             = "Effecter";             // New in 2.9
     ls->propSettings            = "Inställningar";
     ls->propFile                = "Filer";
     ls->propDisk                = "Enheter";              // New in 2.7
@@ -428,6 +429,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "DirectDraw HW accel.";
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Ingen";
     ls->enumVideoFrameskip1     = "1 bild";
@@ -608,7 +610,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Öppna Videofönstret";
     ls->shortcutShowAudioProp   = "Öppna Audiofönstret";
     ls->shortcutShowCtrlProp    = "Öppna Kontrollfönstret";
-    ls->shortcutShowPerfProp    = "Öppna Prestandafönstret";
+    ls->shortcutShowEffectsProp    = "Öppna Effektsfönstret";
     ls->shortcutShowSettProp    = "Öppna Inställningsfönstret";
     ls->shortcutShowPorts       = "Visa Portegenskaper";
     ls->shortcutShowLanguage    = "Öppna Språkfönstret";

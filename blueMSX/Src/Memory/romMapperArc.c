@@ -81,14 +81,14 @@ static void loadState(Arc* rm)
 
 static UInt8 readIo(Arc* rm, UInt16 ioPort)
 {	
-    printf("R: %.2x\n", ((rm->offset & 0x03) == 0x03) ? 0xda : 0xff);
+//    printf("R: %.2x\n", ((rm->offset & 0x03) == 0x03) ? 0xda : 0xff);
 
     return ((rm->offset & 0x03) == 0x03) ? 0xda : 0xff;
 }
 
 static void writeIo(Arc* rm, UInt16 ioPort, UInt8 value)
 {
-    printf("W: %.2x\n", value);
+//    printf("W: %.2x\n", value);
     if (value == 0x35) {
         rm->offset++;
     }

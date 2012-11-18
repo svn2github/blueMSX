@@ -156,7 +156,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->menuPropsVideo          = "Obraz";
     ls->menuPropsSound          = "DŸwiêk";
     ls->menuPropsControls       = "Sterowanie";
-    ls->menuPropsPerformance    = "Wydajnoœæ";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings        = "Ustawienia";
     ls->menuPropsFile           = "Pliki";
     ls->menuPropsDisk           = "Disks";               // New in 2.7
@@ -296,6 +296,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->propSound               = "DŸwiêk";
     ls->propControls            = "Sterowanie";
     ls->propPerformance         = "Wydajnoœæ";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings             = "Ustawienia";
     ls->propFile                = "Pliki";
     ls->propDisk                = "Disks";              // New in 2.7
@@ -427,6 +428,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW = "DirectDraw (sprzêtowy)"; 
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Brak";
     ls->enumVideoFrameskip1     = "1 klatka";
@@ -607,7 +609,7 @@ void langInitPolish(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Wyœwietl ustawienia obrazu";
     ls->shortcutShowAudioProp   = "Wyœwietl ustawienia dŸwiêku";
     ls->shortcutShowCtrlProp    = "Wyœwietl ustawienia sterowania";
-    ls->shortcutShowPerfProp    = "Wyœwietl ustawienia wydajnoœci";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Wyœwietl ustawienia";
     ls->shortcutShowPorts       = "Wyœwietl w³aœciwoœci portów";
     ls->shortcutShowLanguage    = "Wyœwietl ustawienia jêzyka";

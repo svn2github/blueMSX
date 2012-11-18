@@ -150,6 +150,8 @@
 #define IDC_LPTFILENAME                 1038
 #define IDC_LPTFILENAMEBROWSE           1039
 #define IDC_LPTFILENAMETEXT             1040
+#define IDD_VIDEO_SOFTWARE              1041
+#define IDD_VIDEO_DIRECT3D              1042
 
 #define IDC_EMUGENERALGROUPBOX          1800
 #define IDC_EMUFAMILYTEXT               1801
@@ -202,6 +204,10 @@
 #define IDC_PERFSYNCMODETEXT            2007
 #define IDC_PERFFULLSCREEN              2008
 #define IDC_PERFFULLSCREENTEXT          2009
+#define IDC_PERFSETTINGSGROUPBOX        2010
+#define IDD_PERF_DIRECTDRAW             2011
+#define IDD_PERF_GDI                    2012
+#define IDD_PERF_DIRECT3D               2013
 
 #define IDC_SNDCHIPEMUGROUPBOX          2100
 

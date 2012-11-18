@@ -158,7 +158,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->menuPropsVideo          = "Video";
     ls->menuPropsSound          = "Ääni";
     ls->menuPropsControls       = "Kontrollit";
-    ls->menuPropsPerformance    = "Suorituskyky";
+    ls->menuPropsEffects        = "Effects";               // New in 2.9
     ls->menuPropsSettings       = "Asetukset";
     ls->menuPropsFile           = "Tiedostot";
     ls->menuPropsDisk           = "Levyt";               // New in 2.7
@@ -297,6 +297,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->propSound               = "Ääni";
     ls->propControls            = "Kontrollit";
     ls->propPerformance         = "Suorituskyky";
+    ls->propEffects             = "Effects";             // New in 2.9
     ls->propSettings            = "Asetukset";
     ls->propFile                = "Tiedostot";
     ls->propDisk                = "Levyt";              // New in 2.7
@@ -428,6 +429,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->enumVideoDrvDirectDrawHW= "Kiihdytetty DirectDraw";
     ls->enumVideoDrvDirectDraw  = "DirectDraw";
     ls->enumVideoDrvGDI         = "GDI";
+    ls->enumVideoDrvD3D         = "Direct3D";
 
     ls->enumVideoFrameskip0     = "Ei käytössä";
     ls->enumVideoFrameskip1     = "1 päivitys";
@@ -608,7 +610,7 @@ void langInitFinnish(LanguageStrings* ls)
     ls->shortcutShowVideoProp   = "Näytä videoasetukset";
     ls->shortcutShowAudioProp   = "Näytä ääniasetukset";
     ls->shortcutShowCtrlProp    = "Näytä kontrolliasetukset";
-    ls->shortcutShowPerfProp    = "Näytä suorituskykyasetukset";
+    ls->shortcutShowEffectsProp = "Show Effects Properties";     // New in 2.9
     ls->shortcutShowSettProp    = "Näytä yleisasetukset";
     ls->shortcutShowPorts       = "Näytä liitäntäasetukset";
     ls->shortcutShowLanguage    = "Näytä kielivalinnat";
