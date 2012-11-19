@@ -269,6 +269,7 @@ static ButtonEvent getAction(TiXmlElement* el, const char* actionTag,
     if (0 == strcmp(action, "sprite-setenable"))     return (ButtonEvent)actionSetSpriteEnable;
     if (0 == strcmp(action, "switch-setfdctiming"))  return (ButtonEvent)actionSetFdcTiming;
     if (0 == strcmp(action, "switch-setnospritelimits"))  return (ButtonEvent)actionSetNoSpriteLimits;
+    if (0 == strcmp(action, "switch-togglemsxkeyboardquirk")) return (ButtonEvent)actionToggleMsxKeyboardQuirk;
     if (0 == strcmp(action, "switch-setmsxaudio"))   return (ButtonEvent)actionSetMsxAudioSwitch;
     if (0 == strcmp(action, "switch-setfront"))      return (ButtonEvent)actionSetFrontSwitch;
     if (0 == strcmp(action, "switch-setpause"))      return (ButtonEvent)actionSetPauseSwitch;

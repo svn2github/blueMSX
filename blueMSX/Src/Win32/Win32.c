@@ -851,6 +851,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->spritesEnable))                actionToggleSpriteEnable();
     if (hotkeyEq(key, s->fdcTiming))                    actionToggleFdcTiming();
     if (hotkeyEq(key, s->noSpriteLimits))               actionToggleNoSpriteLimits();
+    if (hotkeyEq(key, s->msxKeyboardQuirk))             actionToggleMsxKeyboardQuirk();
     if (hotkeyEq(key, s->msxAudioSwitch))               actionToggleMsxAudioSwitch();
     if (hotkeyEq(key, s->frontSwitch))                  actionToggleFrontSwitch();
     if (hotkeyEq(key, s->pauseSwitch))                  actionTogglePauseSwitch();

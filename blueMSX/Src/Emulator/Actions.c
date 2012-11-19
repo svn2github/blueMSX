@@ -254,6 +254,10 @@ void actionToggleNoSpriteLimits() {
     vdpSetNoSpriteLimits(!vdpGetNoSpritesLimit());
 }
 
+void actionToggleMsxKeyboardQuirk() {
+    state.properties->keyboard.enableKeyboardQuirk = !state.properties->keyboard.enableKeyboardQuirk;
+}
+
 void actionToggleMsxAudioSwitch() {
     state.properties->emulation.audioSwitch = !state.properties->emulation.audioSwitch;
     switchSetAudio(state.properties->emulation.audioSwitch);

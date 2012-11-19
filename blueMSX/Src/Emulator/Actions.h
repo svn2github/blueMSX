@@ -142,6 +142,7 @@ void actionToggleCasAutoRewind();
 void actionToggleSpriteEnable();
 void actionToggleFdcTiming();
 void actionToggleNoSpriteLimits();
+void actionToggleMsxKeyboardQuirk();
 void actionToggleMsxAudioSwitch();
 void actionToggleFrontSwitch();
 void actionTogglePauseSwitch();
