@@ -1514,7 +1514,7 @@ static RomType romTypeList[] = {
     ROM_SNATCHER, /* SCC-I */
     ROM_SDSNATCHER, /* SCC-I */
     ROM_MANBOW2, /* contains SCC */
-    ROM_MANBOW2, /* contains SCC */
+    ROM_MANBOW2_V2, /* contains SCC */
     ROM_HAMARAJANIGHT, /* contains SCC */
     ROM_MEGAFLSHSCC, /* contains SCC */
     ROM_MEGAFLSHSCCPLUS, /* contains SCC */
