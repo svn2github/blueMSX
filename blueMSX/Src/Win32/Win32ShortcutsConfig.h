@@ -48,6 +48,7 @@ typedef struct {
     ShotcutHotkey spritesEnable;
     ShotcutHotkey fdcTiming;
     ShotcutHotkey noSpriteLimits;
+    ShotcutHotkey msxKeyboardQuirk;
     ShotcutHotkey msxAudioSwitch;
     ShotcutHotkey frontSwitch;
     ShotcutHotkey pauseSwitch;

@@ -310,6 +310,8 @@ void langInitRussian(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Скорость эмуляции:";
     ls->propEmuFrontSwitchGB    = "Переключатели Panasonic ";
     ls->propEmuFrontSwitch      = " Передний выключатель";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Кнопка паузы";
@@ -398,6 +400,19 @@ void langInitRussian(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
     ls->propCdromDrive          = "Привод:";          // New in 2.7
 
+    ls->propD3DParametersGB         = "Parameters ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linear filtering";          // New in 2.9
+    ls->propD3DForceHighResText     = " Force high resolution";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Extend border color";   // New in 2.9
+
+    ls->propD3DCroppingGB               = "Cropping ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Cropping type:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Left:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Right:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Top:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Bottom:";                // New in 2.9
+
 
     //----------------------
     // Dropdown related lines
@@ -435,6 +450,19 @@ void langInitRussian(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3 кадра";
     ls->enumVideoFrameskip4     = "4 кадра";
     ls->enumVideoFrameskip5     = "5 кадров";
+
+    ls->enumD3DARAuto           = "Auto";           // New in 2.9
+    ls->enumD3DARStretch        = "Stretch";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
+
+    ls->enumD3DCropNone         = "None";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Custom";         // New in 2.9
 
     ls->enumSoundDrvNone        = "Нет звука";
     ls->enumSoundDrvWMM         = "Драйвер WMM";
@@ -623,6 +651,8 @@ void langInitRussian(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Показать настройки файлов";
     ls->shortcutToggleSpriteEnable = "показать/спрятать спрайты";
     ls->shortcutToggleFdcTiming = "Включить/выключить таймнг дисковода";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "Включить/выключить CPU Trace";
     ls->shortcutVideoLoad       = "Загрузить видеозахват";             
     ls->shortcutVideoPlay       = "Воспроизвести видеозахват";   

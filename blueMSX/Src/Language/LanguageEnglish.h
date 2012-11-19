@@ -312,8 +312,11 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Emulation Speed:";
     ls->propEmuFrontSwitchGB    = "Panasonic Switches ";
     ls->propEmuFrontSwitch      = " Front Switch";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuFdcTiming        = " Disable Floppy Drive Timing";
-    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Pause Switch";
     ls->propEmuAudioSwitch      = " MSX-AUDIO cartridge switch";
@@ -401,18 +404,18 @@ void langInitEnglish(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
     ls->propCdromDrive          = "Drive:";          // New in 2.7
 
-    ls->propD3DParametersGB         = "Parameters ";
-    ls->propD3DAspectRatioText      = "Aspect ratio";
-    ls->propD3DLinearFilteringText  = " Linear filtering";
-    ls->propD3DForceHighResText     = " Force high resolution";
-    ls->propD3DExtendBorderColorText    = " Extend border color";
+    ls->propD3DParametersGB         = "Parameters ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linear filtering";          // New in 2.9
+    ls->propD3DForceHighResText     = " Force high resolution";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Extend border color";   // New in 2.9
 
-    ls->propD3DCroppingGB               = "Cropping ";
-    ls->propD3DCroppingTypeText         = "Cropping type:";
-    ls->propD3DCroppingLeftText         = "Left:";
-    ls->propD3DCroppingRightText        = "Right:";
-    ls->propD3DCroppingTopText          = "Top:";
-    ls->propD3DCroppingBottomText       = "Bottom:";
+    ls->propD3DCroppingGB               = "Cropping ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Cropping type:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Left:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Right:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Top:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Bottom:";                // New in 2.9
 
     //----------------------
     // Dropdown related lines
@@ -451,18 +454,18 @@ void langInitEnglish(LanguageStrings* ls)
     ls->enumVideoFrameskip4     = "4 frames";
     ls->enumVideoFrameskip5     = "5 frames";
 
-    ls->enumD3DARAuto           = "Auto";
-    ls->enumD3DARStretch        = "Stretch";
-    ls->enumD3DARPAL            = "PAL";
-    ls->enumD3DARNTSC           = "NTSC";
-    ls->enumD3DAR11             = "1:1";
+    ls->enumD3DARAuto           = "Auto";           // New in 2.9
+    ls->enumD3DARStretch        = "Stretch";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
 
-    ls->enumD3DCropNone         = "None";
-    ls->enumD3DCropMSX1         = "MSX1";
-    ls->enumD3DCropMSX1Plus8    = "MSX1+8";
-    ls->enumD3DCropMSX2         = "MSX2";
-    ls->enumD3DCropMSX2Plus8    = "MSX2+8";
-    ls->enumD3DCropCustom       = "Custom";
+    ls->enumD3DCropNone         = "None";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Custom";         // New in 2.9
 
     ls->enumSoundDrvNone        = "No Sound";
     ls->enumSoundDrvWMM         = "WMM driver";
@@ -651,7 +654,8 @@ void langInitEnglish(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Show Files Properties";
     ls->shortcutToggleSpriteEnable = "Show/Hide Sprites";
     ls->shortcutToggleFdcTiming = "Enable/Disable Floppy Drive Timing";
-    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "Enable/Disable CPU Trace";
     ls->shortcutVideoLoad       = "Load Video Capture";             
     ls->shortcutVideoPlay       = "Play Last Video Capture";   

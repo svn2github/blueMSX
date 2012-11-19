@@ -313,7 +313,8 @@ void langInitFrench(LanguageStrings* ls)
     ls->propEmuFrontSwitchGB    = "Commutateurs Panasonic "; 
     ls->propEmuFrontSwitch      = " Commutateur frontal"; 
     ls->propEmuFdcTiming        = " Ne pas synchroniser le lecteur de disquettes"; 
-    ls->propEmuNoSpriteLimits   = " Pas de limite de sprites";
+    ls->propEmuNoSpriteLimits   = " Pas de limite de sprites";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Commutateur Pause";
     ls->propEmuAudioSwitch      = " Commutateur MSX-AUDIO"; 
@@ -652,6 +653,7 @@ void langInitFrench(LanguageStrings* ls)
     ls->shortcutToggleSpriteEnable = "Montrer/Cacher les sprites";
     ls->shortcutToggleFdcTiming = "Synchroniser ou non le lecteur de disquettes"; 
     ls->shortcutToggleNoSpriteLimits = "Basculer limitation de l'affichage des sprites";
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "Valider/Invalider la trace du CPU";
     ls->shortcutVideoLoad       = "Charger une capture vidéo";             
     ls->shortcutVideoPlay       = "Voir la plus récente capture vidéo";   

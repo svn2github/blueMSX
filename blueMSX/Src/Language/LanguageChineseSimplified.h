@@ -310,6 +310,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propEmuSpeedText        = "模拟速度:";
     ls->propEmuFrontSwitchGB     = "Panasonic 开关 ";
     ls->propEmuFrontSwitch       = " 前端开关";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuFdcTiming        = " 禁用软盘驱动器计时";
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " 暂停开关";
@@ -398,6 +400,19 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
     ls->propCdromDrive          = "Drive:";          // New in 2.7
 
+    ls->propD3DParametersGB         = "Parameters ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linear filtering";          // New in 2.9
+    ls->propD3DForceHighResText     = " Force high resolution";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Extend border color";   // New in 2.9
+
+    ls->propD3DCroppingGB               = "Cropping ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Cropping type:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Left:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Right:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Top:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Bottom:";                // New in 2.9
+
 
     //----------------------
     // Dropdown related lines
@@ -435,6 +450,19 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3个帧";
     ls->enumVideoFrameskip4     = "4个帧";
     ls->enumVideoFrameskip5     = "5个帧";
+
+    ls->enumD3DARAuto           = "Auto";           // New in 2.9
+    ls->enumD3DARStretch        = "Stretch";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
+
+    ls->enumD3DCropNone         = "None";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Custom";         // New in 2.9
 
     ls->enumSoundDrvNone        = "无声";
     ls->enumSoundDrvWMM         = "WMM 驱动";
@@ -623,6 +651,8 @@ void langInitChineseSimplified(LanguageStrings* ls)
     ls->shortcutShowFiles       = "显示文件设定";
     ls->shortcutToggleSpriteEnable = "显示/隐藏活动块";
     ls->shortcutToggleFdcTiming = "启用/禁用软盘驱动器计时";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "启用/禁用 CPU 追踪";
     ls->shortcutVideoLoad       = "读取截取视频";        
     ls->shortcutVideoPlay       = "播放上一个截取视频";   

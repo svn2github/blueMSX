@@ -312,6 +312,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propEmuSpeedText        = "スピード:";
     ls->propEmuFrontSwitchGB     = " パナソ\ニックスイッチ "; 
     ls->propEmuFrontSwitch       = " 前面[内蔵ソ\フト]スイッチ"; 
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuFdcTiming        = " FDDドライブのタイミングを無効化";
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " ポーズスイッチ";
@@ -400,6 +402,19 @@ void langInitJapanese(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";           // New in 2.7
     ls->propCdromDrive          = "ドライブ:";      // New in 2.7
 
+    ls->propD3DParametersGB         = "Parameters ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linear filtering";          // New in 2.9
+    ls->propD3DForceHighResText     = " Force high resolution";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Extend border color";   // New in 2.9
+
+    ls->propD3DCroppingGB               = "Cropping ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Cropping type:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Left:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Right:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Top:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Bottom:";                // New in 2.9
+
     //----------------------
     // Dropdown related lines
     //----------------------
@@ -436,6 +451,19 @@ void langInitJapanese(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3フレーム";
     ls->enumVideoFrameskip4     = "4フレーム";
     ls->enumVideoFrameskip5     = "5フレーム";
+
+    ls->enumD3DARAuto           = "Auto";           // New in 2.9
+    ls->enumD3DARStretch        = "Stretch";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
+
+    ls->enumD3DCropNone         = "None";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Custom";         // New in 2.9
 
     ls->enumSoundDrvNone        = "なし";
     ls->enumSoundDrvWMM         = "WMM";
@@ -624,6 +652,8 @@ void langInitJapanese(LanguageStrings* ls)
     ls->shortcutShowFiles       = "ファイルダイアログを表\示";
     ls->shortcutToggleSpriteEnable = "スプライトの表\示/非表\示";
     ls->shortcutToggleFdcTiming = "FDDドライブのタイミングの有効/無効";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "CPUトレースの有効/無効";
     ls->shortcutVideoLoad       = "読み込み...";             
     ls->shortcutVideoPlay       = "キャプチャ映像の再生";   

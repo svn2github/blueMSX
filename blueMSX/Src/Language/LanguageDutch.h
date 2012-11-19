@@ -311,6 +311,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Emulatiesnelheid:";
     ls->propEmuFrontSwitchGB    = "Panasonic schakelaars ";
     ls->propEmuFrontSwitch      = " Voorpanel Schakelaar";
+    ls->propEmuNoSpriteLimits   = " Disable Sprites Limitation";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulate MSX keyboard quirk";  // New in 2.9
     ls->propEmuFdcTiming        = " Diskettestation niet synchroniseren";
     ls->propEmuReversePlay      = " Enable reverse playback"; // New in 2.8.3
     ls->propEmuPauseSwitch      = " Pauze Schakelaar";
@@ -399,6 +401,19 @@ void langInitDutch(LanguageStrings* ls)
     ls->propCdromMethodAspi     = "ASPI";
     ls->propCdromDrive          = "Station:";
 
+    ls->propD3DParametersGB         = "Parameters ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linear filtering";          // New in 2.9
+    ls->propD3DForceHighResText     = " Force high resolution";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Extend border color";   // New in 2.9
+
+    ls->propD3DCroppingGB               = "Cropping ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Cropping type:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Left:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Right:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Top:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Bottom:";                // New in 2.9
+
 
     //----------------------
     // Dropdown related lines
@@ -436,6 +451,19 @@ void langInitDutch(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3 frames";
     ls->enumVideoFrameskip4     = "4 frames";
     ls->enumVideoFrameskip5     = "5 frames";
+
+    ls->enumD3DARAuto           = "Auto";           // New in 2.9
+    ls->enumD3DARStretch        = "Stretch";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
+
+    ls->enumD3DCropNone         = "None";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Custom";         // New in 2.9
 
     ls->enumSoundDrvNone        = "Geen Geluid";
     ls->enumSoundDrvWMM         = "WMM-stuurprogramma";
@@ -624,6 +652,8 @@ void langInitDutch(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Toon Bestandseigenschappen";
     ls->shortcutToggleSpriteEnable = "Tonen/Verbergen sprites";
     ls->shortcutToggleFdcTiming = "Synchroniseren/Niet synchroniseren";
+    ls->shortcutToggleNoSpriteLimits = "Toggle Sprites Limitation";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulate MSX Keyboard Quirk";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "CPU tracer aan/uit";
     ls->shortcutVideoLoad       = "Videoclip laden";
     ls->shortcutVideoPlay       = "Laatste videoclip afspelen";

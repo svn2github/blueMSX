@@ -297,7 +297,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propSound               = "Ljud";
     ls->propControls            = "Kontroller";
     ls->propPerformance         = "Prestanda";
-    ls->propEffects             = "Effecter";             // New in 2.9
+    ls->propEffects             = "Effekter";             // New in 2.9
     ls->propSettings            = "Inställningar";
     ls->propFile                = "Filer";
     ls->propDisk                = "Enheter";              // New in 2.7
@@ -312,6 +312,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propEmuSpeedText        = "Emuleringshastighet:";
     ls->propEmuFrontSwitchGB    = "Panasonicbrytare ";
     ls->propEmuFrontSwitch      = " Frontbrytare";
+    ls->propEmuNoSpriteLimits   = " Ignorera sprite begränsning";  // New in 2.9
+    ls->propEnableMsxKeyboardQuirk = " Emulera MSX tangentbordsfel";  // New in 2.9
     ls->propEmuFdcTiming        = " Slå av diskettstationstiming";
     ls->propEmuReversePlay      = " Tillåt baklänges uppspelning";
     ls->propEmuPauseSwitch      = " Pausbrytare";
@@ -375,7 +377,7 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propFileTypes           = " Registrera filtyper med blueMSX (.rom, .dsk, .cas, .sta)";
     ls->propWindowsEnvGB        = "Windows Miljö ";
     ls->propSetScreenSaver      = " Deaktivera skärmsläckare när blueMSX kör";
-    ls->propDisableWinKeys      = " Avaktivera WIndows menyer när emulatorn kör";
+    ls->propDisableWinKeys      = " Avaktivera Windows menyer när emulatorn kör";
     ls->propPriorityBoost       = " Höj prioriteten på blueMSX";
     ls->propScreenshotPng       = " Använd Portable Network Graphics (.png) skärmdump";
     ls->propEjectMediaOnExit    = " Ta ur media när blueMSX avslutas";
@@ -399,6 +401,19 @@ void langInitSwedish(LanguageStrings* ls)
     ls->propCdromMethodIoctl    = "IOCTL";           // New in 2.7
     ls->propCdromMethodAspi     = "ASPI";            // New in 2.7
     ls->propCdromDrive          = "Enhet:";          // New in 2.7
+
+    ls->propD3DParametersGB         = "Parametrar ";                // New in 2.9
+    ls->propD3DAspectRatioText      = "Aspect ratio";               // New in 2.9
+    ls->propD3DLinearFilteringText  = " Linjärt filter";          // New in 2.9
+    ls->propD3DForceHighResText     = " Tvinga högupplösning";     // New in 2.9
+    ls->propD3DExtendBorderColorText    = " Expandera ramfärger";   // New in 2.9
+
+    ls->propD3DCroppingGB               = "Trimning ";              // New in 2.9
+    ls->propD3DCroppingTypeText         = "Trimningstyp:";         // New in 2.9
+    ls->propD3DCroppingLeftText         = "Vänster:";                  // New in 2.9
+    ls->propD3DCroppingRightText        = "Höger:";                 // New in 2.9
+    ls->propD3DCroppingTopText          = "Upptill:";                   // New in 2.9
+    ls->propD3DCroppingBottomText       = "Nertill:";                // New in 2.9
 
 
     //----------------------
@@ -437,6 +452,19 @@ void langInitSwedish(LanguageStrings* ls)
     ls->enumVideoFrameskip3     = "3 bilder";
     ls->enumVideoFrameskip4     = "4 bilder";
     ls->enumVideoFrameskip5     = "5 bilder";
+
+    ls->enumD3DARAuto           = "Automatisk";           // New in 2.9
+    ls->enumD3DARStretch        = "Utsträckt";        // New in 2.9
+    ls->enumD3DARPAL            = "PAL";            // New in 2.9
+    ls->enumD3DARNTSC           = "NTSC";           // New in 2.9
+    ls->enumD3DAR11             = "1:1";            // New in 2.9
+
+    ls->enumD3DCropNone         = "Ingen";           // New in 2.9
+    ls->enumD3DCropMSX1         = "MSX1";           // New in 2.9
+    ls->enumD3DCropMSX1Plus8    = "MSX1+8";         // New in 2.9
+    ls->enumD3DCropMSX2         = "MSX2";           // New in 2.9
+    ls->enumD3DCropMSX2Plus8    = "MSX2+8";         // New in 2.9
+    ls->enumD3DCropCustom       = "Individuell";         // New in 2.9
 
     ls->enumSoundDrvNone        = "Inget ljud";
     ls->enumSoundDrvWMM         = "WMM driver";
@@ -625,6 +653,8 @@ void langInitSwedish(LanguageStrings* ls)
     ls->shortcutShowFiles       = "Öppna Filerfönstret";
     ls->shortcutToggleSpriteEnable = "Visa/Dölj Sprites";
     ls->shortcutToggleFdcTiming = "Slå på/av Diskettstationstiming";
+    ls->shortcutToggleNoSpriteLimits = "Sla på/av Spritebegränsning";                 // New in 2.9
+    ls->shortcutEnableMsxKeyboardQuirk = "Emulera MSX Keyboardfel";              // New in 2.9
     ls->shortcutToggleCpuTrace  = "Slå på/av CPU trace";
     ls->shortcutVideoLoad       = "Ladda...";             
     ls->shortcutVideoPlay       = "Spela upp senaste";   

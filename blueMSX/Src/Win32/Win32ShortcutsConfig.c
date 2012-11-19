@@ -725,6 +725,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(spritesEnable);
     LOAD_SHORTCUT(fdcTiming);
     LOAD_SHORTCUT(noSpriteLimits);
+    LOAD_SHORTCUT(msxKeyboardQuirk);
     LOAD_SHORTCUT(frontSwitch);
     LOAD_SHORTCUT(pauseSwitch);
     LOAD_SHORTCUT(quit);
@@ -824,6 +825,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(spritesEnable);
     SAVE_SHORTCUT(fdcTiming);
     SAVE_SHORTCUT(noSpriteLimits);
+    SAVE_SHORTCUT(msxKeyboardQuirk);
     SAVE_SHORTCUT(frontSwitch);
     SAVE_SHORTCUT(pauseSwitch);
     SAVE_SHORTCUT(quit);
@@ -1085,6 +1087,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(spritesEnable, langShortcutToggleSpriteEnable());
     ADD_SHORTCUT(fdcTiming,     langShortcutToggleFdcTiming());
     ADD_SHORTCUT(noSpriteLimits,     langShortcutToggleNoSpriteLimits());
+    ADD_SHORTCUT(msxKeyboardQuirk,     langShortcutEnableMsxKeyboardQuirk());
 }
 
 

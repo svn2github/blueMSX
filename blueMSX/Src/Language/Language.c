@@ -521,6 +521,7 @@ char* langPropEmuFrontSwitch() { return ls->propEmuFrontSwitch; }
 char* langPropEmuFdcTiming() { return ls->propEmuFdcTiming; }
 char* langPropEmuReversePlay() { return ls->propEmuReversePlay; }
 char* langPropEmuNoSpriteLimits() { return ls->propEmuNoSpriteLimits; }
+char* langPropEnableMsxKeyboardQuirk() { return ls->propEnableMsxKeyboardQuirk; }
 char* langPropEmuPauseSwitch() { return ls->propEmuPauseSwitch; }
 char* langPropEmuAudioSwitch() { return ls->propEmuAudioSwitch; }
 char* langPropVideoFreqText() { return ls->propVideoFreqText; }
@@ -863,6 +864,7 @@ char* langShortcutShowFiles() { return ls->shortcutShowFiles; }
 char* langShortcutToggleSpriteEnable() { return ls->shortcutToggleSpriteEnable; }
 char* langShortcutToggleFdcTiming() { return ls->shortcutToggleFdcTiming; }
 char* langShortcutToggleNoSpriteLimits() { return ls->shortcutToggleNoSpriteLimits; }
+char* langShortcutEnableMsxKeyboardQuirk() { return ls->shortcutEnableMsxKeyboardQuirk; }
 char* langShortcutToggleCpuTrace() { return ls->shortcutToggleCpuTrace; }
 char* langShortcutVideoLoad() { return ls->shortcutVideoLoad; }
 char* langShortcutVideoPlay() { return ls->shortcutVideoPlay; }

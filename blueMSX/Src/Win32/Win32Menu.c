@@ -957,17 +957,14 @@ static HMENU menuCreateOptions(Properties* pProperties, Shortcuts* shortcuts, in
     if (appConfigGetInt("menu.options.sound", 1) != 0) {
         AppendMenu(hMenu, MF_STRING, ID_OPTIONS_AUDIO, langMenuPropsSound());
     }
+    if (appConfigGetInt("menu.options.ports", 1) != 0) {
+        AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PORTS, langMenuPropsPorts());
+    }
     if (appConfigGetInt("menu.options.settings", 1) != 0) {
         AppendMenu(hMenu, MF_STRING, ID_OPTIONS_SETTINGS, langMenuPropsFile());
     }
-    if (appConfigGetInt("menu.options.disk", 1) != 0) {
-        AppendMenu(hMenu, MF_STRING, ID_OPTIONS_DISK, langMenuPropsDisk());
-    }
     if (appConfigGetInt("menu.options.appearance", 1) != 0) {
         AppendMenu(hMenu, MF_STRING, ID_OPTIONS_APEARANCE, langMenuPropsSettings());
-    }
-    if (appConfigGetInt("menu.options.ports", 1) != 0) {
-        AppendMenu(hMenu, MF_STRING, ID_OPTIONS_PORTS, langMenuPropsPorts());
     }
     if (appConfigGetInt("menu.options.language", 1) != 0) {
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);

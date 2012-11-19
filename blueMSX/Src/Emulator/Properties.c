@@ -389,6 +389,7 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
 #endif
 
     properties->keyboard.configFile[0] = 0;
+    properties->keyboard.enableKeyboardQuirk = 1;
 
     if (kbdLang == P_KBD_JAPANESE) {
         strcpy(properties->keyboard.configFile, "blueMSX Japanese Default");
@@ -665,7 +666,8 @@ static void propLoad(Properties* properties)
     GET_ENUM_VALUE_2(joy2, autofire, OnOffPair);
     
     GET_STR_VALUE_2(keyboard, configFile);
-
+    GET_INT_VALUE_2(keyboard, enableKeyboardQuirk);
+    
     GET_ENUM_VALUE_3(ports, Lpt, type, PrinterTypePair);
     GET_ENUM_VALUE_3(ports, Lpt, emulation, PrinterEmulationPair);
     GET_STR_VALUE_3(ports, Lpt, name);
@@ -919,6 +921,7 @@ void propSave(Properties* properties)
     SET_ENUM_VALUE_2(joy2, autofire, OnOffPair);
     
     SET_STR_VALUE_2(keyboard, configFile);
+    SET_INT_VALUE_2(keyboard, enableKeyboardQuirk);
     
     SET_ENUM_VALUE_3(ports, Lpt, type, PrinterTypePair);
     SET_ENUM_VALUE_3(ports, Lpt, emulation, PrinterEmulationPair);

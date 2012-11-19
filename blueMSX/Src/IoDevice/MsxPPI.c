@@ -40,6 +40,7 @@
 #include "Led.h"
 #include "InputEvent.h"
 #include "Language.h"
+#include "Properties.h"
 #include "DAC.h"
 #include <stdlib.h>
 
@@ -240,57 +241,60 @@ static UInt8 getKeyState(int row)
 	#define ROW9  ~_ROW(EC_NUM4,   EC_NUM3,   EC_NUM2,   EC_NUM1,   EC_NUM0,   EC_NUMDIV, EC_NUMADD, EC_NUMMUL )
 	#define ROW10 ~_ROW(EC_NUMPER, EC_NUMCOM, EC_NUMSUB, EC_NUM9,   EC_NUM8,   EC_NUM7,   EC_NUM6,   EC_NUM5   )
 	#define ROW11 ~((inputEventGetState(EC_TORIKE)<<3)|(inputEventGetState(EC_JIKKOU)<<1))
-#if 0
-	switch (row) {
-		case 0:  return ROW0;
-		case 1:  return ROW1;
-		case 2:  return ROW2;
-		case 3:  return ROW3;
-		case 4:  return ROW4;
-		case 5:  return ROW5;
-		case 6:  return ROW6;
-		case 7:  return ROW7;
-		case 8:  return ROW8;
-		case 9:  return ROW9;
-		case 10: return ROW10;
-		case 11: return ROW11;
-		default: break;
-	}
-	return 0xff;
-#else
-	/*
-	Same, but including MSX keyboard matrix quirk, eg. pressing X+Z+J results in X+Z+H+J.
-	Slower than the above, since it needs data of all rows
-	*/
-	UInt8 keyrow[12]={ROW0,ROW1,ROW2,ROW3,ROW4,ROW5,ROW6,ROW7,ROW8,ROW9,ROW10,ROW11};
-	int i=11;
+
+    Properties* pProperties = propGetGlobalProperties();
+    if (!pProperties->keyboard.enableKeyboardQuirk) {
+	    switch (row) {
+		    case 0:  return ROW0;
+		    case 1:  return ROW1;
+		    case 2:  return ROW2;
+		    case 3:  return ROW3;
+		    case 4:  return ROW4;
+		    case 5:  return ROW5;
+		    case 6:  return ROW6;
+		    case 7:  return ROW7;
+		    case 8:  return ROW8;
+		    case 9:  return ROW9;
+		    case 10: return ROW10;
+		    case 11: return ROW11;
+		    default: break;
+	    }
+	    return 0xff;
+    }
+    else {
+        /*
+	    Same, but including MSX keyboard matrix quirk, eg. pressing X+Z+J results in X+Z+H+J.
+	    Slower than the above, since it needs data of all rows
+	    */
+	    UInt8 keyrow[12]={ROW0,ROW1,ROW2,ROW3,ROW4,ROW5,ROW6,ROW7,ROW8,ROW9,ROW10,ROW11};
+	    int i=11;
 	
-	if (row>11) return 0xff;
+	    if (row>11) return 0xff;
 	
-	while (i--) {
+	    while (i--) {
 		
-		if (keyrow[i]==0xff) continue;
+		    if (keyrow[i]==0xff) continue;
 		
-		if (i==6) {
-			/* modifier keys */
-			int k=keyrow[6]&0x15; keyrow[6]|=0x15;
-			if (keyrow[6]!=0xff) {
-				int j=12;
-				while (j--) {
-					if ((keyrow[6]|keyrow[j])!=0xff) keyrow[6]=keyrow[j]=keyrow[6]&keyrow[j];
-				}
-			}
-			keyrow[6]=k|(keyrow[6]&0xea);
-		}
+		    if (i==6) {
+			    /* modifier keys */
+			    int k=keyrow[6]&0x15; keyrow[6]|=0x15;
+			    if (keyrow[6]!=0xff) {
+				    int j=12;
+				    while (j--) {
+					    if ((keyrow[6]|keyrow[j])!=0xff) keyrow[6]=keyrow[j]=keyrow[6]&keyrow[j];
+				    }
+			    }
+			    keyrow[6]=k|(keyrow[6]&0xea);
+		    }
 		
-		else {
-			int j=12;
-			while (j--) {
-				if ((keyrow[i]|keyrow[j])!=0xff) keyrow[i]=keyrow[j]=keyrow[i]&keyrow[j];
-			}
-		}
-	}
+		    else {
+			    int j=12;
+			    while (j--) {
+				    if ((keyrow[i]|keyrow[j])!=0xff) keyrow[i]=keyrow[j]=keyrow[i]&keyrow[j];
+			    }
+		    }
+	    }
 	
-	return keyrow[row];
-#endif
+	    return keyrow[row];
+    }
 }

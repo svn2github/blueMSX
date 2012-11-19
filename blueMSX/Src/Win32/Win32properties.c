@@ -263,7 +263,6 @@ static char* strEmuSpeed(int logFrequency) {
 
     sprintf(buffer, "%d.%03dMHz (%d%%)", frequency / 1000000, (frequency / 1000) % 1000, frequency * 10 / 357954);
     return buffer;
-
 }
 
 static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) {
@@ -279,6 +278,8 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         }
 
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
+       
+        SendDlgItemMessage(hDlg, IDC_SNDCHIPEMUGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropSndChipEmuGB());
 
         SendDlgItemMessage(hDlg, IDC_OVERSAMPLETEXT1, WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
         SendDlgItemMessage(hDlg, IDC_OVERSAMPLETEXT2, WM_SETTEXT, 0, (LPARAM)langPropSndOversampleText());
@@ -296,6 +297,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         
         SetWindowText(GetDlgItem(hDlg, IDC_EMUFDCTIMING),   langPropEmuFdcTiming());
         SetWindowText(GetDlgItem(hDlg, IDC_NOSPRITELIMITS), langPropEmuNoSpriteLimits());
+        SetWindowText(GetDlgItem(hDlg, IDC_ENABLEMSXKEYBOARDQUIRK), langPropEnableMsxKeyboardQuirk());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUFRONTSWITCH), langPropEmuFrontSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUPAUSESWITCH), langPropEmuPauseSwitch());
         SetWindowText(GetDlgItem(hDlg, IDC_EMUAUDIOSWITCH), langPropEmuAudioSwitch());
@@ -307,6 +309,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
 
         setButtonCheck(hDlg, IDC_EMUFDCTIMING,   !pProperties->emulation.enableFdcTiming, 1);
         setButtonCheck(hDlg, IDC_NOSPRITELIMITS, pProperties->emulation.noSpriteLimits, 1);
+        setButtonCheck(hDlg, IDC_ENABLEMSXKEYBOARDQUIRK, pProperties->keyboard.enableKeyboardQuirk, 1);
         setButtonCheck(hDlg, IDC_EMUFRONTSWITCH, pProperties->emulation.frontSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUPAUSESWITCH, pProperties->emulation.pauseSwitch, 1);
         setButtonCheck(hDlg, IDC_EMUAUDIOSWITCH, pProperties->emulation.audioSwitch, 1);
@@ -398,6 +401,7 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
             index = 0;
             pProperties->emulation.enableFdcTiming = !getButtonCheck(hDlg, IDC_EMUFDCTIMING);
             pProperties->emulation.noSpriteLimits = getButtonCheck(hDlg, IDC_NOSPRITELIMITS);
+            pProperties->keyboard.enableKeyboardQuirk = getButtonCheck(hDlg, IDC_ENABLEMSXKEYBOARDQUIRK);
             pProperties->emulation.frontSwitch = getButtonCheck(hDlg, IDC_EMUFRONTSWITCH);
             pProperties->emulation.pauseSwitch = getButtonCheck(hDlg, IDC_EMUPAUSESWITCH);
             pProperties->emulation.audioSwitch = getButtonCheck(hDlg, IDC_EMUAUDIOSWITCH);
@@ -1025,14 +1029,33 @@ static BOOL CALLBACK videoDirect3dDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, L
         pProperties = pCurrentProperties;
 
         SendMessage(GetDlgItem(hDlg, IDC_D3D_PARAMETERSGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropD3DParametersGB());
+        SendDlgItemMessage(hDlg, IDC_MONDEINTERLACE, WM_SETTEXT, 0, (LPARAM)langPropMonDeInterlace());
+        SendDlgItemMessage(hDlg, IDC_MONBLENDFRAMES, WM_SETTEXT, 0, (LPARAM)langPropMonBlendFrames());
+		SendMessage(GetDlgItem(hDlg, IDC_D3D_LINEARFILTERING), WM_SETTEXT, 0, (LPARAM)langPropD3DLinearFilteringText());
 
 		setButtonCheck(hDlg, IDC_D3D_LINEARFILTERING, pProperties->video.d3d.linearFiltering, 1);
-		SendMessage(GetDlgItem(hDlg, IDC_D3D_LINEARFILTERING), WM_SETTEXT, 0, (LPARAM)langPropD3DLinearFilteringText());
+        
+        setButtonCheck(hDlg, IDC_MONDEINTERLACE, pProperties->video.deInterlace, 1);
+        setButtonCheck(hDlg, IDC_MONBLENDFRAMES, pProperties->video.blendFrames, 1);
 
         return FALSE;
 
     case WM_COMMAND:
-        pProperties->video.d3d.linearFiltering = getButtonCheck(hDlg, IDC_D3D_LINEARFILTERING);
+        switch (LOWORD(wParam)) {
+        case IDC_D3D_LINEARFILTERING:
+            pProperties->video.d3d.linearFiltering = getButtonCheck(hDlg, IDC_D3D_LINEARFILTERING);
+            break;
+        case IDC_MONDEINTERLACE:
+            pProperties->video.deInterlace   = getButtonCheck(hDlg, IDC_MONDEINTERLACE);
+            videoSetDeInterlace(theVideo, pProperties->video.deInterlace);
+            updateEmuWindow();
+            break;
+        case IDC_MONBLENDFRAMES:
+            pProperties->video.blendFrames   = getButtonCheck(hDlg, IDC_MONBLENDFRAMES);
+            videoSetBlendFrames(theVideo, pProperties->video.blendFrames);
+            updateEmuWindow();
+            break;
+        }
         return TRUE;
     }
 
@@ -1528,8 +1551,6 @@ static BOOL CALLBACK soundDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
             }
             initDropList(hDlg, IDC_SNDBUFSZ, pSoundBufferSize, index);
         }
-
-        SendMessage(GetDlgItem(hDlg, IDC_SNDCHIPEMUGROUPBOX), WM_SETTEXT, 0, (LPARAM)langPropSndChipEmuGB());
 
         SendDlgItemMessage(hDlg, IDC_AUDIODRVGROUPBOX, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvGB());
         SendDlgItemMessage(hDlg, IDC_PERFSNDDRVTEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfAudioDrvText());
@@ -2069,6 +2090,12 @@ static BOOL updatePortsComList(HWND hDlg, int id, Properties* pProperties)
 static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
     static Properties* pProperties;
+    HWND hMethod, hDrive;
+    int index, data;
+    const char* list;
+    const int* tbl;
+    int methodIdx[3];
+    int method;
 
     switch (iMsg) {
     case WM_INITDIALOG:
@@ -2086,7 +2113,6 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAMETEXT), langTextFilename());
         SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMETEXT), langTextFilename());
         SetWindowText(GetDlgItem(hDlg, IDC_LPTEMULATIONTEXT), langPropPortsEmulateMsxPrn());
-        
 
         pProperties = (Properties*)((PROPSHEETPAGE*)lParam)->lParam;
 
@@ -2108,6 +2134,52 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         SetWindowText(GetDlgItem(hDlg, IDC_LPTFILENAME), pProperties->ports.Lpt.fileName);
         SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAME), pProperties->ports.Com.fileName);
+
+        
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMGROUPBOX), langPropCdromGB());
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMMETHODTEXT), langPropCdromMethod());
+        SetWindowText(GetDlgItem(hDlg, IDC_CDROMDRIVETEXT), langPropCdromDrive());
+        hMethod = GetDlgItem(hDlg, IDC_CDROMMETHODLIST);
+        SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodNone());
+        SendMessage(hMethod, CB_SETITEMDATA, 0, (LPARAM)P_CDROM_DRVNONE);
+
+        memset(methodIdx, 0, sizeof(methodIdx));
+        list = cdromGetDriveListIoctl();
+        if (list && list[0]) {
+            index = SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodIoctl());
+            SendMessage(hMethod, CB_SETITEMDATA, (WPARAM)index, (LPARAM)P_CDROM_DRVIOCTL);
+            methodIdx[P_CDROM_DRVIOCTL] = index;
+        }
+
+        tbl = cdromGetDriveTblAspi();
+        if (tbl && *tbl) {
+            index = SendMessage(hMethod, CB_ADDSTRING, 0, (LPARAM)langPropCdromMethodAspi());
+            SendMessage(hMethod, CB_SETITEMDATA, (WPARAM)index, (LPARAM)P_CDROM_DRVASPI);
+            methodIdx[P_CDROM_DRVASPI] = index;
+        }
+
+        method = pProperties->diskdrive.cdromMethod;
+        index = 0;
+        if (method == P_CDROM_DRVIOCTL || method == P_CDROM_DRVASPI) {
+            index = methodIdx[method];
+        }
+        SendMessage(hMethod, CB_SETCURSEL, (WPARAM)index, 0);
+
+        hDrive = GetDlgItem(hDlg, IDC_CDROMDRIVELIST);
+        switch (method) {
+        case P_CDROM_DRVIOCTL:
+            updateCdromListIoctl(hDrive, pProperties);
+            break;
+        case P_CDROM_DRVASPI:
+            updateCdromListAspi(hDrive, pProperties);
+            break;
+        default:
+            EnableWindow(hDrive, FALSE);
+        }
+
+        if (SendMessage(hMethod, CB_GETCOUNT, 0, 0) < 2) {
+            EnableWindow(hMethod, FALSE);
+        }
 
         return FALSE;
         
@@ -2141,6 +2213,23 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
                 SetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAMEBROWSE), pProperties->ports.Com.fileName);
             }
             return TRUE;
+        case IDC_CDROMMETHODLIST:
+            if (HIWORD(wParam) == CBN_SELCHANGE) {
+                hMethod = (HWND)lParam;
+                index = SendMessage(hMethod, CB_GETCURSEL, 0, 0);
+                data  = (int)SendMessage(hMethod, CB_GETITEMDATA, index, 0);
+                hDrive = GetDlgItem(hDlg, IDC_CDROMDRIVELIST);
+                EnableWindow(hDrive, data > 0);
+                switch (data) {
+                case P_CDROM_DRVIOCTL:
+                    updateCdromListIoctl(hDrive, pProperties);
+                    break;
+                case P_CDROM_DRVASPI:
+                    updateCdromListAspi(hDrive, pProperties);
+                    break;
+                }
+                return TRUE;
+            }
         }
         return FALSE;
 
@@ -2159,6 +2248,11 @@ static BOOL CALLBACK portsDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 
         getPortsComList(hDlg, IDC_PORTSCOM1, pProperties);
         GetWindowText(GetDlgItem(hDlg, IDC_COM1FILENAME), pProperties->ports.Com.fileName, MAX_PATH - 1);
+
+        index = SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETCURSEL, 0, 0);
+        pProperties->diskdrive.cdromMethod = (int)SendDlgItemMessage(hDlg, IDC_CDROMMETHODLIST, CB_GETITEMDATA, index, 0);
+        index = SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETCURSEL, 0, 0);
+        pProperties->diskdrive.cdromDrive = (int)SendDlgItemMessage(hDlg, IDC_CDROMDRIVELIST, CB_GETITEMDATA, index, 0);
 
         return TRUE;
     }
@@ -2291,6 +2385,22 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStar
         curPage++;
     }
 
+    if (appConfigGetInt("properties.ports", 1) != 0) {
+        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
+        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
+        psp[curPage].hInstance = hInst;
+        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
+        psp[curPage].pszIcon = NULL;
+        psp[curPage].pfnDlgProc = portsDlgProc;
+        psp[curPage].pszTitle = langPropPorts();
+        psp[curPage].lParam = (LPARAM)pProperties;
+        psp[curPage].pfnCallback = NULL;
+        if (desiredStartPage == PROP_PORTS || startPage == -1) {
+            startPage = curPage;
+        }
+        curPage++;
+    }
+
     if (appConfigGetInt("properties.settings", 1) != 0) {
         psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
         psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
@@ -2307,6 +2417,7 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStar
         curPage++;
     }
 
+#if 0
     if (appConfigGetInt("properties.disk", 1) != 0) {
         psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
         psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
@@ -2322,6 +2433,7 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStar
         }
         curPage++;
     }
+#endif
 
     if (appConfigGetInt("properties.appearance", 1) != 0) {
         psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
@@ -2334,22 +2446,6 @@ int showProperties(Properties* pProperties, HWND hwndOwner, PropPage desiredStar
         psp[curPage].lParam = (LPARAM)pProperties;
         psp[curPage].pfnCallback = NULL;
         if (desiredStartPage == PROP_APEARANCE || startPage == -1) {
-            startPage = curPage;
-        }
-        curPage++;
-    }
-
-    if (appConfigGetInt("properties.ports", 1) != 0) {
-        psp[curPage].dwSize = sizeof(PROPSHEETPAGE);
-        psp[curPage].dwFlags = PSP_USEICONID | PSP_USETITLE;
-        psp[curPage].hInstance = hInst;
-        psp[curPage].pszTemplate = MAKEINTRESOURCE(IDD_PORTS);
-        psp[curPage].pszIcon = NULL;
-        psp[curPage].pfnDlgProc = portsDlgProc;
-        psp[curPage].pszTitle = langPropPorts();
-        psp[curPage].lParam = (LPARAM)pProperties;
-        psp[curPage].pfnCallback = NULL;
-        if (desiredStartPage == PROP_PORTS || startPage == -1) {
             startPage = curPage;
         }
         curPage++;

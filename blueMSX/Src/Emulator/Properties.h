@@ -367,6 +367,7 @@ typedef struct {
 
 typedef struct {
     char configFile[PROP_MAXPATH];
+    int enableKeyboardQuirk;
 } KeyboardProperties;
 
 typedef struct {
