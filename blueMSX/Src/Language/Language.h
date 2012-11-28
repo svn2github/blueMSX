@@ -758,6 +758,7 @@ char* langRomTypeTurborPause();
 char* langRomTypeF4deviceNormal();
 char* langRomTypeF4deviceInvert();
 char* langRomTypeMsxMidi();
+char* langRomTypeMsxMidiExternal();
 char* langRomTypeTurborTimer();
 char* langRomTypeKoei();
 char* langRomTypeBasic();

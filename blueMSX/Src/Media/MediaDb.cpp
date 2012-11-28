@@ -114,6 +114,7 @@ RomType mediaDbStringToType(const char* romName)
     if (iequals(name, "KoeiSRAM32"))       return ROM_KOEI;
     if (iequals(name, "Konami"))           return ROM_KONAMI4;
     if (iequals(name, "KonamiSCC"))        return ROM_KONAMI5;
+    if (iequals(name, "MuPack"))           return ROM_MUPACK;
     if (iequals(name, "Manbow2"))          return ROM_MANBOW2;
     if (iequals(name, "Manbow2v2"))        return ROM_MANBOW2_V2;
     if (iequals(name, "HamarajaNight"))    return ROM_HAMARAJANIGHT;
@@ -218,6 +219,7 @@ RomType mediaDbStringToType(const char* romName)
     if (iequals(name, "forteII"))      return ROM_FORTEII;
     if (iequals(name, "msxdos2"))      return ROM_MSXDOS2;
     if (iequals(name, "konami5"))      return ROM_KONAMI5;
+    if (iequals(name, "MuPack"))       return ROM_MUPACK;
     if (iequals(name, "konami4"))      return ROM_KONAMI4;
     if (iequals(name, "ascii8"))       return ROM_ASCII8;
     if (iequals(name, "halnote"))      return ROM_HALNOTE;
@@ -575,6 +577,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_STANDARD:    return langRomTypeStandard();
     case ROM_MSXDOS2:     return langRomTypeMsxdos2();
     case ROM_KONAMI5:     return langRomTypeKonamiScc();
+    case ROM_MUPACK:      return "Mu-Pack";
     case ROM_MANBOW2:     return langRomTypeManbow2();
     case ROM_HAMARAJANIGHT:return "Hamaraja Night";
     case ROM_MANBOW2_V2:  return "Manbow 2 v2";
@@ -645,6 +648,7 @@ extern "C" const char* romTypeToString(RomType romType)
     case ROM_F4DEVICE:    return langRomTypeF4deviceNormal();
     case ROM_F4INVERTED:  return langRomTypeF4deviceInvert();
     case ROM_MSXMIDI:     return langRomTypeMsxMidi();
+    case ROM_MSXMIDI_EXTERNAL: return langRomTypeMsxMidiExternal();
     case ROM_TURBORTIMER: return langRomTypeTurborTimer();
     case ROM_KOEI:        return langRomTypeKoei();
     case ROM_BASIC:       return langRomTypeBasic();
@@ -748,6 +752,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_STANDARD:    return "STANDARD";
     case ROM_MSXDOS2:     return "MSXDOS2";
     case ROM_KONAMI5:     return "KONAMI SCC";
+    case ROM_MUPACK:      return "MU-PACK";
     case ROM_MANBOW2:     return "MANBOW 2";
     case ROM_HAMARAJANIGHT:return "HAMARAJANGT";
     case ROM_MANBOW2_V2:  return "MANBOW 2 v2";
@@ -815,6 +820,7 @@ extern "C" const char* romTypeToShortString(RomType romType)
     case ROM_F4DEVICE:    return "F4NORMAL";
     case ROM_F4INVERTED:  return "F4INV";
     case ROM_MSXMIDI:     return "MSX-MIDI";
+    case ROM_MSXMIDI_EXTERNAL: return "MSX-MIDIEX";
     case ROM_TURBORTIMER: return "TURBORTMR";
     case ROM_KOEI:        return "KOEI";
     case ROM_BASIC:       return "BASIC";
@@ -968,6 +974,7 @@ int romTypeIsMegaRom(RomType romType) {
     case ROM_STANDARD:    return 1;
     case ROM_MSXDOS2:     return 1;
     case ROM_KONAMI5:     return 1;
+    case ROM_MUPACK:      return 1;
     case ROM_MANBOW2:     return 1;
     case ROM_HAMARAJANIGHT: return 1;
     case ROM_MANBOW2_V2:  return 1;

@@ -111,6 +111,7 @@
 #include "romMapperArc.h"
 #include "romMapperDooly.h"
 #include "romMapperSg1000RamExpander.h"
+#include "romMapperMuPack.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -433,6 +434,11 @@ int cartridgeInsert(int cartNo, RomType romType, const char* cart, const char* c
         case ROM_KONAMI5:
             success &= romMapperKonami5Create(romName, buf, size, slot, sslot, 2);
             break;
+
+        case ROM_MUPACK:
+            success &= romMapperMuPackCreate(romName, buf, size, slot, sslot, 2);
+            break;
+
 
         case ROM_MANBOW2:
             if (size > 0x70000) size = 0x70000;

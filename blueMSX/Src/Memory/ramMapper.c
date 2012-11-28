@@ -47,6 +47,7 @@ typedef struct {
     int debugHandle;
     int dramHandle;
     int dramMode;
+    UInt8 port[4];
     int slot;
     int sslot;
     int mask;
@@ -61,7 +62,8 @@ static void saveState(RamMapper* rm)
     
     saveStateSet(state, "mask",     rm->mask);
     saveStateSet(state, "dramMode", rm->dramMode);
-    
+
+    saveStateSetBuffer(state, "port", rm->port, 4);
     saveStateSetBuffer(state, "ramData", rm->ramData, 0x4000 * (rm->mask + 1));
 
     saveStateClose(state);
@@ -75,10 +77,16 @@ static void loadState(RamMapper* rm)
     rm->mask     = saveStateGet(state, "mask", 0);
     rm->dramMode = saveStateGet(state, "dramMode", 0);
     
+    saveStateGetBuffer(state, "port", rm->port, 4);
     saveStateGetBuffer(state, "ramData", rm->ramData, 0x4000 * (rm->mask + 1));
 
     saveStateClose(state);
-    
+
+#if 1
+    for (i = 0; i < 4; i++) {
+        writeIo(rm, i, rm->port[i]);
+    }
+#else
     ramMapperIoRemove(rm->handle);
     rm->handle  = ramMapperIoAdd(0x4000 * (rm->mask + 1), writeIo, rm);
 
@@ -88,11 +96,13 @@ static void loadState(RamMapper* rm)
         slotMapPage(rm->slot, rm->sslot, 2 * i,     rm->ramData + 0x4000 * value, 1, mapped);
         slotMapPage(rm->slot, rm->sslot, 2 * i + 1, rm->ramData + 0x4000 * value + 0x2000, 1, mapped);
     }
+#endif
 }
 
 static void writeIo(RamMapper* rm, UInt16 page, UInt8 value)
 {
     int baseAddr = 0x4000 * (value & rm->mask);
+    rm->port[page] = value;
     if (rm->dramMode && baseAddr >= (rm->size - 0x10000)) {
         slotMapPage(rm->slot, rm->sslot, 2 * page,     NULL, 0, 0);
         slotMapPage(rm->slot, rm->sslot, 2 * page + 1, NULL, 0, 0);

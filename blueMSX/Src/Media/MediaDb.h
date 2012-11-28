@@ -196,7 +196,9 @@ enum  {
     ROM_DOOLY       = 166,
     ROM_SG1000_RAMEXPANDER_A = 167,
     ROM_SG1000_RAMEXPANDER_B = 168,
-    ROM_MAXROMID    = 168
+    ROM_MSXMIDI_EXTERNAL     = 169,
+    ROM_MUPACK               = 170,
+    ROM_MAXROMID    = 170
 };
 
 typedef struct MediaType MediaType;

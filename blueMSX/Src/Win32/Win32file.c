@@ -112,6 +112,7 @@ static RomType romTypeList[] = {
     ROM_YAMAHASFG05,
     ROM_JOYREXPSG,
     ROM_OPCODEPSG,
+    ROM_MUPACK,
     
     ROM_NOWIND,
     ROM_OBSONET,

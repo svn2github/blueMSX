@@ -57,8 +57,10 @@ int romMapperNormalCreate(const char* filename, UInt8* romData,
 {
     DeviceCallbacks callbacks = { destroy, NULL, NULL, NULL };
     RomMapperNormal* rm;
-    int pages = size / 0x2000 + ((size & 0x1fff) ? 1 : 0);
+    int pages;
     int i;
+
+    pages = (size + 0x1fff) / 0x2000;
 
     if (pages == 0 || (startPage + pages) > 8) {
         return 0;

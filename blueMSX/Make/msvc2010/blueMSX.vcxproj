@@ -334,6 +334,7 @@
     <ClCompile Include="..\..\Src\Memory\romMapperActivisionPcb.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperArc.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperDooly.c" />
+    <ClCompile Include="..\..\Src\Memory\romMapperMuPack.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperNms1210Rs232.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperOpcodeBios.c" />
     <ClCompile Include="..\..\Src\Memory\romMapperOpcodeMegaRam.c" />
@@ -632,6 +633,7 @@
     <ClInclude Include="..\..\Src\Memory\romMapperActivisionPcb.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperArc.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperDooly.h" />
+    <ClInclude Include="..\..\Src\Memory\romMapperMuPack.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperNms1210Rs232.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperOpcodeBios.h" />
     <ClInclude Include="..\..\Src\Memory\romMapperOpcodeMegaRam.h" />

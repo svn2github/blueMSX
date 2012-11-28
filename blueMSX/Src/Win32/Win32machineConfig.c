@@ -611,6 +611,7 @@ static void getSlotControl(HWND hDlg)
         editSlotInfo.romType == ROM_F4INVERTED || editSlotInfo.romType == ROM_F4DEVICE ||
         editSlotInfo.romType == ROM_NMS8280DIGI || editSlotInfo.romType == ROM_NMS1210 || 
         editSlotInfo.romType == ROM_MOONSOUND || editSlotInfo.romType == ROM_MSXMIDI ||
+        editSlotInfo.romType == ROM_MSXMIDI_EXTERNAL ||
         editSlotInfo.romType == ROM_KANJI || editSlotInfo.romType == ROM_KANJI12 ||
         editSlotInfo.romType == ROM_JISYO || editSlotInfo.romType == ROM_MSXAUDIODEV ||
         editSlotInfo.romType == ROM_TURBORPCM || editSlotInfo.romType == ROM_SVI328FDC ||
@@ -763,6 +764,7 @@ static void endEditControls(HWND hDlg)
     case ROM_F4DEVICE:
     case ROM_NMS8280DIGI:
     case ROM_MSXMIDI:
+    case ROM_MSXMIDI_EXTERNAL:
     case ROM_MSXAUDIODEV:
     case ROM_TURBORPCM:
     case ROM_JOYREXPSG:
@@ -948,7 +950,8 @@ static void setEditControls(HWND hDlg)
         romType != ROM_F4INVERTED && romType != ROM_F4DEVICE && romType != ROM_NMS8280DIGI && 
         romType != ROM_TURBORTIMER && romType != ROM_TURBORIO && romType != ROM_GIDE && romType != ROM_NMS1210 && 
         romType != ROM_MSXAUDIODEV && romType != ROM_TURBORPCM && romType != ROM_SVI328FDC &&
-        romType != ROM_MSXMIDI && romType != ROM_MSXPRN && romType != ROM_JOYREXPSG && 
+        romType != ROM_MSXMIDI && romType != ROM_MSXMIDI_EXTERNAL &&
+        romType != ROM_MSXPRN && romType != ROM_JOYREXPSG && 
         romType != ROM_OPCODEPSG && romType != ROM_OPCODESLOT && romType != ROM_OPCODEMEGA &&
         romType != SRAM_MEGASCSI && romType != SRAM_ESERAM && romType != SRAM_WAVESCSI && romType != SRAM_ESESCC &&
         romType != ROM_SVI328RSIDE &&
@@ -974,7 +977,7 @@ static void setEditControls(HWND hDlg)
         romType == ROM_TURBORTIMER || romType == ROM_TURBORIO || romType == ROM_NMS1210 ||
         romType == ROM_F4INVERTED || romType == ROM_F4DEVICE ||
         romType == ROM_NMS8280DIGI || 
-        romType == ROM_MOONSOUND || romType == ROM_MSXMIDI ||
+        romType == ROM_MOONSOUND || romType == ROM_MSXMIDI || romType == ROM_MSXMIDI_EXTERNAL ||
         romType == ROM_MSXAUDIODEV || romType == ROM_TURBORPCM || romType == ROM_JOYREXPSG ||
         romType == ROM_KANJI12 || romType == ROM_JISYO || 
         romType == ROM_OPCODEPSG || romType == ROM_OPCODESLOT ||
@@ -1386,6 +1389,7 @@ static void setEditControls(HWND hDlg)
     case ROM_F4DEVICE:
     case ROM_NMS8280DIGI:
     case ROM_MSXMIDI:
+    case ROM_MSXMIDI_EXTERNAL:
     case ROM_TURBORTIMER:
     case ROM_TURBORIO:
     case ROM_MSXAUDIODEV:
@@ -1452,6 +1456,7 @@ static RomType romTypeList[] = {
     ROM_FMPAC,
     ROM_FMPAK,
     ROM_MSXMIDI,
+    ROM_MSXMIDI_EXTERNAL,
     ROM_MSXMUSIC,
     ROM_MSXAUDIO,
     ROM_MSXAUDIODEV,

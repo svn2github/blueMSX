@@ -85,6 +85,7 @@ static void saveState(RomMapperPanasonic* rm)
     saveStateSet(state, "readSection", rm->readSection);
     saveStateSet(state, "readOffset", rm->readOffset);
     saveStateSet(state, "control", rm->control);
+    saveStateSetBuffer(state, "sram", rm->sram, rm->sramSize);
 
     saveStateClose(state);
 }
@@ -104,6 +105,7 @@ static void loadState(RomMapperPanasonic* rm)
     rm->readSection = saveStateGet(state, "readSection", 0);
     rm->readOffset  = saveStateGet(state, "readOffset", 0);
     rm->control     = (UInt8)saveStateGet(state, "control", 0);
+    saveStateGetBuffer(state, "sram", rm->sram, rm->sramSize);
 
     saveStateClose(state);
 

@@ -1046,7 +1046,12 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
         }
 
         if (machine->slotInfo[i].romType == ROM_MSXMIDI) {
-            success &= MSXMidiCreate();
+            success &= MSXMidiCreate(0);
+            continue;
+        }
+
+        if (machine->slotInfo[i].romType == ROM_MSXMIDI_EXTERNAL) {
+            success &= MSXMidiCreate(1);
             continue;
         }
 

@@ -1,13 +1,13 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/IoDevice/MSXMidi.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Src/Memory/romMapperMuPack.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.6 $
 **
-** $Date: 2008-03-31 19:42:19 $
+** $Date: 2008-03-30 18:38:44 $
 **
 ** More info: http://www.bluemsx.com
 **
-** Copyright (C) 2003-2006 Daniel Vik, Tomas Karlsson, Johan van Leur
+** Copyright (C) 2003-2012 Daniel Vik
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 **
 ******************************************************************************
 */
-
-#ifndef MSX_MIDI_H
-#define MSX_MIDI_H
-
+#ifndef ROMMAPPER_MUPACK_H
+#define ROMMAPPER_MUPACK_H
+ 
 #include "MsxTypes.h"
 
-int MSXMidiCreate(int isExternal);
+int romMapperMuPackCreate(const char* filename, UInt8* romData, 
+                          int size, int slot, int sslot, int startPage);
 
 #endif
