@@ -49,12 +49,12 @@ typedef struct {
     I8254* i8254;
 
     int ioStart;
+    int isExternal;
     
 	int timerIRQlatch;
 	int timerIRQenabled;
 	int rxrdyIRQlatch;
 	int rxrdyIRQenabled;
-
 } MSXMidi;
 
 #define INT_TMR   0x100
@@ -385,10 +385,20 @@ static void getDebugInfo(MSXMidi* msxMidi, DbgDevice* dbgDevice)
 {
     DbgIoPorts* ioPorts;
     int i;
+    int externalPorts = msxMidi->isExternal ? 1 : 0;
+    int mappedPorts = 0;
 
-    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxMidi(), 8);
-    for (i = 0; i < 8; i++) {
-        dbgIoPortsAddPort(ioPorts, i, 0xe8 + i, DBG_IO_READWRITE, peekIo(msxMidi, 0xe8 + i));
+    if (msxMidi->ioStart != 0) {
+        mappedPorts = (msxMidi->ioStart == 0xe0 ? 2 : 8);
+    }
+    ioPorts = dbgDeviceAddIoPorts(dbgDevice, langDbgDevMsxMidi(), externalPorts + mappedPorts);
+
+    if (externalPorts != 0) {
+        dbgIoPortsAddPort(ioPorts, mappedPorts, 0xe2, DBG_IO_READWRITE, peekIo(msxMidi, 0xe2));
+    }
+
+    for (i = 0; i < mappedPorts; i++) {
+        dbgIoPortsAddPort(ioPorts, i, msxMidi->ioStart + i, DBG_IO_READWRITE, peekIo(msxMidi, msxMidi->ioStart + i));
     }
 }
 
@@ -419,6 +429,7 @@ int MSXMidiCreate(int isExternal)
     msxMidi->i8254 = i8254Create(4000000, pitOut0, pitOut1, pitOut2, msxMidi);
     msxMidi->i8251 = i8251Create(transmit, signal8251, setDataBits, setStopBits, setParity, 
                                  setRxReady, setDtr, setRts, getDtr, getRts, msxMidi);
+    msxMidi->isExternal = isExternal;
 
     if (isExternal) {
         ioPortRegister(0xe2, NULL, writeIo, msxMidi);

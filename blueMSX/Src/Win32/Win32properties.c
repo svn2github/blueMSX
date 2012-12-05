@@ -989,12 +989,21 @@ static BOOL CALLBACK performanceDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPA
             return FALSE;
         }
         
-        SendMessage(hDlgDirect3d,  WM_UPDATEPROPERTIES, 0, 0);
-        SendMessage(hDlgGdi,  WM_UPDATEPROPERTIES, 0, 0);
-        SendMessage(hDlgDirectDraw,  WM_UPDATEPROPERTIES, 0, 0);
-            
         pProperties->video.driver           = getDropListIndex(hDlg, IDC_VIDEODRV, pVideoDriver);
 
+        switch (pProperties->video.driver) {
+        case 0:
+        case 1:
+            SendMessage(hDlgDirectDraw,  WM_UPDATEPROPERTIES, 0, 0);
+            break;
+        case 2:
+            SendMessage(hDlgGdi,  WM_UPDATEPROPERTIES, 0, 0);
+            break;
+        case 3:
+            SendMessage(hDlgDirect3d,  WM_UPDATEPROPERTIES, 0, 0);
+            break;
+        }
+            
         propModified = 1;
         
         return TRUE;

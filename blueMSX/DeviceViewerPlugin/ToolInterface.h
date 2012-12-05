@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/DeviceViewerPlugin/ToolInterface.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.4 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-03-31 19:42:18 $
+** $Date: 2009-07-01 05:01:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -30,6 +30,8 @@
 #ifndef TOOL_INTERFACE_H
 #define TOOL_INTERFACE_H
 
+#include <windows.h>
+
 //
 // See the include file below for the datastructures used in the interface
 //
@@ -42,18 +44,34 @@ int SnapshotGetDeviceCount(Snapshot* snapshot);
 Device* SnapshotGetDevice(Snapshot* snapshot, int index);
 int DeviceGetMemoryBlockCount(Device* device);
 MemoryBlock* DeviceGetMemoryBlock(Device* device, int index);
+bool DeviceWriteMemoryBlockMemory(MemoryBlock* memoryBlock, void* data, int startAddr, int size);
 int DeviceGetRegisterBankCount(Device* device);
 RegisterBank* DeviceGetRegisterBank(Device* device, int index);
+bool DeviceWriteRegisterBankRegister(RegisterBank* regBank, int regIndex, UInt32 value);
+int DeviceGetCallstackCount(Device* device);
+Callstack* DeviceGetCallstack(Device* device, int index);
 int DeviceGetIoPortsCount(Device* device);
 IoPorts* DeviceGetIoPorts(Device* device, int index);
+bool DeviceWriteIoPortsPort(IoPorts* ioPorts, int portIndex, UInt32 value);
 
 void EmulatorRun();
 void EmulatorStop();
 void EmulatorPause();
 void EmulatorStep();
+void EmulatorStepBack();
 
 void SetBreakpoint(UInt16 address);
 void ClearBreakpoint(UInt16 address);
+
+char* GetToolPath();
+int GetEmulatorMajorVersion();
+int GetEmulatorMinorVersion();
+int GetEmulatorBuildNumber();
+
+void EnableVramAccessCheck(int enable);
+
+void SetWatchpoint(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size);
+void ClearWatchpoint(DeviceType devType, int address);
 
 HINSTANCE GetDllHinstance();
 
@@ -67,6 +85,12 @@ void OnEmulatorStart();
 void OnEmulatorStop();
 void OnEmulatorPause();
 void OnEmulatorResume();
+void OnEmulatorReset();
+void OnEmulatorTrace(const char* message);
+void OnEmulatorSetBreakpoint(UInt16 address);
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 address);
+void OnEmulatorSetBreakpoint(UInt16 slot, UInt16 page, UInt16 address);
+void OnSetLanguage(LanguageId languageId);
 
 const char* OnGetName();
 

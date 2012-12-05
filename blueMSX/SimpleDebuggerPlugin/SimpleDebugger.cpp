@@ -164,7 +164,7 @@ static void updateToolBar()
     toolBar->enableItem(7, state == EMULATOR_PAUSED);
     toolBar->enableItem(8, state == EMULATOR_PAUSED);
     toolBar->enableItem(9, state == EMULATOR_PAUSED && callstack->getMostRecent() >= 0);
-    toolBar->enableItem(10, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
+    toolBar->enableItem(10, state == EMULATOR_PAUSED && disassembly->isBpOnCcursor());
 
     toolBar->enableItem(12, state == EMULATOR_PAUSED && disassembly->isCursorPresent());
     toolBar->enableItem(13, state != EMULATOR_STOPPED && disassembly->isBpOnCcursor());

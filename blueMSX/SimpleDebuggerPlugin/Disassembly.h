@@ -55,7 +55,7 @@ public:
     int getCurrentAddress() { return currentLine < 0 ? -1 : lineInfo[currentLine].address; }
 
 
-    bool isBpOnCcursor() { return currentLine >= 0 && Breakpoints::IsBreakpointUnset(lineInfo[currentLine].address); }
+    bool isBpOnCcursor() { return currentLine >= 0 && !Breakpoints::IsBreakpointUnset(lineInfo[currentLine].address); }
     bool isCursorPresent()    { return currentLine >= 0; }
 
     bool writeToFile(const char* fileName);

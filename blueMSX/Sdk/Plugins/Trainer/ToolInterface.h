@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/Trainer/ToolInterface.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/ToolInterface.h,v $
 **
-** $Revision: 1.2 $
+** $Revision: 1.11 $
 **
-** $Date: 2008-03-31 19:42:18 $
+** $Date: 2009-07-01 05:01:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -58,6 +58,7 @@ void EmulatorRun();
 void EmulatorStop();
 void EmulatorPause();
 void EmulatorStep();
+void EmulatorStepBack();
 
 void SetBreakpoint(UInt16 address);
 void ClearBreakpoint(UInt16 address);
@@ -66,6 +67,11 @@ char* GetToolPath();
 int GetEmulatorMajorVersion();
 int GetEmulatorMinorVersion();
 int GetEmulatorBuildNumber();
+
+void EnableVramAccessCheck(int enable);
+
+void SetWatchpoint(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size);
+void ClearWatchpoint(DeviceType devType, int address);
 
 HINSTANCE GetDllHinstance();
 

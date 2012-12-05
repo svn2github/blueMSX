@@ -125,7 +125,7 @@ static UInt8 read(RomMapperMuPack* rm, UInt16 address)
         ramBaseAddr = 0x4000 * (rm->ramPort[page] & rm->ramMask);
         return rm->ramData[ramBaseAddr + (address & 0x3fff)];
     case 2:
-        if (address > 0x4000 && address < 0x4000 + rm->romSize) {
+        if (address >= 0x4000 && address < 0x4000 + rm->romSize) {
             return rm->romData[address - 0x4000];
         }
         return 0xff;

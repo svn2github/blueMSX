@@ -1,9 +1,9 @@
 /*****************************************************************************
-** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/Sdk/Plugins/TraceWindow/BlueMSXToolInterface.h,v $
+** $Source: /cygdrive/d/Private/_SVNROOT/bluemsx/blueMSX/SimpleDebuggerPlugin/BlueMSXToolInterface.h,v $
 **
-** $Revision: 1.7 $
+** $Revision: 1.15 $
 **
-** $Date: 2008-03-31 19:42:18 $
+** $Date: 2009-07-01 05:01:04 $
 **
 ** More info: http://www.bluemsx.com
 **
@@ -137,6 +137,14 @@ typedef struct {
     } port[1];
 } IoPorts;
 
+typedef enum {
+    WATCHPOINT_ANY,
+    WATCHPOINT_EQUALS,
+    WATCHPOINT_NOT_EQUALS,
+    WATCHPOINT_LESS_THAN,
+    WATCHPOINT_GREATER_THAN
+} WatchpointCondition;
+
 
 
 
@@ -165,6 +173,9 @@ typedef void          (__stdcall *ToolAction)();
 typedef void          (__stdcall *ToolBreakpoint)(UInt16);
 typedef char*         (__stdcall *ToolPath)();
 typedef void          (__stdcall *ToolEmulatorVersion)(int* major, int* minor, int* buildNumber);
+typedef void          (__stdcall *ToolEnableVramAccessCheck)(int enable);
+typedef void          (__stdcall *ToolSetWatchpoint)(DeviceType devType, int address, WatchpointCondition condition, UInt32 referenceValue, int size);
+typedef void          (__stdcall *ToolClearWatchpoint)(DeviceType devType, int address);
 typedef struct {
     ToolSnapshotCreate              create;
     ToolSnapshotDestroy             destroy;
@@ -194,6 +205,13 @@ typedef struct {
 
     ToolPath                        getToolDirectory;
     ToolEmulatorVersion             getEmulatorVersion;
+
+    ToolEnableVramAccessCheck       enableVramAccessCheck;
+
+    ToolSetWatchpoint               setWatchpoint;
+    ToolClearWatchpoint             clearWatchpoint;
+
+    ToolAction                      stepBack;
 } Interface;
 
 typedef int  (__stdcall *CreateFn)(Interface*, char*, int);

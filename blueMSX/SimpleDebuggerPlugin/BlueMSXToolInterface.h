@@ -69,6 +69,7 @@ typedef enum {
     LID_CHINESESIMP = 12,
     LID_CHINESETRAD = 13,
     LID_RUSSIAN     = 14,
+    LID_CATALAN     = 15,
 } LanguageId;
 
 typedef struct Snapshot Snapshot;

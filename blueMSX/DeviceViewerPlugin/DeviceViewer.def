@@ -1,8 +1,13 @@
 EXPORTS
-Create10 @1 NONAME
-Destroy @2 NONAME
-Show @3 NONAME
-OnEmulatorStart @4 NONAME
-OnEmulatorStop @5 NONAME
-OnEmulatorPause @6 NONAME
-OnEmulatorResume @7 NONAME
+Create12
+Destroy
+Show
+NotifyEmulatorStart
+NotifyEmulatorStop
+NotifyEmulatorPause
+NotifyEmulatorResume
+NotifyEmulatorReset
+EmulatorTrace
+EmulatorSetBreakpoint
+SetLanguage
+GetName
