@@ -194,6 +194,11 @@ static char* pEmuSync[] = {
     pEmuSyncData[4],
     NULL
 };
+static char* pEmuGdiSync[] = {
+    pEmuSyncData[0],
+    pEmuSyncData[1],
+    NULL
+};
 
 static int soundBufSizes[] = { 10, 25, 50, 75, 100, 150, 200, 250, 300, 350 };
 
@@ -734,7 +739,7 @@ static BOOL CALLBACK directDraWProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM 
         SendDlgItemMessage(hDlg, IDC_MONVERTSTRETCH, WM_SETTEXT, 0, (LPARAM)langPropMonVertStretch());
 
         initDropList(hDlg, IDC_FRAMESKIP, pVideoFrameSkip, pProperties->video.frameSkip);
-        initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethod);
+        initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethodDirectX);
         
         setButtonCheck(hDlg, IDC_MONHORIZSTRETCH, pProperties->video.horizontalStretch, 1);
         setButtonCheck(hDlg, IDC_MONVERTSTRETCH, pProperties->video.verticalStretch, 1);
@@ -764,6 +769,7 @@ static BOOL CALLBACK directDraWProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM 
                                 
         pProperties->video.frameSkip        = getDropListIndex(hDlg, IDC_FRAMESKIP, pVideoFrameSkip);
         pProperties->emulation.syncMethod   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
+        pProperties->emulation.syncMethodDirectX   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
 
         DirectDrawSetDisplayMode(pProperties->video.fullscreen.width,
                                 pProperties->video.fullscreen.height,
@@ -788,13 +794,14 @@ static BOOL CALLBACK gdiProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
         SendDlgItemMessage(hDlg, IDC_PERFSYNCMODETEXT, WM_SETTEXT, 0, (LPARAM)langPropPerfSyncModeText());
         
         initDropList(hDlg, IDC_FRAMESKIP, pVideoFrameSkip, pProperties->video.frameSkip);
-        initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethod);
+        initDropList(hDlg, IDC_EMUSYNC, pEmuGdiSync, pProperties->emulation.syncMethodGdi);
 
         return FALSE;
 
     case WM_UPDATEPROPERTIES:
         pProperties->video.frameSkip        = getDropListIndex(hDlg, IDC_FRAMESKIP, pVideoFrameSkip);
-        pProperties->emulation.syncMethod   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
+        pProperties->emulation.syncMethodGdi   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
+        pProperties->emulation.syncMethod      = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
 
         return TRUE;
     }
@@ -840,7 +847,7 @@ static BOOL CALLBACK direct3dProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
 		setButtonCheck(hDlg, IDC_D3D_FORCEHIGHRES, pProperties->video.d3d.forceHighRes, 1);
 
         initDropList(hDlg, IDC_FRAMESKIP, pVideoFrameSkip, pProperties->video.frameSkip);
-        initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethod);
+        initDropList(hDlg, IDC_EMUSYNC, pEmuSync, pProperties->emulation.syncMethodD3D);
 
 
 		SendMessage(GetDlgItem(hDlg, IDC_D3D_CROPPINGGROUPBOX), WM_SETTEXT, 0, (LPARAM)langpropD3DCroppingGB());
@@ -926,6 +933,7 @@ static BOOL CALLBACK direct3dProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lP
     case WM_UPDATEPROPERTIES:
         pProperties->video.frameSkip        = getDropListIndex(hDlg, IDC_FRAMESKIP, pVideoFrameSkip);
         pProperties->emulation.syncMethod   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
+        pProperties->emulation.syncMethodD3D   = getDropListIndex(hDlg, IDC_EMUSYNC, pEmuSync);
 
         return TRUE;
     }

@@ -239,6 +239,9 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     strcpy(properties->emulation.machineName, "MSX2");
     properties->emulation.speed             = 50;
     properties->emulation.syncMethod        = syncMode ? P_EMU_SYNCTOVBLANK : P_EMU_SYNCAUTO;
+    properties->emulation.syncMethodGdi     = P_EMU_SYNCAUTO;
+    properties->emulation.syncMethodD3D     = properties->emulation.syncMethod;
+    properties->emulation.syncMethodDirectX = properties->emulation.syncMethod;
     properties->emulation.vdpSyncMode       = P_VDP_SYNCAUTO;
     properties->emulation.enableFdcTiming   = 1;
     properties->emulation.noSpriteLimits    = 0;
@@ -543,6 +546,9 @@ static void propLoad(Properties* properties)
     GET_STR_VALUE_2(emulation, shortcutProfile);
     GET_INT_VALUE_2(emulation, speed);
     GET_ENUM_VALUE_2(emulation, syncMethod, EmuSyncPair);
+    GET_ENUM_VALUE_2(emulation, syncMethodGdi, EmuSyncPair);
+    GET_ENUM_VALUE_2(emulation, syncMethodD3D, EmuSyncPair);
+    GET_ENUM_VALUE_2(emulation, syncMethodDirectX, EmuSyncPair);
     GET_ENUM_VALUE_2(emulation, vdpSyncMode, VdpSyncPair);
     GET_ENUM_VALUE_2(emulation, enableFdcTiming, BoolPair);
     GET_ENUM_VALUE_2(emulation, noSpriteLimits, BoolPair);
@@ -790,6 +796,9 @@ void propSave(Properties* properties)
     SET_STR_VALUE_2(emulation, shortcutProfile);
     SET_INT_VALUE_2(emulation, speed);
     SET_ENUM_VALUE_2(emulation, syncMethod, EmuSyncPair);
+    SET_ENUM_VALUE_2(emulation, syncMethodGdi, EmuSyncPair);
+    SET_ENUM_VALUE_2(emulation, syncMethodD3D, EmuSyncPair);
+    SET_ENUM_VALUE_2(emulation, syncMethodDirectX, EmuSyncPair);
     SET_ENUM_VALUE_2(emulation, vdpSyncMode, VdpSyncPair);
     SET_ENUM_VALUE_2(emulation, enableFdcTiming, YesNoPair);
     SET_ENUM_VALUE_2(emulation, noSpriteLimits, YesNoPair);

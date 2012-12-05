@@ -221,6 +221,9 @@ typedef struct {
     int  disableWinKeys;
     int  priorityBoost;
     int  syncMethod;
+    int  syncMethodGdi;
+    int  syncMethodD3D;
+    int  syncMethodDirectX;
     int  vdpSyncMode;
     int  reverseEnable;
     int  reverseMaxTime;
