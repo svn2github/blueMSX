@@ -4,20 +4,24 @@ Next release
 - Fix DER files in panasonic FDC
 - Add search for numbers (byte, word, dword) in degugger
 - Wildcard search (part of numbers or strings)
-- Memory watchpoint
+- Support for new EEPROM in Activision PCB
 
-
-v 2.9.0     November 18, 2012
+v 2.9.0     December 15, 2012
 =============================
 
 - Added support for smooth rewind of emulation
+- Added support for step back in debugger
+- Added support for memory and IO watchpoints
+- Added support for Direct3D
+- Added support for disabling sprite limits
 - Added support for the Spectravideo SVI-707 FDC cartridge
 - Added support for Spectravideo SVI-328 64KB cartridge 
 - Added support for SVI-328 80 track single sided drive 
 - Added support for ColecoVision Super Action Controller
 - Added support for ColecoVision Super Expansion Module hardware
 - Added support for ColecoVision Expansion Module #2 using mouse
-- Added support for ColecoVision ActivisionPCB (a cartridge for homebrew games)
+- Added support for ColecoVision ActivisionPCB (small EEPROM) (a cartridge for homebrew games)
+- Added support for Mu-Pack MIDI cartridge
 - Added support for Parallax ARC cartridge
 - Added support for Dooly cartridge
 - Added support for Manbow 2 v2 cartridge
@@ -31,6 +35,7 @@ v 2.9.0     November 18, 2012
 - Increased number of supported machine configs to 512 
 - Fixed critical bug that caused Trainer and Cheats to fail as well as memory writes in the debugger 
   when when language is any of: Catalan, Chinese, Dutch, Finnish, or Russian
+- Multiple performance optimizations (mainly developed during the MSX.emu port)
 - Fixed Gunstick and ASCII Laser bug
 - Fixed 64kB vram handling (now correctly detects 64kB vram)
 - Fixed bug in handling of transparent sprites
@@ -39,6 +44,7 @@ v 2.9.0     November 18, 2012
 - Fixed 'no frequency' bug in SN76489 emulation
 - Fixed minor bug in Beer IDE emulation
 - Fixed minor bug in video capture
+- Fixed minor bug in debugger shortcuts for breakpoints
 
 v 2.8.2     August 14, 2009
 ===========================
