@@ -261,6 +261,10 @@ SOURCE_FILES += romMapperForteII.c
 SOURCE_FILES += romMapperDRAM.c
 SOURCE_FILES += romMapperA1FM.c
 SOURCE_FILES += romMapperA1FMModem.c
+SOURCE_FILES += romMapperSvi707Fdc.c
+SOURCE_FILES += romMapperSg1000RamExpander.c
+SOURCE_FILES += romMapperDooly.c
+SOURCE_FILES += romMapperMuPack.c
 
 
 SOURCE_FILES += Crc32Calc.c
