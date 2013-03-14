@@ -138,6 +138,7 @@ SOURCE_FILES += Win32wmmSound.c
 SOURCE_FILES += Win32Midi.c
 SOURCE_FILES += Midi_w32.c
 
+SOURCE_FILES += ArrayList.c
 SOURCE_FILES += DebugMemory.c
 
 SOURCE_FILES += Patch.c 
