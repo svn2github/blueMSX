@@ -855,7 +855,26 @@ static BOOL CALLBACK dropdownProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lP
 
             switch (oi->notifyId) {
             case WM_DROPDOWN_MACHINECONFIG:
-                items = machineGetAvailable(0);
+                {
+                    ArrayList *machineList;
+					ArrayListIterator *iterator;
+
+					machineList = arrayListCreate();
+                    machineFillAvailable(machineList, 1);
+
+                    iterator = arrayListCreateIterator(machineList);
+                    while (arrayListCanIterate(iterator)) {
+                        char *machineInList = (char *)arrayListIterate(iterator);
+                        SendDlgItemMessage(hwnd, IDC_CONTROL, CB_ADDSTRING, 0, (LPARAM)machineInList);
+
+                        if (index == 0 || 0 == strcmp(machineInList, oi->text))
+                            SendDlgItemMessage(hwnd, IDC_CONTROL, CB_SETCURSEL, index, 0);
+                        index++;
+                    }
+                    arrayListDestroyIterator(iterator);
+
+                    arrayListDestroy(machineList);
+                }
                 break;
             case WM_DROPDOWN_KEYBOARDCONFIG:
                 items = keyboardGetConfigs();

@@ -96,25 +96,32 @@ static void updateMachine() {
     EnableWindow(GetDlgItem(hDlgMain, IDC_CONFSAVEAS), machineModified | foundMachine);
 }
 
-static updateMachineList(HWND hDlg) {
-    char** machineNames = machineGetAvailable(0);
+static void updateMachineList(HWND hDlg) {
     int index = 0;
+	ArrayListIterator *iterator;
+	ArrayList *machineList;
 
     while (CB_ERR != SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_DELETESTRING, 0, 0));
 
-    while (*machineNames != NULL) {
-        char buffer[128];
+    machineList = arrayListCreate();
+    machineFillAvailable(machineList, 0);
 
-        sprintf(buffer, "%s", *machineNames);
+    iterator = arrayListCreateIterator(machineList);
+    while (arrayListCanIterate(iterator)) {
+        char buffer[128];
+        _snprintf(buffer, sizeof(buffer) - 1, "%s", arrayListIterate(iterator));
 
         SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_ADDSTRING, 0, (LPARAM)buffer);
-        if (index == 0 || 0 == strcmp(*machineNames, machineName)) {
+        if (index == 0 || 0 == strcmp(buffer, machineName)) {
             SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_SETCURSEL, index, 0);
             foundMachine = 1;
         }
-        machineNames++;
         index++;
     }
+    arrayListDestroyIterator(iterator);
+
+    arrayListDestroy(machineList);
+
     if (!foundMachine) {
         machineName[0] = 0;
     }
@@ -2411,8 +2418,9 @@ static BOOL CALLBACK discardProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPa
 
 static BOOL CALLBACK saveAsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    static char **machineNameList;
-    switch (iMsg) {        
+    static ArrayList *machineList = NULL;
+
+    switch (iMsg) {
     case WM_INITDIALOG:
         SetWindowText(hDlg, langConfSaveAsTitle());
         SetWindowText(GetDlgItem(hDlg, IDC_MACHINENAMETEXT), langConfSaveAsMachineName());
@@ -2420,25 +2428,27 @@ static BOOL CALLBACK saveAsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         SetWindowText(GetDlgItem(hDlg, IDCANCEL), langDlgCancel());
 
         {
-            char** machineNames;
             int index = 0;
+			ArrayListIterator *iterator;
 
-            machineNameList = machineGetAvailable(0);
-            machineNames = machineNameList;
+            machineList = arrayListCreate();
+            machineFillAvailable(machineList, 0);
 
             EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
 
-            while (*machineNames != NULL) {
-                SendDlgItemMessage(hDlg, IDC_MACHINELIST, LB_ADDSTRING, 0, (LPARAM)*machineNames);
+            iterator = arrayListCreateIterator(machineList);
+            while (arrayListCanIterate(iterator)) {
+                char *machineInList = (char *)arrayListIterate(iterator);
+                SendDlgItemMessage(hDlg, IDC_MACHINELIST, LB_ADDSTRING, 0, (LPARAM)machineInList);
 
-                if (0 == strcmpnocase(*machineNames, machineName)) {
+                if (0 == strcmpnocase(machineInList, machineName)) {
                     SetWindowText(GetDlgItem(hDlg, IDC_MACHINENAME), machineName);
                     SendDlgItemMessage(hDlg, IDC_MACHINELIST, LB_SETCURSEL, index, 0);
                     EnableWindow(GetDlgItem(hDlg, IDOK), TRUE);
                 }
-                machineNames++;
                 index++;
             }
+            arrayListDestroyIterator(iterator);
         }
 
         return FALSE;
@@ -2460,8 +2470,8 @@ static BOOL CALLBACK saveAsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         case IDC_MACHINENAME:
             {
                 char buffer[64];
-                char** machineNames = machineNameList;
                 int index = 0;
+				ArrayListIterator *iterator;
 
                 GetWindowText(GetDlgItem(hDlg, IDC_MACHINENAME), buffer, 63);
 
@@ -2469,13 +2479,15 @@ static BOOL CALLBACK saveAsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 
                 SendDlgItemMessage(hDlg, IDC_MACHINELIST, LB_SETCURSEL, -1, 0);
 
-                while (*machineNames != NULL) {
-                    if (0 == strcmpnocase(*machineNames, buffer)) {
+                iterator = arrayListCreateIterator(machineList);
+                while (arrayListCanIterate(iterator)) {
+                    char *machineInList = (char *)arrayListIterate(iterator);
+                    if (0 == strcmpnocase(machineInList, buffer)) {
                         SendDlgItemMessage(hDlg, IDC_MACHINELIST, LB_SETCURSEL, index, 0);
                     }
-                    machineNames++;
                     index++;
                 }
+                arrayListDestroyIterator(iterator);
             }
             return TRUE;
         case IDOK:
@@ -2489,6 +2501,7 @@ static BOOL CALLBACK saveAsProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
         break;
 
     case WM_CLOSE:
+        arrayListDestroy(machineList);
         DestroyWindow(hDlgSlots);
         EndDialog(hDlg, FALSE);
         return TRUE;
@@ -2602,17 +2615,26 @@ static BOOL CALLBACK configProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
                             }
 
                             if (machineModified != 0) {
-                                char** machineNames = machineGetAvailable(0);
                                 int index = 0;
+                                ArrayList *machineList;
+								ArrayListIterator *iterator;
 
-                                while (*machineNames != NULL) {
-                                    if (0 == strcmp(*machineNames, machineName)) {
+								machineList = arrayListCreate();
+                                machineFillAvailable(machineList, 0);
+
+                                iterator = arrayListCreateIterator(machineList);
+                                while (arrayListCanIterate(iterator)) {
+                                    char *machineInList = (char *)arrayListIterate(iterator);
+
+                                    if (0 == strcmp(machineInList, machineName)) {
                                         SendDlgItemMessage(hDlg, IDC_CONF_CONFIGS, CB_SETCURSEL, index, 0);
                                         break;
                                     }
-                                    machineNames++;
                                     index++;
                                 }
+                                arrayListDestroyIterator(iterator);
+
+                                arrayListDestroy(machineList);
                             }
                             else {
                                 Machine* newMachine = machineCreate(machineNameSel);

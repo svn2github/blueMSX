@@ -513,76 +513,61 @@ int machineIsValid(const char* machineName, int checkRoms)
     return success;
 }
 
-char** machineGetAvailable(int checkRoms)
+void machineFillAvailable(ArrayList *list, int checkRoms)
 {
     const char* machineName = appConfigGetString("singlemachine", NULL);
-
+    const int maxNameLength = 512;
+    
     if (machineName != NULL) {
         char filename[128];
-        static char* machineNames[512];
-        static char  names[512][64];
-        int index = 0;
-
+        
         FILE* file;
-
+        
         sprintf(filename, "Machines/%s/config.ini", machineName);
         file = fopen(filename, "rb");
         if (file != NULL) {
             if (machineIsValid(machineName, checkRoms)) {
-                strcpy(names[index], machineName);
-                machineNames[index] = names[index];
-                index++;
+                char *name = (char *)calloc(512, sizeof(char));
+                strncpy(name, machineName, maxNameLength - 1);
+                arrayListAppend(list, name, 1);
             }
             fclose(file);
         }
-        
-        machineNames[index] = NULL;
-
-        return machineNames;
     }
     else {
-        static char* machineNames[512];
-        static char  names[512][64];
         ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
-        int index = 0;
         int i;
-
-        if (glob == NULL) {
-            machineNames[0] = NULL;
-            return machineNames;
-        }
-
+        
+        if (glob == NULL)
+            return;
+        
         for (i = 0; i < glob->count; i++) {
             char fileName[512];
             FILE* file;
-		    sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
+            sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
             file = fopen(fileName, "rb");
             if (file != NULL) {
-                const char* name = strrchr(glob->pathVector[i], '/');
-                if (name == NULL) {
-                    name = strrchr(glob->pathVector[i], '\\');
+                const char* machineName = strrchr(glob->pathVector[i], '/');
+                if (machineName == NULL) {
+                    machineName = strrchr(glob->pathVector[i], '\\');
                 }
-                if (name == NULL) {
-                    name = glob->pathVector[i] - 1;
+                if (machineName == NULL) {
+                    machineName = glob->pathVector[i] - 1;
                 }
-                name++;
-                if (machineIsValid(name, checkRoms)) {
-                    strcpy(names[index], name);
-                    machineNames[index] = names[index];
-                    index++;
+                machineName++;
+                if (machineIsValid(machineName, checkRoms)) {
+                    char *name = (char *)calloc(512, sizeof(char));
+                    strncpy(name, machineName, maxNameLength - 1);
+                    arrayListAppend(list, name, 1);
                 }
+                
                 fclose(file);
             }
         }
-
-        archGlobFree(glob);
         
-        machineNames[index] = NULL;
-
-        return machineNames;
+        archGlobFree(glob);
     }
 }
-
 
 void machineUpdate(Machine* machine)
 {

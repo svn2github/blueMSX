@@ -29,6 +29,7 @@
 #define MACHINE_H
  
 #include "MsxTypes.h"
+#include "ArrayList.h"
 #include "MediaDb.h"
 #include "VDP.h"
 #include "AY8910.h"
@@ -104,7 +105,7 @@ typedef struct {
 Machine* machineCreate(const char* machineName);
 void machineDestroy(Machine* machine);
 
-char** machineGetAvailable(int checkRoms);
+void machineFillAvailable(ArrayList *list, int checkRoms);
 
 int machineIsValid(const char* machineName, int checkRoms);
 

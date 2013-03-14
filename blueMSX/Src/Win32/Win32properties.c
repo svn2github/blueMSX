@@ -34,6 +34,10 @@
 
 #include "AppConfig.h"
 
+#if _MSC_VER
+#define snprintf _snprintf
+#endif
+
 #ifdef __GNUC__ // FIXME: Include is not available in gnu c
 static HRESULT StringCchCopy(LPTSTR d, size_t l, LPCTSTR s) { strncpy(d, s, l); d[l-1]=0; return S_OK; }
 static HRESULT StringCchLength(LPCTSTR s, size_t m, size_t *l) { *l = strlen(s); if (*l > m) *l = m; return S_OK; }
@@ -334,21 +338,30 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         machineName[0] = 0;
 
         {
-            char** machineNames = machineGetAvailable(1);
             int index = 0;
-            while (*machineNames != NULL) {
+            ArrayList *machineList;
+            ArrayListIterator *iterator;
+
+			machineList = arrayListCreate();
+			machineFillAvailable(machineList, 1);
+
+            iterator = arrayListCreateIterator(machineList);
+            while (arrayListCanIterate(iterator)) {
+                char *machineInList = (char *)arrayListIterate(iterator);
                 char buffer[128];
 
-                sprintf(buffer, "%s", *machineNames);
+                snprintf(buffer, sizeof(buffer) - 1, "%s", machineInList);
 
                 SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_ADDSTRING, 0, (LPARAM)buffer);
-                if (index == 0 || 0 == strcmp(*machineNames, pProperties->emulation.machineName)) {
+                if (index == 0 || 0 == strcmp(machineInList, pProperties->emulation.machineName)) {
                     SendDlgItemMessage(hDlg, IDC_EMUFAMILY, CB_SETCURSEL, index, 0);
-                    strcpy(machineName, *machineNames);
+                    strcpy(machineName, machineInList);
                 }
-                machineNames++;
                 index++;
             }
+            arrayListDestroyIterator(iterator);
+
+            arrayListDestroy(machineList);
         }
 
         SendMessage(GetDlgItem(hDlg, IDC_EMUSPEEDCUR), WM_SETTEXT, 0, (LPARAM)strEmuSpeed(curSpeed));
@@ -389,9 +402,13 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
         }
 
         {
-            char** machineNames = machineGetAvailable(1);
             int index = 0;
             char buffer[64];
+            ArrayList *machineList;
+			ArrayListIterator *iterator;
+
+			machineList = arrayListCreate();
+            machineFillAvailable(machineList, 1);
 
             pProperties->sound.chip.enableYM2413 = getButtonCheck(hDlg, IDC_ENABLEMSXMUSIC);
             pProperties->sound.chip.enableY8950 = getButtonCheck(hDlg, IDC_ENABLEMSXAUDIO);
@@ -416,14 +433,17 @@ static BOOL CALLBACK emulationDlgProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARA
 
             GetDlgItemText(hDlg, IDC_EMUFAMILY, buffer, 63);
             
-            while (*machineNames != NULL) {
-                if (0 == strcmp(buffer, *machineNames)) {
+            iterator = arrayListCreateIterator(machineList);
+            while (arrayListCanIterate(iterator)) {
+                char *machineInList = (char *)arrayListIterate(iterator);
+                if (0 == strcmp(buffer, machineInList)) {
                     strcpy(pProperties->emulation.machineName, buffer);
                     break;
                 }
-                machineNames++;
-                index++;
             }
+            arrayListDestroyIterator(iterator);
+
+            arrayListDestroy(machineList);
         }
 
         pProperties->emulation.speed        = curSpeed;
