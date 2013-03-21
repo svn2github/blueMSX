@@ -949,6 +949,7 @@ char** keyboardGetConfigs()
 
 int keyboardLoadConfig(char* configName)
 {
+	IniFile *keyConfigFile;
     char fileName[MAX_PATH];
     FILE* file;
     int i;
@@ -974,7 +975,7 @@ int keyboardLoadConfig(char* configName)
 
     sprintf(currentConfigFile, *configName ? configName : DefaultConfigName);
 
-    iniFileOpen(fileName);
+    keyConfigFile = iniFileOpen(fileName);
 
     for (n = 0; n < KBD_TABLE_NUM; n++) {
         char profString[32];
@@ -987,7 +988,7 @@ int keyboardLoadConfig(char* configName)
                 char key[32] = { 0 };
                 strcat(key, keyCode);
                 strcat(key, " ");
-                iniFileGetString(profString, key, "", dikName, sizeof(dikName));
+                iniFileGetString(keyConfigFile, profString, key, "", dikName, sizeof(dikName));
 //                GetPrivateProfileString(profString, keyCode, "", dikName, sizeof(dikName), fileName);
                 dikKey = str2dik(dikName);
                 if (dikKey > 0) {
@@ -1002,7 +1003,7 @@ int keyboardLoadConfig(char* configName)
             }
         }
     }
-    iniFileClose();
+    iniFileClose(keyConfigFile);
 
     if (kbdTable[0][DIK_NUMPADENTER] == 0) {
         kbdTable[0][DIK_NUMPADENTER] = kbdTable[0][DIK_RETURN];
@@ -1013,6 +1014,7 @@ int keyboardLoadConfig(char* configName)
 
 void keyboardSaveConfig(char* configName)
 {
+	IniFile *keyConfigFile;
     char fileName[MAX_PATH];
     int i, n;
     
@@ -1022,7 +1024,7 @@ void keyboardSaveConfig(char* configName)
 
     sprintf(fileName, "%s/%s.config", keyboardConfigDir, configName);
     
-    iniFileOpen(fileName);
+    keyConfigFile = iniFileOpen(fileName);
     for (n = 0; n < KBD_TABLE_NUM; n++) {
         char profString[32];
         sprintf(profString, "Keymapping-%d", n);
@@ -1040,7 +1042,7 @@ void keyboardSaveConfig(char* configName)
                 char key[32] = { 0 };
                 strcat(key, keyCode);
                 strcat(key, " ");
-                iniFileWriteString(profString, key, (char*)dikName);
+                iniFileWriteString(keyConfigFile, profString, key, (char*)dikName);
 //            WritePrivateProfileString(profString, keyCode, dikName, fileName);
             }
         }
@@ -1048,7 +1050,7 @@ void keyboardSaveConfig(char* configName)
         memcpy(kbdTableBackup[n], kbdTable[n], sizeof(kbdTableBackup[n]));
     }
     sprintf(currentConfigFile, configName);
-    iniFileClose();
+    iniFileClose(keyConfigFile);
 }
 
 void keyboardSetDirectory(char* directory)

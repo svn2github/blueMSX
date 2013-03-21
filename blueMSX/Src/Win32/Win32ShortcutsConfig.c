@@ -695,20 +695,20 @@ static LRESULT CALLBACK hotkeyCtrlProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPAR
     return CallWindowProc(baseHotkeyCtrlProc, hwnd, iMsg, wParam, lParam);
 }
 
-#define LOAD_SHORTCUT(hotkey)                                                   \
+#define LOAD_SHORTCUT(iniFile, hotkey)                                          \
 do {                                                                            \
     char buffer[32];                                                            \
     DWORD value;                                                                \
-    iniFileGetString("Shortcuts", #hotkey, "0", buffer, 32);                    \
+    iniFileGetString(iniFile, "Shortcuts", #hotkey, "0", buffer, 32);           \
     if (0 == sscanf(buffer, "%X", &value)) value = 0;                           \
     shortcuts->hotkey = int2hotkey(&value);                                     \
 } while(0)
 
-#define SAVE_SHORTCUT(hotkey)                                                   \
+#define SAVE_SHORTCUT(iniFile, hotkey)                                          \
 do {                                                                            \
     char buffer[32];                                                            \
     sprintf(buffer, "%.8X", hotkey2int(shortcuts->hotkey));                     \
-    iniFileWriteString("Shortcuts", #hotkey, buffer);                           \
+    iniFileWriteString(iniFile, "Shortcuts", #hotkey, buffer);                  \
 } while(0)
 
 
@@ -716,99 +716,100 @@ static Shortcuts* loadShortcuts(char* profileName)
 {
     char fileName[MAX_PATH];
     Shortcuts* shortcuts = (Shortcuts*)malloc(sizeof(Shortcuts));
+	IniFile *shortcutFile;
 
     sprintf(fileName, "%s/%s.shortcuts", profileDir, profileName);
 
-    iniFileOpen(fileName);
+    shortcutFile = iniFileOpen(fileName);
 
-    LOAD_SHORTCUT(msxAudioSwitch);
-    LOAD_SHORTCUT(spritesEnable);
-    LOAD_SHORTCUT(fdcTiming);
-    LOAD_SHORTCUT(noSpriteLimits);
-    LOAD_SHORTCUT(msxKeyboardQuirk);
-    LOAD_SHORTCUT(frontSwitch);
-    LOAD_SHORTCUT(pauseSwitch);
-    LOAD_SHORTCUT(quit);
-    LOAD_SHORTCUT(wavCapture);
-    LOAD_SHORTCUT(videoCapLoad);
-    LOAD_SHORTCUT(videoCapPlay);
-    LOAD_SHORTCUT(videoCapRec);
-    LOAD_SHORTCUT(videoCapStop);
-    LOAD_SHORTCUT(videoCapSave);
-    LOAD_SHORTCUT(screenCapture);
-    LOAD_SHORTCUT(screenCaptureUnfilteredSmall);
-    LOAD_SHORTCUT(screenCaptureUnfilteredLarge);
-    LOAD_SHORTCUT(cpuStateLoad);
-    LOAD_SHORTCUT(cpuStateSave);
-    LOAD_SHORTCUT(cpuStateQuickLoad);
-    LOAD_SHORTCUT(cpuStateQuickSave);
+    LOAD_SHORTCUT(shortcutFile, msxAudioSwitch);
+    LOAD_SHORTCUT(shortcutFile, spritesEnable);
+    LOAD_SHORTCUT(shortcutFile, fdcTiming);
+    LOAD_SHORTCUT(shortcutFile, noSpriteLimits);
+    LOAD_SHORTCUT(shortcutFile, msxKeyboardQuirk);
+    LOAD_SHORTCUT(shortcutFile, frontSwitch);
+    LOAD_SHORTCUT(shortcutFile, pauseSwitch);
+    LOAD_SHORTCUT(shortcutFile, quit);
+    LOAD_SHORTCUT(shortcutFile, wavCapture);
+    LOAD_SHORTCUT(shortcutFile, videoCapLoad);
+    LOAD_SHORTCUT(shortcutFile, videoCapPlay);
+    LOAD_SHORTCUT(shortcutFile, videoCapRec);
+    LOAD_SHORTCUT(shortcutFile, videoCapStop);
+    LOAD_SHORTCUT(shortcutFile, videoCapSave);
+    LOAD_SHORTCUT(shortcutFile, screenCapture);
+    LOAD_SHORTCUT(shortcutFile, screenCaptureUnfilteredSmall);
+    LOAD_SHORTCUT(shortcutFile, screenCaptureUnfilteredLarge);
+    LOAD_SHORTCUT(shortcutFile, cpuStateLoad);
+    LOAD_SHORTCUT(shortcutFile, cpuStateSave);
+    LOAD_SHORTCUT(shortcutFile, cpuStateQuickLoad);
+    LOAD_SHORTCUT(shortcutFile, cpuStateQuickSave);
     
-    LOAD_SHORTCUT(cartInsert[0]);
-    LOAD_SHORTCUT(cartInsert[1]);
-    LOAD_SHORTCUT(cartSpecialMenu[0]);
-    LOAD_SHORTCUT(cartSpecialMenu[1]);
-    LOAD_SHORTCUT(cartRemove[0]);
-    LOAD_SHORTCUT(cartRemove[1]);
-    LOAD_SHORTCUT(cartAutoReset[0]);
+    LOAD_SHORTCUT(shortcutFile, cartInsert[0]);
+    LOAD_SHORTCUT(shortcutFile, cartInsert[1]);
+    LOAD_SHORTCUT(shortcutFile, cartSpecialMenu[0]);
+    LOAD_SHORTCUT(shortcutFile, cartSpecialMenu[1]);
+    LOAD_SHORTCUT(shortcutFile, cartRemove[0]);
+    LOAD_SHORTCUT(shortcutFile, cartRemove[1]);
+    LOAD_SHORTCUT(shortcutFile, cartAutoReset[0]);
     
-    LOAD_SHORTCUT(diskInsert[0]);
-    LOAD_SHORTCUT(diskInsert[1]);
-    LOAD_SHORTCUT(diskDirInsert[0]);
-    LOAD_SHORTCUT(diskDirInsert[1]);
-    LOAD_SHORTCUT(diskRemove[0]);
-    LOAD_SHORTCUT(diskRemove[1]);
-    LOAD_SHORTCUT(diskChange[0]);
-    LOAD_SHORTCUT(diskAutoReset[0]);
+    LOAD_SHORTCUT(shortcutFile, diskInsert[0]);
+    LOAD_SHORTCUT(shortcutFile, diskInsert[1]);
+    LOAD_SHORTCUT(shortcutFile, diskDirInsert[0]);
+    LOAD_SHORTCUT(shortcutFile, diskDirInsert[1]);
+    LOAD_SHORTCUT(shortcutFile, diskRemove[0]);
+    LOAD_SHORTCUT(shortcutFile, diskRemove[1]);
+    LOAD_SHORTCUT(shortcutFile, diskChange[0]);
+    LOAD_SHORTCUT(shortcutFile, diskAutoReset[0]);
 
-    LOAD_SHORTCUT(casInsert);
-    LOAD_SHORTCUT(casRewind);
-    LOAD_SHORTCUT(casSetPos);
-    LOAD_SHORTCUT(casRemove);
+    LOAD_SHORTCUT(shortcutFile, casInsert);
+    LOAD_SHORTCUT(shortcutFile, casRewind);
+    LOAD_SHORTCUT(shortcutFile, casSetPos);
+    LOAD_SHORTCUT(shortcutFile, casRemove);
     
-    LOAD_SHORTCUT(prnFormFeed);
-    LOAD_SHORTCUT(mouseLockToggle);
-    LOAD_SHORTCUT(emulationRunPause);
-    LOAD_SHORTCUT(emulationStop);
-    LOAD_SHORTCUT(emuSpeedFull);
-    LOAD_SHORTCUT(emuPlayReverse);
-    LOAD_SHORTCUT(emuSpeedToggle);
-    LOAD_SHORTCUT(emuSpeedNormal);
-    LOAD_SHORTCUT(emuSpeedInc);
-    LOAD_SHORTCUT(emuSpeedDec);
-    LOAD_SHORTCUT(windowSizeSmall);
-    LOAD_SHORTCUT(windowSizeNormal);
-    LOAD_SHORTCUT(windowSizeFullscreen);
-    LOAD_SHORTCUT(windowSizeMinimized);
-    LOAD_SHORTCUT(windowSizeFullscreenToggle);
-    LOAD_SHORTCUT(resetSoft);
-    LOAD_SHORTCUT(resetHard);
-    LOAD_SHORTCUT(resetClean);
-    LOAD_SHORTCUT(volumeIncrease);
-    LOAD_SHORTCUT(volumeDecrease);
-    LOAD_SHORTCUT(volumeMute);
-    LOAD_SHORTCUT(volumeStereo);
-    LOAD_SHORTCUT(themeSwitch);
-    LOAD_SHORTCUT(casToggleReadonly);
-    LOAD_SHORTCUT(casAutoRewind);
-    LOAD_SHORTCUT(casSave);
-    LOAD_SHORTCUT(propShowEmulation);
-    LOAD_SHORTCUT(propShowVideo);
-    LOAD_SHORTCUT(propShowAudio);
-    LOAD_SHORTCUT(propShowEffects);
-    LOAD_SHORTCUT(propShowSettings);
-    LOAD_SHORTCUT(propShowApearance);
-    LOAD_SHORTCUT(propShowPorts);
-    LOAD_SHORTCUT(optionsShowLanguage);
-    LOAD_SHORTCUT(toolsShowMachineEditor);
-    LOAD_SHORTCUT(toolsShowShorcutEditor);
-    LOAD_SHORTCUT(toolsShowKeyboardEditor);
-    LOAD_SHORTCUT(toolsShowMixer);
-    LOAD_SHORTCUT(toolsShowDebugger);
-    LOAD_SHORTCUT(toolsShowTrainer);
-    LOAD_SHORTCUT(helpShowHelp);
-    LOAD_SHORTCUT(helpShowAbout);
+    LOAD_SHORTCUT(shortcutFile, prnFormFeed);
+    LOAD_SHORTCUT(shortcutFile, mouseLockToggle);
+    LOAD_SHORTCUT(shortcutFile, emulationRunPause);
+    LOAD_SHORTCUT(shortcutFile, emulationStop);
+    LOAD_SHORTCUT(shortcutFile, emuSpeedFull);
+    LOAD_SHORTCUT(shortcutFile, emuPlayReverse);
+    LOAD_SHORTCUT(shortcutFile, emuSpeedToggle);
+    LOAD_SHORTCUT(shortcutFile, emuSpeedNormal);
+    LOAD_SHORTCUT(shortcutFile, emuSpeedInc);
+    LOAD_SHORTCUT(shortcutFile, emuSpeedDec);
+    LOAD_SHORTCUT(shortcutFile, windowSizeSmall);
+    LOAD_SHORTCUT(shortcutFile, windowSizeNormal);
+    LOAD_SHORTCUT(shortcutFile, windowSizeFullscreen);
+    LOAD_SHORTCUT(shortcutFile, windowSizeMinimized);
+    LOAD_SHORTCUT(shortcutFile, windowSizeFullscreenToggle);
+    LOAD_SHORTCUT(shortcutFile, resetSoft);
+    LOAD_SHORTCUT(shortcutFile, resetHard);
+    LOAD_SHORTCUT(shortcutFile, resetClean);
+    LOAD_SHORTCUT(shortcutFile, volumeIncrease);
+    LOAD_SHORTCUT(shortcutFile, volumeDecrease);
+    LOAD_SHORTCUT(shortcutFile, volumeMute);
+    LOAD_SHORTCUT(shortcutFile, volumeStereo);
+    LOAD_SHORTCUT(shortcutFile, themeSwitch);
+    LOAD_SHORTCUT(shortcutFile, casToggleReadonly);
+    LOAD_SHORTCUT(shortcutFile, casAutoRewind);
+    LOAD_SHORTCUT(shortcutFile, casSave);
+    LOAD_SHORTCUT(shortcutFile, propShowEmulation);
+    LOAD_SHORTCUT(shortcutFile, propShowVideo);
+    LOAD_SHORTCUT(shortcutFile, propShowAudio);
+    LOAD_SHORTCUT(shortcutFile, propShowEffects);
+    LOAD_SHORTCUT(shortcutFile, propShowSettings);
+    LOAD_SHORTCUT(shortcutFile, propShowApearance);
+    LOAD_SHORTCUT(shortcutFile, propShowPorts);
+    LOAD_SHORTCUT(shortcutFile, optionsShowLanguage);
+    LOAD_SHORTCUT(shortcutFile, toolsShowMachineEditor);
+    LOAD_SHORTCUT(shortcutFile, toolsShowShorcutEditor);
+    LOAD_SHORTCUT(shortcutFile, toolsShowKeyboardEditor);
+    LOAD_SHORTCUT(shortcutFile, toolsShowMixer);
+    LOAD_SHORTCUT(shortcutFile, toolsShowDebugger);
+    LOAD_SHORTCUT(shortcutFile, toolsShowTrainer);
+    LOAD_SHORTCUT(shortcutFile, helpShowHelp);
+    LOAD_SHORTCUT(shortcutFile, helpShowAbout);
 
-    iniFileClose();
+    iniFileClose(shortcutFile);
 
     return shortcuts;
 }
@@ -816,99 +817,100 @@ static Shortcuts* loadShortcuts(char* profileName)
 static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
 {
     char fileName[MAX_PATH];
+	IniFile *shortcutFile;
 
     sprintf(fileName, "%s/%s.shortcuts", profileDir, profileName);
 
-    iniFileOpen(fileName);
+    shortcutFile = iniFileOpen(fileName);
 
-    SAVE_SHORTCUT(msxAudioSwitch);
-    SAVE_SHORTCUT(spritesEnable);
-    SAVE_SHORTCUT(fdcTiming);
-    SAVE_SHORTCUT(noSpriteLimits);
-    SAVE_SHORTCUT(msxKeyboardQuirk);
-    SAVE_SHORTCUT(frontSwitch);
-    SAVE_SHORTCUT(pauseSwitch);
-    SAVE_SHORTCUT(quit);
-    SAVE_SHORTCUT(wavCapture);
-    SAVE_SHORTCUT(videoCapLoad);
-    SAVE_SHORTCUT(videoCapPlay);
-    SAVE_SHORTCUT(videoCapRec);
-    SAVE_SHORTCUT(videoCapStop);
-    SAVE_SHORTCUT(videoCapSave);
-    SAVE_SHORTCUT(screenCapture);
-    SAVE_SHORTCUT(screenCaptureUnfilteredSmall);
-    SAVE_SHORTCUT(screenCaptureUnfilteredLarge);
-    SAVE_SHORTCUT(cpuStateLoad);
-    SAVE_SHORTCUT(cpuStateSave);
-    SAVE_SHORTCUT(cpuStateQuickLoad);
-    SAVE_SHORTCUT(cpuStateQuickSave);
+    SAVE_SHORTCUT(shortcutFile, msxAudioSwitch);
+    SAVE_SHORTCUT(shortcutFile, spritesEnable);
+    SAVE_SHORTCUT(shortcutFile, fdcTiming);
+    SAVE_SHORTCUT(shortcutFile, noSpriteLimits);
+    SAVE_SHORTCUT(shortcutFile, msxKeyboardQuirk);
+    SAVE_SHORTCUT(shortcutFile, frontSwitch);
+    SAVE_SHORTCUT(shortcutFile, pauseSwitch);
+    SAVE_SHORTCUT(shortcutFile, quit);
+    SAVE_SHORTCUT(shortcutFile, wavCapture);
+    SAVE_SHORTCUT(shortcutFile, videoCapLoad);
+    SAVE_SHORTCUT(shortcutFile, videoCapPlay);
+    SAVE_SHORTCUT(shortcutFile, videoCapRec);
+    SAVE_SHORTCUT(shortcutFile, videoCapStop);
+    SAVE_SHORTCUT(shortcutFile, videoCapSave);
+    SAVE_SHORTCUT(shortcutFile, screenCapture);
+    SAVE_SHORTCUT(shortcutFile, screenCaptureUnfilteredSmall);
+    SAVE_SHORTCUT(shortcutFile, screenCaptureUnfilteredLarge);
+    SAVE_SHORTCUT(shortcutFile, cpuStateLoad);
+    SAVE_SHORTCUT(shortcutFile, cpuStateSave);
+    SAVE_SHORTCUT(shortcutFile, cpuStateQuickLoad);
+    SAVE_SHORTCUT(shortcutFile, cpuStateQuickSave);
 
-    SAVE_SHORTCUT(cartInsert[0]);
-    SAVE_SHORTCUT(cartInsert[1]);
-    SAVE_SHORTCUT(cartSpecialMenu[0]);
-    SAVE_SHORTCUT(cartSpecialMenu[1]);
-    SAVE_SHORTCUT(cartRemove[0]);
-    SAVE_SHORTCUT(cartRemove[1]);
-    SAVE_SHORTCUT(cartAutoReset[0]);
+    SAVE_SHORTCUT(shortcutFile, cartInsert[0]);
+    SAVE_SHORTCUT(shortcutFile, cartInsert[1]);
+    SAVE_SHORTCUT(shortcutFile, cartSpecialMenu[0]);
+    SAVE_SHORTCUT(shortcutFile, cartSpecialMenu[1]);
+    SAVE_SHORTCUT(shortcutFile, cartRemove[0]);
+    SAVE_SHORTCUT(shortcutFile, cartRemove[1]);
+    SAVE_SHORTCUT(shortcutFile, cartAutoReset[0]);
     
-    SAVE_SHORTCUT(diskInsert[0]);
-    SAVE_SHORTCUT(diskInsert[1]);
-    SAVE_SHORTCUT(diskDirInsert[0]);
-    SAVE_SHORTCUT(diskDirInsert[1]);
-    SAVE_SHORTCUT(diskRemove[0]);
-    SAVE_SHORTCUT(diskRemove[1]); 
-    SAVE_SHORTCUT(diskChange[0]);   
-    SAVE_SHORTCUT(diskAutoReset[0]);
+    SAVE_SHORTCUT(shortcutFile, diskInsert[0]);
+    SAVE_SHORTCUT(shortcutFile, diskInsert[1]);
+    SAVE_SHORTCUT(shortcutFile, diskDirInsert[0]);
+    SAVE_SHORTCUT(shortcutFile, diskDirInsert[1]);
+    SAVE_SHORTCUT(shortcutFile, diskRemove[0]);
+    SAVE_SHORTCUT(shortcutFile, diskRemove[1]); 
+    SAVE_SHORTCUT(shortcutFile, diskChange[0]);   
+    SAVE_SHORTCUT(shortcutFile, diskAutoReset[0]);
 
-    SAVE_SHORTCUT(casInsert);
-    SAVE_SHORTCUT(casRewind);
-    SAVE_SHORTCUT(casSetPos);
-    SAVE_SHORTCUT(casToggleReadonly);
-    SAVE_SHORTCUT(casAutoRewind);
-    SAVE_SHORTCUT(casSave);
-    SAVE_SHORTCUT(casRemove);
+    SAVE_SHORTCUT(shortcutFile, casInsert);
+    SAVE_SHORTCUT(shortcutFile, casRewind);
+    SAVE_SHORTCUT(shortcutFile, casSetPos);
+    SAVE_SHORTCUT(shortcutFile, casToggleReadonly);
+    SAVE_SHORTCUT(shortcutFile, casAutoRewind);
+    SAVE_SHORTCUT(shortcutFile, casSave);
+    SAVE_SHORTCUT(shortcutFile, casRemove);
 
-    SAVE_SHORTCUT(prnFormFeed);
-    SAVE_SHORTCUT(mouseLockToggle);
-    SAVE_SHORTCUT(emulationRunPause);
-    SAVE_SHORTCUT(emulationStop);
-    SAVE_SHORTCUT(emuSpeedFull);
-    SAVE_SHORTCUT(emuPlayReverse);
-    SAVE_SHORTCUT(emuSpeedToggle);
-    SAVE_SHORTCUT(emuSpeedNormal);
-    SAVE_SHORTCUT(emuSpeedInc);
-    SAVE_SHORTCUT(emuSpeedDec);
-    SAVE_SHORTCUT(windowSizeSmall);
-    SAVE_SHORTCUT(windowSizeNormal);
-    SAVE_SHORTCUT(windowSizeFullscreen);
-    SAVE_SHORTCUT(windowSizeMinimized);
-    SAVE_SHORTCUT(windowSizeFullscreenToggle);
-    SAVE_SHORTCUT(resetSoft);
-    SAVE_SHORTCUT(resetHard);
-    SAVE_SHORTCUT(resetClean);
-    SAVE_SHORTCUT(volumeIncrease);
-    SAVE_SHORTCUT(volumeDecrease);
-    SAVE_SHORTCUT(volumeMute);
-    SAVE_SHORTCUT(volumeStereo);
-    SAVE_SHORTCUT(themeSwitch);
-    SAVE_SHORTCUT(propShowEmulation);
-    SAVE_SHORTCUT(propShowVideo);
-    SAVE_SHORTCUT(propShowAudio);
-    SAVE_SHORTCUT(propShowEffects);
-    SAVE_SHORTCUT(propShowSettings);
-    SAVE_SHORTCUT(propShowApearance);
-    SAVE_SHORTCUT(propShowPorts);
-    SAVE_SHORTCUT(optionsShowLanguage);
-    SAVE_SHORTCUT(toolsShowMachineEditor);
-    SAVE_SHORTCUT(toolsShowShorcutEditor);
-    SAVE_SHORTCUT(toolsShowKeyboardEditor);
-    SAVE_SHORTCUT(toolsShowMixer);
-    SAVE_SHORTCUT(toolsShowDebugger);
-    SAVE_SHORTCUT(toolsShowTrainer);
-    SAVE_SHORTCUT(helpShowHelp);
-    SAVE_SHORTCUT(helpShowAbout);
+    SAVE_SHORTCUT(shortcutFile, prnFormFeed);
+    SAVE_SHORTCUT(shortcutFile, mouseLockToggle);
+    SAVE_SHORTCUT(shortcutFile, emulationRunPause);
+    SAVE_SHORTCUT(shortcutFile, emulationStop);
+    SAVE_SHORTCUT(shortcutFile, emuSpeedFull);
+    SAVE_SHORTCUT(shortcutFile, emuPlayReverse);
+    SAVE_SHORTCUT(shortcutFile, emuSpeedToggle);
+    SAVE_SHORTCUT(shortcutFile, emuSpeedNormal);
+    SAVE_SHORTCUT(shortcutFile, emuSpeedInc);
+    SAVE_SHORTCUT(shortcutFile, emuSpeedDec);
+    SAVE_SHORTCUT(shortcutFile, windowSizeSmall);
+    SAVE_SHORTCUT(shortcutFile, windowSizeNormal);
+    SAVE_SHORTCUT(shortcutFile, windowSizeFullscreen);
+    SAVE_SHORTCUT(shortcutFile, windowSizeMinimized);
+    SAVE_SHORTCUT(shortcutFile, windowSizeFullscreenToggle);
+    SAVE_SHORTCUT(shortcutFile, resetSoft);
+    SAVE_SHORTCUT(shortcutFile, resetHard);
+    SAVE_SHORTCUT(shortcutFile, resetClean);
+    SAVE_SHORTCUT(shortcutFile, volumeIncrease);
+    SAVE_SHORTCUT(shortcutFile, volumeDecrease);
+    SAVE_SHORTCUT(shortcutFile, volumeMute);
+    SAVE_SHORTCUT(shortcutFile, volumeStereo);
+    SAVE_SHORTCUT(shortcutFile, themeSwitch);
+    SAVE_SHORTCUT(shortcutFile, propShowEmulation);
+    SAVE_SHORTCUT(shortcutFile, propShowVideo);
+    SAVE_SHORTCUT(shortcutFile, propShowAudio);
+    SAVE_SHORTCUT(shortcutFile, propShowEffects);
+    SAVE_SHORTCUT(shortcutFile, propShowSettings);
+    SAVE_SHORTCUT(shortcutFile, propShowApearance);
+    SAVE_SHORTCUT(shortcutFile, propShowPorts);
+    SAVE_SHORTCUT(shortcutFile, optionsShowLanguage);
+    SAVE_SHORTCUT(shortcutFile, toolsShowMachineEditor);
+    SAVE_SHORTCUT(shortcutFile, toolsShowShorcutEditor);
+    SAVE_SHORTCUT(shortcutFile, toolsShowKeyboardEditor);
+    SAVE_SHORTCUT(shortcutFile, toolsShowMixer);
+    SAVE_SHORTCUT(shortcutFile, toolsShowDebugger);
+    SAVE_SHORTCUT(shortcutFile, toolsShowTrainer);
+    SAVE_SHORTCUT(shortcutFile, helpShowHelp);
+    SAVE_SHORTCUT(shortcutFile, helpShowAbout);
 
-    iniFileClose();
+    iniFileClose(shortcutFile);
 }
 
 static void addShortcutEntry(HWND hwnd, int entry, char* description, ShotcutHotkey hotkey) {
