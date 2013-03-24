@@ -2467,6 +2467,9 @@ int setDefaultPath() {
     // Set up temp directories
     propertiesSetDirectory(st.pCurDir, rootDir);
 
+    sprintf(buffer, "%s\\Machines", rootDir);
+	machineSetDirectory(buffer);
+
     sprintf(buffer, "%s\\Audio Capture", rootDir);
     mkdir(buffer);
     actionSetAudioCaptureSetDirectory(buffer, "");

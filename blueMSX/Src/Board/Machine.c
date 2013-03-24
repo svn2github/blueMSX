@@ -36,6 +36,7 @@
 #include "MediaDb.h"
 #include "TokenExtract.h"
 #include "Disk.h"
+#include "unzip.h"
 
 #include "AppConfig.h"
 
@@ -153,6 +154,7 @@
 
 #include "romExclusion.h"
 
+static char machinesDir[PROP_MAXPATH]  = "";
 
 int toint(char* buffer) 
 {
@@ -169,18 +171,62 @@ int toint(char* buffer)
     return atoi(buffer);
 }
 
+#ifdef _MSC_VER
+
+static char *strcasestr(const char *str1, const char *str2)
+{
+	char *str1copy;
+	char *str2copy;
+	char *ptr;
+	int offset;
+
+	if (str1 == NULL || str2 == NULL)
+		return NULL;
+
+	// Create a copy of each
+	str1copy = _strdup(str1);
+	str2copy = _strdup(str2);
+
+	// Convert both to lowercase
+	_strlwr(str1copy);
+	_strlwr(str2copy);
+
+	// Find the occurrence in the lowercased version
+	ptr = strstr(str1copy, str2copy);
+
+	// Now that we have the position, contents are not needed
+	free(str1copy);
+	free(str2copy);
+	
+	if (ptr == NULL)
+		return NULL; // No match
+
+	// Compute the offset in the lowercased version
+	offset = ptr - str1copy;
+
+	return (char *)(str1 + offset); // Return the original version + offset
+}
+
+#endif
+
 static int readMachine(Machine* machine, const char* machineName, const char* file)
 {
     static char buffer[10000];
     char* slotBuf;
     int value;
     int i = 0;
-	IniFile *configIni;
-
+    IniFile *configIni;
+    
+    if (machine->isZipped)
+        configIni = iniFileOpenZipped(machine->zipFile, "config.ini");
+    else
+        configIni = iniFileOpen(file);
+    
+    if (configIni == NULL)
+        return 0;
+    
     strcpy(machine->name, machineName);
-
-    configIni = iniFileOpen(file);
-
+    
     // Read board info
     iniFileGetString(configIni, "Board", "type", "none", buffer, 10000);
     if      (0 == strcmp(buffer, "MSX"))          machine->board.type = BOARD_MSX;
@@ -309,6 +355,8 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
     machine->fdc.enabled = 0;
     for (i = 0; i < sizeof(machine->slotInfo) / sizeof(SlotInfo) && *slotBuf; i++) {
         char* arg;
+        char slotInfoName[512];
+		char *slotFilename;
 
         machine->slotInfo[i].slot = toint(extractToken(slotBuf, 0));    
         machine->slotInfo[i].subslot = toint(extractToken(slotBuf, 1));
@@ -339,6 +387,54 @@ static int readMachine(Machine* machine, const char* machineName, const char* fi
         if (machine->slotInfo[i].romType < 1 || machine->slotInfo[i].romType > ROM_MAXROMID) { iniFileClose(configIni); return 0; }
 
         slotBuf += strlen(slotBuf) + 1;
+        
+        strcpy(slotInfoName, machine->slotInfo[i].name);
+        
+        slotFilename = strrchr(slotInfoName, '/');
+        if (slotFilename == NULL)
+            slotFilename = strrchr(slotInfoName, '\\');
+        if (slotFilename == NULL)
+            slotFilename = slotInfoName;
+        else
+            slotFilename++;
+        
+        if (!machine->isZipped)
+        {
+            // Convert the relative path into absolute
+			
+            if (strcasestr(machine->slotInfo[i].name, "Machines/") == machine->slotInfo[i].name ||
+                strcasestr(machine->slotInfo[i].name, "Machines\\") == machine->slotInfo[i].name)
+            {
+                char expandedPath[1024];
+                sprintf(expandedPath, "%s/%s", machinesDir, machine->slotInfo[i].name + 9);
+                strcpy(machine->slotInfo[i].name, expandedPath);
+            }
+        }
+        else
+        {
+            char iniFilePath[512];
+			char *parentDir;
+
+            strcpy(iniFilePath, iniFileGetFilePath(configIni));
+            
+            parentDir = strrchr(iniFilePath, '/');
+            if (parentDir == NULL)
+                parentDir = strrchr(iniFilePath, '\\');
+            if (parentDir == NULL)
+                parentDir = iniFilePath;
+            else
+                *(parentDir + 1) = '\0';
+            
+            strcpy(machine->slotInfo[i].name, machine->zipFile);
+            sprintf(machine->slotInfo[i].inZipName, "%s%s",
+                    iniFilePath, slotFilename);
+        }
+        
+#ifdef __APPLE__
+        // On OS X, replace all backslashes with slashes
+        for (char *ch = machine->slotInfo[i].name; *ch; ch++)
+            if (*ch == '\\') *ch = '/';
+#endif
     }
 
     machine->slotInfoCount = i;
@@ -355,14 +451,16 @@ void machineSave(Machine* machine)
     char buffer[10000];
     int size = 0;
     int i;
-	IniFile *configIni;
+    IniFile *configIni;
 
-    sprintf(dir, "Machines/%s", machine->name);
+    sprintf(dir, "%s/%s", machinesDir, machine->name);
     archCreateDirectory(dir);
 
-    sprintf(file, "Machines/%s/config.ini", machine->name);
+    sprintf(file, "%s/%s/config.ini", machinesDir, machine->name);
 
     configIni = iniFileOpen(file);
+    if (configIni == NULL)
+        return;
 
     // Write CMOS info
     iniFileWriteString(configIni, "CMOS", "Enable CMOS", machine->cmos.enable ? "1" : "0");
@@ -455,26 +553,62 @@ void machineSave(Machine* machine)
 
 Machine* machineCreate(const char* machineName)
 {
-    char fileName[512];
+    char configIni[512];
     Machine* machine;
     int success;
-
-    machine = malloc(sizeof(Machine));
-
-    sprintf(fileName, "Machines/%s/config.ini", machineName);
-    success = readMachine(machine, machineName, fileName);
-    if (!success) {
-        free(machine);
+    FILE *file;
+    
+    machine = (Machine *)malloc(sizeof(Machine));
+    if (machine == NULL)
+        return NULL;
+    
+    machine->zipFile = NULL;
+    machine->isZipped = 0;
+    
+    sprintf(configIni, "%s/%s/config.ini", machinesDir, machineName);
+    file = fopen(configIni, "rb");
+    
+    if (file != NULL)
+    {
+        fclose(file);
+    }
+    else
+    {
+        // No config.ini. Is it compressed?
+        char zipFile[512];
+        
+        sprintf(zipFile, "%s/%s.zip", machinesDir, machineName);
+        file = fopen(zipFile, "rb");
+        
+        if (file == NULL)
+        {
+		    machineDestroy(machine);
+            return NULL; // Not compressed and no config.ini
+        }
+        
+        machine->zipFile = (char *)calloc(strlen(zipFile) + 1, sizeof(char));
+        strcpy(machine->zipFile, zipFile);
+        
+        machine->isZipped = 1;
+    }
+    
+    success = readMachine(machine, machineName, configIni);
+    if (!success)
+    {
+		machineDestroy(machine);
         return NULL;
     }
-
+    
     machineUpdate(machine);
-
+    
     return machine;
 }
 
 void machineDestroy(Machine* machine)
 {
+    if (machine->zipFile)
+        free(machine->zipFile);
+    
     free(machine);
 }
 
@@ -488,29 +622,58 @@ int machineIsValid(const char* machineName, int checkRoms)
     if (machine == NULL) {
         return 0;
     }
-
-    if (!checkRoms) {
-        return 1;
-    }
-
-    for (i = 0; i < machine->slotInfoCount; i++) {
-        if (strlen(machine->slotInfo[i].name) || 
-            strlen(machine->slotInfo[i].inZipName))
-        {        
-            FILE* file = fopen(machine->slotInfo[i].name, "r");
-            if (file == NULL) {
-                if (success) {
-//                    printf("\n%s: Cant find rom:\n", machineName);
-                }
-//                printf("     %s\n", machine->slotInfo[i].name);
-                success = 0;
-                continue;
+    
+    if (checkRoms)
+    {
+        unzFile zippedMachine = 0;
+        
+#ifdef COCOAMSX
+        if ((machine->board.type & BOARD_MASK) != BOARD_MSX)
+            success = 0;
+#endif
+        if (success)
+        {
+            if (machine->isZipped)
+            {
+                zippedMachine = unzOpen(machine->zipFile);
+                if (!zippedMachine)
+                    success = 0;
             }
-            fclose(file);
+            
+            if (success)
+            {
+                for (i = 0; i < machine->slotInfoCount; i++) {
+                    if (strlen(machine->slotInfo[i].name) ||
+                        strlen(machine->slotInfo[i].inZipName))
+                    {
+                        if (machine->isZipped)
+                        {
+                            int location = unzLocateFile(zippedMachine,
+                                                         machine->slotInfo[i].inZipName, 1);
+                            
+                            if (location == UNZ_END_OF_LIST_OF_FILE)
+                                success = 0;
+                        }
+                        else
+                        {
+                            FILE* file = fopen(machine->slotInfo[i].name, "r");
+                            if (file == NULL)
+                            {
+                                success = 0;
+                                continue;
+                            }
+                            fclose(file);
+                        }
+                    }
+                }
+            }
+            
+            if (zippedMachine)
+                unzClose(zippedMachine);
         }
     }
-
-    free(machine);
+    
+    machineDestroy(machine);
 
     return success;
 }
@@ -519,13 +682,13 @@ void machineFillAvailable(ArrayList *list, int checkRoms)
 {
     const char* machineName = appConfigGetString("singlemachine", NULL);
     const int maxNameLength = 512;
-    
+ 
     if (machineName != NULL) {
         char filename[128];
         
         FILE* file;
         
-        sprintf(filename, "Machines/%s/config.ini", machineName);
+        sprintf(filename, "%s/%s/config.ini", machinesDir, machineName);
         file = fopen(filename, "rb");
         if (file != NULL) {
             if (machineIsValid(machineName, checkRoms)) {
@@ -537,16 +700,20 @@ void machineFillAvailable(ArrayList *list, int checkRoms)
         }
     }
     else {
-        ArchGlob* glob = archGlob("Machines/*", ARCH_GLOB_DIRS);
+        char globPath[PROP_MAXPATH];
+        ArchGlob* glob;
         int i;
         
+        sprintf(globPath, "%s/*", machinesDir);
+        
+        glob = archGlob(globPath, ARCH_GLOB_DIRS);
         if (glob == NULL)
             return;
         
         for (i = 0; i < glob->count; i++) {
             char fileName[512];
             FILE* file;
-            sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
+		    sprintf(fileName, "%s/config.ini", glob->pathVector[i]);
             file = fopen(fileName, "rb");
             if (file != NULL) {
                 const char* machineName = strrchr(glob->pathVector[i], '/');
@@ -564,6 +731,46 @@ void machineFillAvailable(ArrayList *list, int checkRoms)
                 }
                 
                 fclose(file);
+            }
+        }
+        
+        archGlobFree(glob);
+        
+        // Check ZIP sets
+        
+        sprintf(globPath, "%s/*.zip", machinesDir);
+        
+        glob = archGlob(globPath, ARCH_GLOB_FILES);
+        
+        if (glob == NULL)
+            return;
+        
+        for (i = 0; i < glob->count; i++) {
+            char buffer[512];
+			char *extension;
+			char *machineName;
+
+            strcpy(buffer, glob->pathVector[i]);
+            
+            extension = strrchr(buffer, '.');
+            if (extension != NULL)
+                *extension = '\0';
+            
+            machineName = strrchr(buffer, '/');
+            if (machineName == NULL) {
+                machineName = strrchr(buffer, '\\');
+            }
+            if (machineName == NULL) {
+                machineName = buffer - 1;
+            }
+            
+            machineName++;
+            
+            if (machineIsValid(machineName, checkRoms))
+            {
+                char *name = (char *)calloc(512, sizeof(char));
+                strncpy(name, machineName, maxNameLength - 1);
+                arrayListAppend(list, name, 1);
             }
         }
         
@@ -1610,3 +1817,7 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
     return success;
 }
 
+void machineSetDirectory(const char* dir)
+{
+    strcpy(machinesDir, dir);
+}

@@ -29,8 +29,8 @@
 #define MACHINE_H
  
 #include "MsxTypes.h"
-#include "ArrayList.h"
 #include "MediaDb.h"
+#include "ArrayList.h"
 #include "VDP.h"
 #include "AY8910.h"
 #include <stdio.h>
@@ -99,6 +99,8 @@ typedef struct {
     } fdc;
     int slotInfoCount;
     SlotInfo slotInfo[32];
+    int isZipped;
+    char *zipFile;
 } Machine;
 
 
@@ -117,6 +119,8 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
 
 void machineLoadState(Machine* machine);
 void machineSaveState(Machine* machine);
+
+void machineSetDirectory(const char* dir);
 
 #endif
 
