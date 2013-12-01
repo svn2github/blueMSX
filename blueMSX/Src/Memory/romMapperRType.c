@@ -71,7 +71,8 @@ static void loadState(RomMapperRType* rm)
     }
 
     saveStateClose(state);
-
+    //DINK: Nov 27, 2013 - fix for save state load at level2+
+    bank = 2;
     bankData = rm->romData + (rm->romMapper[bank] << 14);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + bank,     bankData, 1, 0);
     slotMapPage(rm->slot, rm->sslot, rm->startPage + bank + 1, bankData + 0x2000, 1, 0);
