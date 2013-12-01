@@ -540,7 +540,7 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     int idOffset = cartNo * ID_FILE_CART_OFFSET;
     char langBuffer[560];
     HMENU hMenu = CreatePopupMenu();
-    int i;
+    int i, firstone;
 
     setMenuColor(hMenu);
 #ifndef NO_FILE_HISTORY
@@ -561,23 +561,111 @@ static HMENU menuCreateCart(int cartNo, Properties* pProperties, Shortcuts* shor
     sprintf(langBuffer, "%s%hs%hs", langMenuEject(), (*pProperties->media.carts[cartNo].fileName ? ": " : ""), getCleanFileName(pProperties->media.carts[cartNo].fileName));
     AppendMenu(hMenu, MF_STRING | (*pProperties->media.carts[cartNo].fileName ? 0 : MF_GRAYED), idOffset + ID_FILE_CART_REMOVE, langBuffer);
 
-    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+    //AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
     if (cartNo == 0) {
-        AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), idOffset + ID_FILE_CART_AUTORESET, langMenuCartAutoReset());
         AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+        AppendMenu(hMenu, MF_STRING | (pProperties->cartridge.autoReset ? MFS_CHECKED : 0), idOffset + ID_FILE_CART_AUTORESET, langMenuCartAutoReset());
+//        AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
     }
 
 #ifndef NO_FILE_HISTORY
     if (appConfigGetInt("filehistory", 1) != 0) {
         if (*pProperties->filehistory.cartridge[cartNo][0] == 0) {
+            AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
             AppendMenu(hMenu, MF_STRING | MF_GRAYED,  0, langMenuNoRecentFiles());
         }
 
+        firstone=0;
         for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
-            sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
-            AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+            if (pProperties->filehistory.cartridgeType[cartNo][i] != 94 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 95 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 76 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 74 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 108 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 112 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 107 &&
+                pProperties->filehistory.cartridgeType[cartNo][i] != 113) {
+
+                if (firstone==0) {
+                    firstone++;
+                    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+                    sprintf(langBuffer, "%hs        \tMSX", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]), pProperties->filehistory.cartridgeType[cartNo][i]);
+                } else {
+                    sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                }
+                AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+            }
         }
+
+        firstone=0;
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 94 ||
+                pProperties->filehistory.cartridgeType[cartNo][i] == 95 ||
+                pProperties->filehistory.cartridgeType[cartNo][i] == 108 ||
+                pProperties->filehistory.cartridgeType[cartNo][i] == 112 ||
+                pProperties->filehistory.cartridgeType[cartNo][i] == 107) {
+
+                if (firstone==0) {
+                    firstone++;
+                    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+                    sprintf(langBuffer, "%hs        \tSega SG-1000[+]", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                } else {
+                    sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                }
+                AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+            }
+        }
+
+        firstone=0;
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 76 ||
+                pProperties->filehistory.cartridgeType[cartNo][i] == 113) {
+
+                if (firstone==0) {
+                    firstone++;
+                    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+                    sprintf(langBuffer, "%hs        \tColeco", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                } else {
+                    sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                }
+                AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+            }
+        }
+
+        firstone=0;
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 74) {
+
+                if (firstone==0) {
+                    firstone++;
+                    AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+                    sprintf(langBuffer, "%hs        \tSVI-318/328", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                } else {
+                    sprintf(langBuffer, "%hs", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]));
+                }
+                AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+            }
+        }
+
+/*
+        for (i = 0; i < pProperties->filehistory.count && *pProperties->filehistory.cartridge[cartNo][i]; i++) {
+            char system[40];
+            system[0] = 0;
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 94) {
+                strcpy(system, "  - Sega SG-1000[+]");
+            } else
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 76) {
+                strcpy(system, "  - Coleco");
+            } else
+            if (pProperties->filehistory.cartridgeType[cartNo][i] == 74) {
+                strcpy(system, "  - SVI-318/328");
+            } else {
+                sprintf(system, "  - MSX (RT:%d)", pProperties->filehistory.cartridgeType[cartNo][i]);
+            }
+            sprintf(langBuffer, "%hs %s", getCleanFileName(pProperties->filehistory.cartridge[cartNo][i]), system);
+            AppendMenu(hMenu, MF_STRING, idOffset + ID_FILE_CART_HISTORY + i, langBuffer);
+        } */
     }
 #endif
     return hMenu;
