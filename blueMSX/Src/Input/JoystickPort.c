@@ -63,17 +63,24 @@ void joystickPortUpdateBoardInfo()
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_MAGICKEYDONGLE] = 1;
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_ASCIILASER] = 1;
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_ARKANOID_PAD] = 1;
-            joystickConfig.defaultType[i] = JOYSTICK_PORT_NONE;
+            joystickConfig.defaultType[i] = JOYSTICK_PORT_JOYSTICK;
         }
+        //DINK: added line below
+        joystickConfig.defaultType[0] = JOYSTICK_PORT_JOYSTICK;
         joystickConfig.keyboardEnabled = 1;
         break;
 
     case BOARD_SG1000:
     case BOARD_SVI:
         for (i = 0; i < 2; i++) {
-            joystickConfig.typeEnabled[i][JOYSTICK_PORT_NONE] = 1;
+            //joystickConfig.typeEnabled[i][JOYSTICK_PORT_NONE] = 1;
             joystickConfig.typeEnabled[i][JOYSTICK_PORT_JOYSTICK] = 1;
-            joystickConfig.defaultType[i] = JOYSTICK_PORT_NONE;
+            joystickConfig.defaultType[i] = JOYSTICK_PORT_JOYSTICK;
+        }
+        //DINK: added line below
+        joystickConfig.defaultType[0] = JOYSTICK_PORT_JOYSTICK;
+        if (boardType==BOARD_SG1000) {  // enable port2 on SEGA SG-*
+            joystickConfig.defaultType[1] = JOYSTICK_PORT_JOYSTICK;
         }
         joystickConfig.keyboardEnabled = 1;
         break;
