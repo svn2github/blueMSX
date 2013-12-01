@@ -171,7 +171,7 @@ int toint(char* buffer)
     return atoi(buffer);
 }
 
-#ifdef _MSC_VER
+#ifdef WIN32
 
 static char *strcasestr(const char *str1, const char *str2)
 {
