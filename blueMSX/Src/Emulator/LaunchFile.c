@@ -178,7 +178,7 @@ int insertCartridge(Properties* properties, int drive, const char* fname, const 
             }
 
             if (romType == ROM_UNKNOWN) {
-//                romType = chkRomType;
+                romType = chkRomType;
             }
         }
     }
