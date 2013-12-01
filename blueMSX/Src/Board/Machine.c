@@ -173,7 +173,7 @@ int toint(char* buffer)
 
 #ifdef WIN32
 
-static char *strcasestr(const char *str1, const char *str2)
+char *strcasestr(const char *str1, const char *str2)
 {
 	char *str1copy;
 	char *str2copy;
