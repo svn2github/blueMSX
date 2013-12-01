@@ -3314,6 +3314,16 @@ char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romT
     char* title = cartSlot == 1 ? langDlgInsertRom2() : langDlgInsertRom1();
     char* fileName;
     char extensionList[512];
+
+    // DINK: different defDir depending on machine
+    if (strcasestr(properties->emulation.machineName, "Coleco")!=0) {
+        defaultDir = properties->cartridge.defDirCOLECO; }
+    if (strcasestr(properties->emulation.machineName, "SEGA")!=0) {
+        defaultDir = properties->cartridge.defDirSEGA; }
+    if ((strcasestr(properties->emulation.machineName, "SVI-318")!=0) ||
+        (strcasestr(properties->emulation.machineName, "SVI-328")!=0)) {
+        defaultDir = properties->cartridge.defDirSVI; }
+
     sprintf(extensionList, "%s   (*.rom, *.ri, *.mx1, *.mx2, *.col, *.sms, *.sg, *.sc, *.zip)#*.rom; *.ri; *.mx1; *.mx2; *.col; *.sg; *.sc; *.zip#%s   (*.*)#*.*#", langFileRom(), langFileAll());
     replaceCharInString(extensionList, '#', 0);
 
