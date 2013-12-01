@@ -398,6 +398,9 @@ typedef struct {
 typedef struct {
     RomType defaultType;
     char    defDir[PROP_MAXPATH];
+    char    defDirSEGA[PROP_MAXPATH];
+    char    defDirCOLECO[PROP_MAXPATH];
+    char    defDirSVI[PROP_MAXPATH];
     int     autoReset;
     int     quickStartDrive;
 } CartridgeProperties;
