@@ -691,7 +691,9 @@ static int joystickUpdateState(int index,  DWORD* buttonMask) {
 
     rv = IDirectInputDevice_GetDeviceState(joyInfo[index].diDevice, sizeof(DIJOYSTATE), &js);
     if (rv == DIERR_INPUTLOST || rv == DIERR_NOTACQUIRED) {
-    	rv = IDirectInputDevice_Acquire(joyInfo[index].diDevice);
+        rv = IDirectInputDevice_Acquire(joyInfo[index].diDevice);
+        // dink: after acquire, return 0 instead of proceeding further
+        return 0;
     }
 
     if (rv != DI_OK) {
