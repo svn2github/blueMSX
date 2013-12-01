@@ -429,6 +429,9 @@ void propInitDefaults(Properties* properties, int langType, PropKeyboardLanguage
     }
     
     properties->cartridge.defDir[0]    = 0;
+    properties->cartridge.defDirSEGA[0]   = 0;
+    properties->cartridge.defDirCOLECO[0] = 0;
+    properties->cartridge.defDirSVI[0] = 0;
     properties->cartridge.defaultType  = ROM_UNKNOWN;
     properties->cartridge.autoReset    = 1;
     properties->cartridge.quickStartDrive = 0;
@@ -712,6 +715,9 @@ static void propLoad(Properties* properties)
     histFile = iniFileOpen(histFilename);
     
     GET_STR_VALUE_2(histFile, cartridge, defDir);
+    GET_STR_VALUE_2(histFile, cartridge, defDirSEGA);
+    GET_STR_VALUE_2(histFile, cartridge, defDirCOLECO);
+    GET_STR_VALUE_2(histFile, cartridge, defDirSVI);
     GET_INT_VALUE_2(histFile, cartridge, autoReset);
     GET_INT_VALUE_2(histFile, cartridge, quickStartDrive);
 
@@ -973,6 +979,9 @@ void propSave(Properties* properties)
     histFile = iniFileOpen(histFilename);
     
     SET_STR_VALUE_2(histFile, cartridge, defDir);
+    SET_STR_VALUE_2(histFile, cartridge, defDirSEGA);
+    SET_STR_VALUE_2(histFile, cartridge, defDirCOLECO);
+    SET_STR_VALUE_2(histFile, cartridge, defDirSVI);
     SET_INT_VALUE_2(histFile, cartridge, autoReset);
     SET_INT_VALUE_2(histFile, cartridge, quickStartDrive);
 
