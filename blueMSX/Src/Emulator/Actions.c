@@ -53,6 +53,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <windows.h>
 
 
 static struct {
@@ -445,6 +446,45 @@ void actionQuickSaveState() {
         strcpy(state.properties->filehistory.quicksave, generateSaveFilename(state.properties, stateDir, statePrefix, ".sta", 2));
         boardSaveState(state.properties->filehistory.quicksave, 1);
         emulatorResume();
+    }
+}
+
+void actionQuickSaveStateUndo() {
+    if (emulatorGetState() != EMU_STOPPED) {
+        // what this does:
+        // convert "c:\blah\states\blah_19.sta" to "c:\blah\states\blah_18.sta"
+        // if its at "blah_00.sta" and "blah_99.sta" exists, then wrap around
+        // (as quicksavestate goes from 99 -> 00)
+        if (state.properties->filehistory.quicksave && strlen(state.properties->filehistory.quicksave) > 10) {
+            char numstr[5], *oldstatefilename;
+            int numstrtonum;
+            int qslen=strlen(state.properties->filehistory.quicksave)-6; // focus on the 2 numbers before the ext
+            oldstatefilename = strdup(state.properties->filehistory.quicksave);
+            memset(&numstr, 0, sizeof(numstr));
+            strncpy(numstr, state.properties->filehistory.quicksave+qslen, 2);
+            numstrtonum = atoi(numstr);
+            if (numstrtonum>0) {
+                numstrtonum--;
+            } else { //wrap-around to 99 if it exists!
+                state.properties->filehistory.quicksave[qslen]='9';
+                state.properties->filehistory.quicksave[qslen+1]='9';
+                if (archFileExists(state.properties->filehistory.quicksave)) {
+                    DeleteFile(oldstatefilename);
+                    free(oldstatefilename);
+                    return;
+                }
+            }
+            state.properties->filehistory.quicksave[qslen]='0'+(numstrtonum/10);
+            state.properties->filehistory.quicksave[qslen+1]='0'+(numstrtonum%10);
+            if (archFileExists(state.properties->filehistory.quicksave) &&
+                        strcmp(oldstatefilename, state.properties->filehistory.quicksave)) {
+                DeleteFile(oldstatefilename);
+            } else { // no state to go back to, keep filehistory.quicksave the same
+                state.properties->filehistory.quicksave[qslen]=oldstatefilename[qslen];
+                state.properties->filehistory.quicksave[qslen+1]=oldstatefilename[qslen+1];
+            }
+            free(oldstatefilename);
+        }
     }
 }
 
