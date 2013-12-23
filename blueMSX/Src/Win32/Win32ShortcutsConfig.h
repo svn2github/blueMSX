@@ -66,6 +66,7 @@ typedef struct {
     ShotcutHotkey cpuStateSave;
     ShotcutHotkey cpuStateQuickLoad;
     ShotcutHotkey cpuStateQuickSave;
+    ShotcutHotkey cpuStateQuickSaveUndo;
 
     ShotcutHotkey cartInsert[2];
     ShotcutHotkey cartSpecialMenu[2];

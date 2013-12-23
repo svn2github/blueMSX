@@ -743,6 +743,7 @@ static Shortcuts* loadShortcuts(char* profileName)
     LOAD_SHORTCUT(shortcutFile, cpuStateSave);
     LOAD_SHORTCUT(shortcutFile, cpuStateQuickLoad);
     LOAD_SHORTCUT(shortcutFile, cpuStateQuickSave);
+    LOAD_SHORTCUT(shortcutFile, cpuStateQuickSaveUndo);
     
     LOAD_SHORTCUT(shortcutFile, cartInsert[0]);
     LOAD_SHORTCUT(shortcutFile, cartInsert[1]);
@@ -844,6 +845,7 @@ static void saveShortcuts(char* profileName, Shortcuts* shortcuts)
     SAVE_SHORTCUT(shortcutFile, cpuStateSave);
     SAVE_SHORTCUT(shortcutFile, cpuStateQuickLoad);
     SAVE_SHORTCUT(shortcutFile, cpuStateQuickSave);
+    SAVE_SHORTCUT(shortcutFile, cpuStateQuickSaveUndo);
 
     SAVE_SHORTCUT(shortcutFile, cartInsert[0]);
     SAVE_SHORTCUT(shortcutFile, cartInsert[1]);
@@ -990,6 +992,7 @@ static void updateShortcutEntries(HWND hDlg)
     ADD_SHORTCUT(cpuStateSave, langShortcutCpuStateSave());
     ADD_SHORTCUT(cpuStateQuickLoad, langShortcutCpuStateQload());
     ADD_SHORTCUT(cpuStateQuickSave, langShortcutCpuStateQsave());
+    ADD_SHORTCUT(cpuStateQuickSaveUndo, "Quick save CPU state UNDO");
     
     ADD_SHORTCUTSEPARATOR();
     
