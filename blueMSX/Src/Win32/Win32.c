@@ -869,6 +869,7 @@ static void checkKeyUp(Shortcuts* s, ShotcutHotkey key)
     if (hotkeyEq(key, s->cpuStateSave))                 actionSaveState();
     if (hotkeyEq(key, s->cpuStateQuickLoad))            actionQuickLoadState();
     if (hotkeyEq(key, s->cpuStateQuickSave))            actionQuickSaveState();
+    if (hotkeyEq(key, s->cpuStateQuickSaveUndo))        actionQuickSaveStateUndo();
 
     if (hotkeyEq(key, s->cartInsert[0]))                actionCartInsert1();
     if (hotkeyEq(key, s->cartInsert[1]))                actionCartInsert2();
