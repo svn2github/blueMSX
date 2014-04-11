@@ -53,8 +53,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <windows.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 static struct {
     Properties* properties;
@@ -469,7 +471,7 @@ void actionQuickSaveStateUndo() {
                 state.properties->filehistory.quicksave[qslen]='9';
                 state.properties->filehistory.quicksave[qslen+1]='9';
                 if (archFileExists(state.properties->filehistory.quicksave)) {
-                    DeleteFile(oldstatefilename);
+                    archFileDelete(oldstatefilename);
                     free(oldstatefilename);
                     return;
                 }
@@ -478,7 +480,7 @@ void actionQuickSaveStateUndo() {
             state.properties->filehistory.quicksave[qslen+1]='0'+(numstrtonum%10);
             if (archFileExists(state.properties->filehistory.quicksave) &&
                         strcmp(oldstatefilename, state.properties->filehistory.quicksave)) {
-                DeleteFile(oldstatefilename);
+                archFileDelete(oldstatefilename);
             } else { // no state to go back to, keep filehistory.quicksave the same
                 state.properties->filehistory.quicksave[qslen]=oldstatefilename[qslen];
                 state.properties->filehistory.quicksave[qslen+1]=oldstatefilename[qslen+1];

@@ -35,6 +35,7 @@ int archCreateDirectory(const char* pathname);
 const char* archGetCurrentDirectory();
 void archSetCurrentDirectory(const char* pathname);
 int archFileExists(const char* fileName);
+int archFileDelete(const char *fileName);
 
 // File dialogs:
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType);

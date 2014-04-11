@@ -366,6 +366,7 @@ SOURCE_FILES += SaveState.c
 SOURCE_FILES += StrcmpNoCase.c 
 SOURCE_FILES += TokenExtract.c 
 SOURCE_FILES += IniFileParser.c 
+SOURCE_FILES += ArrayList.c 
 
 SOURCE_FILES += Board.c 
 SOURCE_FILES += Machine.c 

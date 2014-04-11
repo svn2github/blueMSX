@@ -56,6 +56,11 @@ int archFileExists(const char* fileName)
     return stat(fileName, &s) == 0;
 }
 
+int archFileDelete(const char *fileName)
+{
+    return remove(fileName) == 0;
+}
+
 /* File dialogs: */
 char* archFilenameGetOpenRom(Properties* properties, int cartSlot, RomType* romType) { return NULL; }
 char* archFilenameGetOpenDisk(Properties* properties, int drive, int allowCreate) { return NULL; }

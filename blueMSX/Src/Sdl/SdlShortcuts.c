@@ -88,7 +88,7 @@ struct Shortcuts {
 };
 
 
-#define LOAD_SHORTCUT(hotkey) loadShortcut(#hotkey, &shortcuts->hotkey)
+#define LOAD_SHORTCUT(hotkey) loadShortcut(iniFile, #hotkey, &shortcuts->hotkey)
 
 #define HOTKEY_EQ(hotkey1, hotkey2) (*(UInt32*)&hotkey1 == *(UInt32*)&hotkey2)
 
@@ -120,7 +120,7 @@ static int stringToMod(const char* name)
     return 0;
 }
 
-static void loadShortcut(char* name, ShotcutHotkey* hotkey)
+static void loadShortcut(IniFile *iniFile, char* name, ShotcutHotkey* hotkey)
 {
     char buffer[512];
     char* token;
@@ -130,7 +130,7 @@ static void loadShortcut(char* name, ShotcutHotkey* hotkey)
     hotkey->mods = 0;
     hotkey->key  = 0;
 
-    if (!iniFileGetString("Shortcuts", name, "", buffer, sizeof(buffer))) {
+    if (!iniFileGetString(iniFile, "Shortcuts", name, "", buffer, sizeof(buffer))) {
         return;
     }
 
@@ -161,7 +161,7 @@ Shortcuts* shortcutsCreate()
 
     sprintf(filename, "%s/blueMSX.shortcuts", shortcutsDir);
 
-    iniFileOpen(filename);
+    IniFile *iniFile = iniFileOpen(filename);
 
     LOAD_SHORTCUT(switchMsxAudio);
     LOAD_SHORTCUT(spritesEnable);
@@ -207,7 +207,7 @@ Shortcuts* shortcutsCreate()
     LOAD_SHORTCUT(volumeMute);
     LOAD_SHORTCUT(volumeStereo);
 
-    iniFileClose();
+    iniFileClose(iniFile);
 
     return shortcuts;
 }

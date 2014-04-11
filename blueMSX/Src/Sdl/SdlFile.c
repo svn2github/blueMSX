@@ -58,6 +58,11 @@ int archFileExists(const char* fileName)
     return PathFileExists(fileName);
 }
 
+int archFileDelete(const char* fileName)
+{
+    return DeleteFile(fileName);
+}
+
 #else
 
 #include <sys/stat.h>
@@ -85,6 +90,12 @@ int archFileExists(const char* fileName)
     struct stat s;
     return stat(fileName, &s) == 0;
 }
+
+int archFileDelete(const char* fileName)
+{
+    return remove(fileName) == 0;
+}
+
 #endif
 
 /* File dialogs: */

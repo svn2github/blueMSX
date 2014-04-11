@@ -3656,6 +3656,11 @@ int archFileExists(const char* fileName)
     return PathFileExists(fileName);
 }
 
+int archFileDelete(const char* fileName)
+{
+    return DeleteFile(fileName);
+}
+
 void archMaximizeWindow() {
     if (st.currentHwnd != NULL) {
 //        ShowWindow(st.currentHwnd, SW_MAXIMIZE);
