@@ -146,6 +146,7 @@
 #include "romMapperOpcodeSaveRam.h"
 #include "romMapperOpcodeSlotManager.h"
 #include "romMapperDooly.h"
+#include "romMapperMuPack.h"
 
 
 // PacketFileSystem.h Need to be included after all other includes
@@ -1429,6 +1430,10 @@ int machineInitialize(Machine* machine, UInt8** mainRam, UInt32* mainRamSize, UI
             
         case ROM_MSXDOS2:
             success &= romMapperMsxDos2Create(romName, buf, size, slot, subslot, startPage);
+            break;
+            
+        case ROM_MUPACK:
+            success &= romMapperMuPackCreate(romName, buf, size, slot, subslot, startPage);
             break;
             
         case ROM_KONAMI5:

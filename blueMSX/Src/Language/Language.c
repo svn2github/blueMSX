@@ -949,7 +949,7 @@ char* langRomTypeTurborPause() { return ls->romTypeTurborPause; }
 char* langRomTypeF4deviceNormal() { return ls->romTypeF4deviceNormal; }
 char* langRomTypeF4deviceInvert() { return ls->romTypeF4deviceInvert; }
 char* langRomTypeMsxMidi() { return "MSX-MIDI"; }
-char* langRomTypeMsxMidiExternal() { return "MSX-MIDI u.Pack"; }
+char* langRomTypeMsxMidiExternal() { return "MSX-MIDI external"; }
 char* langRomTypeTurborTimer() { return ls->romTypeTurborTimer; }
 char* langRomTypeKoei() { return "Koei (SRAM)"; }
 char* langRomTypeBasic() { return "Basic ROM"; }

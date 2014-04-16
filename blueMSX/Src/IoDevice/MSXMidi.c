@@ -131,7 +131,9 @@ static void reset(MSXMidi* msxMidi)
 	msxMidi->rxrdyIRQlatch   = 0;
 	msxMidi->rxrdyIRQenabled = 0;
 
-    unregisterIoPorts(msxMidi);
+    if (msxMidi->isExternal) {
+        unregisterIoPorts(msxMidi);
+    }
 
     i8251Reset(msxMidi->i8251);
     i8254Reset(msxMidi->i8254);
@@ -296,7 +298,8 @@ static void registerIoPorts(MSXMidi* msxMidi, int ioStart) {
 
     msxMidi->ioStart = ioStart;
 
-    for (i = 0; i < (msxMidi->ioStart == 0xe0 ? 2 : 8); i++) {
+    i = msxMidi->ioStart == 0xe0 ? 2 : 8;
+    while (i--) {
         ioPortRegister(ioStart + i, readIo, writeIo, msxMidi);
     }
 }

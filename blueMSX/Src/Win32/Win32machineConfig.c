@@ -823,6 +823,7 @@ static void endEditControls(HWND hDlg)
     case ROM_DUMAS:
     case ROM_SCC:
     case ROM_SCCPLUS:
+    case ROM_MUPACK:
     case ROM_KOEI:
     case ROM_GAMEMASTER2:
     case ROM_RTYPE:
@@ -1314,6 +1315,7 @@ static void setEditControls(HWND hDlg)
     case ROM_HAMARAJANIGHT:
     case ROM_MEGAFLSHSCC:
     case ROM_MEGAFLSHSCCPLUS:
+    case ROM_MUPACK:
     case ROM_OBSONET:
     case ROM_DUMAS:
     case ROM_SCC:
@@ -1465,6 +1467,7 @@ static RomType romTypeList[] = {
     ROM_FMPAK,
     ROM_MSXMIDI,
     ROM_MSXMIDI_EXTERNAL,
+    ROM_MUPACK,
     ROM_MSXMUSIC,
     ROM_MSXAUDIO,
     ROM_MSXAUDIODEV,
