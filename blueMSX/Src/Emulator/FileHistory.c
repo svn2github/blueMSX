@@ -49,11 +49,13 @@ static char extendedCasName[PROP_MAX_TAPES][256];
 
 const char* stripPathExt(const char* filename) {
     static char buffer[128];
+    char *dotChar;
 
     strcpy(buffer, stripPath(filename));
+    dotChar = strrchr(buffer, '.');
 
-    if (buffer[strlen(buffer) - 4] == '.') {
-        buffer[strlen(buffer) - 4] = 0;
+    if (dotChar != NULL) {
+        *dotChar = 0;
     }
 
     return buffer;
